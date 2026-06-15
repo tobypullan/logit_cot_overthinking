@@ -135,14 +135,46 @@ def build_summary(
     truncated_trace_count = sum(
         bool(record.get("truncated", False)) for record in trace_records
     )
+    truncated_keys = {
+        (int(record["position"]), str(record["question_id"]))
+        for record in trace_records
+        if bool(record.get("truncated", False))
+    }
+    complete_dataframe = dataframe[
+        ~dataframe.apply(
+            lambda row: (int(row["position"]), str(row["question_id"]))
+            in truncated_keys,
+            axis=1,
+        )
+    ]
+    complete_accuracy = (
+        complete_dataframe.groupby("decile", sort=True)["correct"]
+        .mean()
+        .rename(lambda value: str(int(value)))
+        .to_dict()
+    )
+    complete_outcome_counts = (
+        complete_dataframe[complete_dataframe["decile"] == 100]["outcome"]
+        .value_counts()
+        .sort_index()
+        .to_dict()
+    )
     return {
         "config": config,
         "trace_count": len(trace_records),
         "trajectory_row_count": len(dataframe),
         "category_counts": category_counts,
         "truncated_trace_count": truncated_trace_count,
+        "complete_trace_count": len(trace_records) - truncated_trace_count,
+        "trace_completion_rate": (
+            (len(trace_records) - truncated_trace_count) / len(trace_records)
+            if trace_records
+            else 0.0
+        ),
         "per_decile_accuracy": accuracy,
+        "per_decile_accuracy_complete_traces": complete_accuracy,
         "outcome_counts": outcome_counts,
+        "outcome_counts_complete_traces": complete_outcome_counts,
         "validation": {
             "passed": all(checks.values()),
             "checks": checks,

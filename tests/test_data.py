@@ -2,6 +2,7 @@ import pytest
 
 from logit_cot_overthinking.data import (
     format_question,
+    parse_gpqa_diamond_question,
     select_balanced_category_indices,
 )
 
@@ -15,6 +16,28 @@ def test_format_question_preserves_variable_choice_count() -> None:
 def test_format_question_rejects_empty_options() -> None:
     with pytest.raises(ValueError, match="at least one option"):
         format_question("Impossible.", [])
+
+
+def test_parse_gpqa_diamond_question_extracts_final_choice_block() -> None:
+    question, options = parse_gpqa_diamond_question(
+        "Which original option is correct?\n\n"
+        "a) Alpha\n"
+        "b) Beta\n"
+        "c) Gamma\n"
+        "d) Delta\n\n"
+        "A. d\n"
+        "B. a\n"
+        "C. b\n"
+        "D. c"
+    )
+
+    assert question.endswith("d) Delta")
+    assert options == ("d", "a", "b", "c")
+
+
+def test_parse_gpqa_diamond_question_rejects_missing_choices() -> None:
+    with pytest.raises(ValueError, match="answer-choice block"):
+        parse_gpqa_diamond_question("Question without final choices")
 
 
 def test_balanced_category_selection_is_deterministic_and_ordered() -> None:

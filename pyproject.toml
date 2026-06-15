@@ -27,6 +27,14 @@ dev = [
 [project.scripts]
 trajectory-probe = "logit_cot_overthinking.cli:main"
 trajectory-visualize = "logit_cot_overthinking.visualize_cli:main"
+trajectory-analyze-lost = "logit_cot_overthinking.lost_analysis_cli:main"
+trajectory-rerun-candidates = "logit_cot_overthinking.candidate_reruns_cli:main"
+trajectory-extend-capped = "logit_cot_overthinking.trace_extension_cli:main"
+trajectory-analyze-seeds = "logit_cot_overthinking.seed_analysis_cli:main"
+trajectory-analyze-extensions = "logit_cot_overthinking.extension_analysis_cli:main"
+trajectory-run-matched-controls = "logit_cot_overthinking.matched_controls_cli:main"
+trajectory-analyze-matched-controls = "logit_cot_overthinking.matched_analysis_cli:main"
+trajectory-extend-matched-controls = "logit_cot_overthinking.matched_extension_cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]

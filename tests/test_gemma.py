@@ -63,6 +63,20 @@ def test_answer_token_validation_and_extraction() -> None:
     assert extract_answer_letter("D", ("A", "B", "C")) is None
 
 
+def test_answer_extraction_prefers_verbose_conclusion() -> None:
+    answer_text = (
+        "Comparing the options:\n"
+        "A. first\nB. second\nC. third\nD. fourth\n\n"
+        "The closest option is C.\n\nC"
+    )
+    assert extract_answer_letter(answer_text, ("A", "B", "C", "D")) == "C"
+
+
+def test_answer_extraction_ignores_unconcluded_verbose_option_list() -> None:
+    answer_text = "The possibilities are:\nA. first\nB. second\nC. third\nD. fourth"
+    assert extract_answer_letter(answer_text, ("A", "B", "C", "D")) is None
+
+
 def test_probability_calculation_preserves_raw_choice_mass() -> None:
     token_map = {"A": ord("A"), "B": ord("B")}
     values = {
@@ -75,4 +89,3 @@ def test_probability_calculation_preserves_raw_choice_mass() -> None:
     assert logprobs["A"] == pytest.approx(math.log(0.25))
     assert probabilities == pytest.approx({"A": 0.25, "B": 0.50})
     assert non_choice == pytest.approx(0.25)
-

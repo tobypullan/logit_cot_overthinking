@@ -31,6 +31,14 @@ def _save_figure(figure: plt.Figure, path: Path) -> Path:
     return path
 
 
+def _read_trace_records(path: Path) -> list[dict[str, object]]:
+    return [
+        json.loads(line)
+        for line in path.read_text(encoding="utf-8").splitlines()
+        if line.strip()
+    ]
+
+
 def plot_overview(dataframe: pd.DataFrame, output_dir: Path) -> Path:
     grouped = dataframe.groupby("decile", sort=True)
     deciles = np.array(sorted(dataframe["decile"].unique()))
@@ -78,15 +86,25 @@ def plot_overview(dataframe: pd.DataFrame, output_dir: Path) -> Path:
     for axis in axes[1]:
         axis.set_xlabel("Reasoning trace revealed (%)")
 
+    question_count = dataframe["question_id"].nunique()
     figure.suptitle(
-        f"Gemma 4 12B smoke-run trajectory overview (n={dataframe['question_id'].nunique()})",
+        f"Gemma 4 12B trajectory overview (n={question_count})",
         fontsize=15,
         fontweight="bold",
     )
+    excluded = int(dataframe.attrs.get("excluded_traces", 0))
+    note = (
+        "Descriptive smoke-test results only; the sample is too small for "
+        "aggregate inference."
+        if question_count <= 50
+        else "Aggregate descriptive results from complete traces."
+    )
+    if excluded:
+        note += f" {excluded} token-capped traces are excluded."
     figure.text(
         0.5,
         0.01,
-        "Descriptive smoke-test results only; the sample is too small for aggregate inference.",
+        note,
         ha="center",
         color=COLORS["gray"],
         fontsize=9,
@@ -239,16 +257,165 @@ def plot_choice_trajectories(dataframe: pd.DataFrame, output_dir: Path) -> Path:
     return _save_figure(figure, output_dir / "choice_probability_trajectories.png")
 
 
+def plot_category_accuracy_heatmap(
+    dataframe: pd.DataFrame,
+    output_dir: Path,
+) -> Path:
+    accuracy = dataframe.pivot_table(
+        index="category",
+        columns="decile",
+        values="correct",
+        aggfunc="mean",
+    ).sort_index()
+
+    figure, axis = plt.subplots(figsize=(12, 7))
+    image = axis.imshow(
+        accuracy.to_numpy(),
+        aspect="auto",
+        cmap="YlGn",
+        vmin=0,
+        vmax=1,
+    )
+    for row_index, category in enumerate(accuracy.index):
+        for column_index, decile in enumerate(accuracy.columns):
+            value = float(accuracy.loc[category, decile])
+            axis.text(
+                column_index,
+                row_index,
+                f"{value:.0%}",
+                ha="center",
+                va="center",
+                color="white" if value > 0.65 else "black",
+                fontsize=8,
+            )
+
+    axis.set_xticks(range(len(accuracy.columns)))
+    axis.set_xticklabels(accuracy.columns)
+    axis.set_yticks(range(len(accuracy.index)))
+    axis.set_yticklabels(accuracy.index)
+    axis.set_xlabel("Reasoning trace revealed (%)")
+    axis.set_title("Accuracy trajectory by category", fontweight="bold")
+    colorbar = figure.colorbar(image, ax=axis, pad=0.02)
+    colorbar.set_label("Accuracy")
+    figure.tight_layout()
+    return _save_figure(figure, output_dir / "category_accuracy_heatmap.png")
+
+
+def plot_outcome_probability_trajectories(
+    dataframe: pd.DataFrame,
+    output_dir: Path,
+) -> Path:
+    working = dataframe.copy()
+    working["correct_answer_probability"] = working.apply(
+        lambda row: row["choice_probabilities"][row["answer"]],
+        axis=1,
+    )
+    final_rows = working[working["decile"] == 100]
+    outcome_counts = final_rows["outcome"].value_counts().to_dict()
+    outcome_order = ("stable_correct", "gained", "lost", "stable_wrong")
+    outcome_colors = {
+        "stable_correct": COLORS["green"],
+        "gained": COLORS["blue"],
+        "lost": COLORS["red"],
+        "stable_wrong": COLORS["gray"],
+    }
+
+    figure, axis = plt.subplots(figsize=(11, 5.5))
+    for outcome in outcome_order:
+        subset = working[working["outcome"] == outcome]
+        if subset.empty:
+            continue
+        grouped = subset.groupby("decile")["correct_answer_probability"]
+        median = grouped.median()
+        lower = grouped.quantile(0.25)
+        upper = grouped.quantile(0.75)
+        axis.plot(
+            median.index,
+            median.values,
+            marker="o",
+            linewidth=2.3,
+            color=outcome_colors[outcome],
+            label=f"{outcome.replace('_', ' ')} (n={outcome_counts[outcome]})",
+        )
+        axis.fill_between(
+            median.index,
+            lower.values,
+            upper.values,
+            color=outcome_colors[outcome],
+            alpha=0.12,
+        )
+
+    axis.set_xticks(sorted(working["decile"].unique()))
+    axis.set_yscale("symlog", linthresh=1e-6)
+    axis.set_ylim(0, 1.1)
+    axis.set_xlabel("Reasoning trace revealed (%)")
+    axis.set_ylabel("Raw probability on correct answer")
+    axis.set_title(
+        "Correct-answer commitment by trajectory outcome",
+        fontweight="bold",
+    )
+    axis.grid(alpha=0.25)
+    axis.legend()
+    figure.text(
+        0.5,
+        0.01,
+        "Lines show medians; shaded regions show interquartile ranges.",
+        ha="center",
+        color=COLORS["gray"],
+        fontsize=9,
+    )
+    figure.tight_layout(rect=(0, 0.04, 1, 1))
+    return _save_figure(
+        figure,
+        output_dir / "outcome_probability_trajectories.png",
+    )
+
+
+def plot_outcomes_by_category(
+    dataframe: pd.DataFrame,
+    output_dir: Path,
+) -> Path:
+    final_rows = dataframe[dataframe["decile"] == 100]
+    outcome_order = ["stable_correct", "gained", "lost", "stable_wrong"]
+    counts = pd.crosstab(final_rows["category"], final_rows["outcome"]).reindex(
+        columns=outcome_order,
+        fill_value=0,
+    )
+    fractions = counts.div(counts.sum(axis=1), axis=0)
+    colors = [
+        COLORS["green"],
+        COLORS["blue"],
+        COLORS["red"],
+        COLORS["gray"],
+    ]
+
+    figure, axis = plt.subplots(figsize=(11, 7))
+    left = np.zeros(len(fractions))
+    for outcome, color in zip(outcome_order, colors):
+        values = fractions[outcome].to_numpy()
+        axis.barh(
+            fractions.index,
+            values,
+            left=left,
+            color=color,
+            label=outcome.replace("_", " "),
+        )
+        left += values
+    axis.set_xlim(0, 1)
+    axis.set_xlabel("Share of category questions")
+    axis.set_title("Trajectory outcomes by category", fontweight="bold")
+    axis.grid(axis="x", alpha=0.2)
+    axis.legend(ncols=2, loc="lower right")
+    figure.tight_layout()
+    return _save_figure(figure, output_dir / "outcomes_by_category.png")
+
+
 def plot_runtime_and_trace_lengths(
     traces_path: Path,
     summary_path: Path,
     output_dir: Path,
 ) -> Path:
-    traces = [
-        json.loads(line)
-        for line in traces_path.read_text(encoding="utf-8").splitlines()
-        if line.strip()
-    ]
+    traces = _read_trace_records(traces_path)
     summary = json.loads(summary_path.read_text(encoding="utf-8"))
     timings = summary.get("timings_seconds", {})
     stage_names = [
@@ -262,20 +429,35 @@ def plot_runtime_and_trace_lengths(
         "Dataset",
         "Model init",
         "Trace generation",
-        "33 probes",
+        f"{int(summary['trajectory_row_count']):,} probes",
         "Outputs",
     ]
     stage_values = [float(timings.get(name, 0)) for name in stage_names]
 
     figure, axes = plt.subplots(1, 2, figsize=(11, 4.3))
-    trace_ids = [str(trace["question_id"]) for trace in traces]
     trace_lengths = [int(trace["trace_token_count"]) for trace in traces]
-    bars = axes[0].bar(trace_ids, trace_lengths, color=COLORS["blue"])
-    axes[0].bar_label(bars, padding=3, fmt="%d")
+    if len(traces) <= 40:
+        trace_ids = [str(trace["question_id"]) for trace in traces]
+        bars = axes[0].bar(trace_ids, trace_lengths, color=COLORS["blue"])
+        axes[0].bar_label(bars, padding=3, fmt="%d")
+        axes[0].set_xlabel("Question ID")
+        axes[0].set_ylabel("Tokens")
+        axes[0].grid(axis="y", alpha=0.25)
+    else:
+        axes[0].hist(trace_lengths, bins=30, color=COLORS["blue"], alpha=0.9)
+        trace_limit = int(summary["config"]["trace_max_tokens"])
+        axes[0].axvline(
+            trace_limit,
+            color=COLORS["red"],
+            linestyle="--",
+            linewidth=1.8,
+            label=f"trace cap ({trace_limit:,})",
+        )
+        axes[0].set_xlabel("Reasoning tokens")
+        axes[0].set_ylabel("Questions")
+        axes[0].grid(axis="y", alpha=0.25)
+        axes[0].legend()
     axes[0].set_title("Generated reasoning trace lengths")
-    axes[0].set_xlabel("Question ID")
-    axes[0].set_ylabel("Tokens")
-    axes[0].grid(axis="y", alpha=0.25)
 
     runtime_bars = axes[1].barh(
         stage_labels,
@@ -289,13 +471,13 @@ def plot_runtime_and_trace_lengths(
         ],
     )
     axes[1].bar_label(runtime_bars, padding=3, fmt="%.2fs")
-    axes[1].set_title("Cached smoke-run time by stage")
+    axes[1].set_title("Latest run time by stage")
     axes[1].set_xlabel("Seconds")
     axes[1].set_xlim(0, max(stage_values) * 1.15)
     axes[1].grid(axis="x", alpha=0.25)
     axes[1].invert_yaxis()
 
-    figure.suptitle("Smoke-run compute diagnostics", fontsize=15, fontweight="bold")
+    figure.suptitle("Run compute diagnostics", fontsize=15, fontweight="bold")
     figure.tight_layout(rect=(0, 0, 1, 0.94))
     return _save_figure(figure, output_dir / "runtime_and_trace_lengths.png")
 
@@ -326,11 +508,39 @@ def create_visualizations(input_dir: Path, output_dir: Path) -> list[Path]:
     if missing:
         raise KeyError(f"trajectory.parquet is missing columns: {sorted(missing)}")
 
+    traces = _read_trace_records(traces_path)
+    truncated_keys = {
+        (int(trace["position"]), str(trace["question_id"]))
+        for trace in traces
+        if bool(trace.get("truncated", False))
+    }
+    analysis_dataframe = dataframe[
+        ~dataframe.apply(
+            lambda row: (int(row["position"]), str(row["question_id"]))
+            in truncated_keys,
+            axis=1,
+        )
+    ].copy()
+    analysis_dataframe.attrs["excluded_traces"] = len(truncated_keys)
+
     output_dir.mkdir(parents=True, exist_ok=True)
     return [
-        plot_overview(dataframe, output_dir),
-        plot_correct_answer_heatmap(dataframe, output_dir),
-        plot_choice_trajectories(dataframe, output_dir),
+        plot_overview(analysis_dataframe, output_dir),
+        *(
+            [
+                plot_correct_answer_heatmap(analysis_dataframe, output_dir),
+                plot_choice_trajectories(analysis_dataframe, output_dir),
+            ]
+            if analysis_dataframe["question_id"].nunique() <= 50
+            else [
+                plot_category_accuracy_heatmap(analysis_dataframe, output_dir),
+                plot_outcome_probability_trajectories(
+                    analysis_dataframe,
+                    output_dir,
+                ),
+                plot_outcomes_by_category(analysis_dataframe, output_dir),
+            ]
+        ),
         plot_runtime_and_trace_lengths(
             traces_path,
             summary_path,

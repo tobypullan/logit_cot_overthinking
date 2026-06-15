@@ -56,4 +56,7 @@ def test_metrics_compute_flips_commitment_and_lost_outcome() -> None:
     assert summary["outcome_counts"] == {"lost": 1}
     assert summary["category_counts"] == {"": 1}
     assert summary["truncated_trace_count"] == 0
+    assert summary["complete_trace_count"] == 1
+    assert summary["trace_completion_rate"] == 1.0
+    assert summary["outcome_counts_complete_traces"] == {"lost": 1}
     assert summary["validation"]["passed"] is True

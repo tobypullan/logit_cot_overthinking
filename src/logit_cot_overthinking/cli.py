@@ -14,12 +14,23 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--model", default="google/gemma-4-12B-it")
     parser.add_argument("--dataset", default="TIGER-Lab/MMLU-Pro")
+    parser.add_argument(
+        "--dataset-format",
+        choices=("auto", "mmlu-pro", "gpqa-diamond"),
+        default="auto",
+        help="Dataset adapter. Auto detects supported schemas.",
+    )
     parser.add_argument("--split", default="test")
     parser.add_argument(
         "--selection",
-        choices=("contiguous", "balanced-categories"),
+        choices=("contiguous", "balanced-categories", "indices"),
         default="contiguous",
         help="Row selection policy. Balanced selection samples evenly across categories.",
+    )
+    parser.add_argument(
+        "--row-indices",
+        default="",
+        help="Comma-separated test-split positions for --selection indices.",
     )
     parser.add_argument("--start-row", type=int, default=0)
     parser.add_argument("--num-rows", type=int, default=3)
@@ -34,6 +45,11 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--gpu-memory-utilization", type=float, default=0.90)
     parser.add_argument(
+        "--resume-traces",
+        action="store_true",
+        help="Reuse matching non-truncated traces already in the output directory.",
+    )
+    parser.add_argument(
         "--output-dir",
         type=Path,
         default=Path("outputs/smoke"),
@@ -43,11 +59,18 @@ def build_parser() -> argparse.ArgumentParser:
 
 def main() -> None:
     args = build_parser().parse_args()
+    row_indices = tuple(
+        int(value.strip())
+        for value in args.row_indices.split(",")
+        if value.strip()
+    )
     config = ProbeConfig(
         model=args.model,
         dataset=args.dataset,
+        dataset_format=args.dataset_format,
         split=args.split,
         selection=args.selection,
+        row_indices=row_indices,
         start_row=args.start_row,
         num_rows=args.num_rows,
         seed=args.seed,
@@ -55,6 +78,7 @@ def main() -> None:
         max_model_len=args.max_model_len,
         max_num_seqs=args.max_num_seqs,
         gpu_memory_utilization=args.gpu_memory_utilization,
+        resume_traces=args.resume_traces,
         output_dir=args.output_dir,
     )
     summary = run_probe(config)

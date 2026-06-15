@@ -58,9 +58,31 @@ def extract_answer_letter(answer_text: str, valid_labels: Sequence[str]) -> str 
     stripped = answer_text.strip()
     if stripped in valid:
         return stripped
-    for match in re.finditer(r"\b([A-Z])\b", stripped):
-        if match.group(1) in valid:
-            return match.group(1)
+
+    trailing = re.search(
+        r"(?:^|\n)\s*(?:\*\*)?([A-Z])(?:\*\*)?[\s.]*$",
+        stripped,
+    )
+    if trailing and trailing.group(1) in valid:
+        return trailing.group(1)
+
+    explicit_matches = list(
+        re.finditer(
+            r"(?i)\b(?:correct answer|answer|closest option|matches option|"
+            r"option|choice)\s*(?:is|:|=)?\s*(?:option\s*)?"
+            r"[\(\[]?([A-Z])[\)\].]?",
+            stripped,
+        )
+    )
+    for match in reversed(explicit_matches):
+        label = match.group(1).upper()
+        if label in valid:
+            return label
+
+    if len(stripped) <= 32:
+        for match in re.finditer(r"\b([A-Z])\b", stripped):
+            if match.group(1) in valid:
+                return match.group(1)
     return None
 
 
@@ -184,18 +206,29 @@ class GemmaProbeRunner:
         self,
         questions: Sequence[MultipleChoiceQuestion],
         base_prompts: Sequence[str],
+        seeds: Sequence[int] | None = None,
     ) -> list[dict[str, object]]:
         from vllm import SamplingParams
 
-        sampling_params = SamplingParams(
-            temperature=1.0,
-            top_p=0.95,
-            top_k=64,
-            max_tokens=self.config.trace_max_tokens,
-            seed=self.config.seed,
-            skip_special_tokens=False,
-            spaces_between_special_tokens=False,
+        request_seeds = (
+            list(seeds)
+            if seeds is not None
+            else [self.config.seed] * len(questions)
         )
+        if len(request_seeds) != len(questions):
+            raise ValueError("seeds must match the number of questions")
+        sampling_params = [
+            SamplingParams(
+                temperature=1.0,
+                top_p=0.95,
+                top_k=64,
+                max_tokens=self.config.trace_max_tokens,
+                seed=seed,
+                skip_special_tokens=False,
+                spaces_between_special_tokens=False,
+            )
+            for seed in request_seeds
+        ]
         outputs = self.llm.generate(
             list(base_prompts),
             sampling_params=sampling_params,
@@ -207,7 +240,11 @@ class GemmaProbeRunner:
             )
 
         records: list[dict[str, object]] = []
-        for question, output in zip(questions, outputs):
+        for question, output, seed in zip(
+            questions,
+            outputs,
+            request_seeds,
+        ):
             if not output.outputs:
                 raise RuntimeError(f"No trace generated for question {question.question_id}")
             completion = output.outputs[0]
@@ -225,6 +262,7 @@ class GemmaProbeRunner:
                     "answer": question.answer,
                     "category": question.category,
                     "source": question.source,
+                    "run_seed": seed,
                     "prompt": question.prompt,
                     "raw_response": completion.text,
                     "reasoning_trace": parsed.reasoning,
@@ -241,7 +279,103 @@ class GemmaProbeRunner:
             )
         return records
 
-    def probe_trajectories(
+    def extend_traces(
+        self,
+        questions: Sequence[MultipleChoiceQuestion],
+        base_prompts: Sequence[str],
+        traces: Sequence[dict[str, object]],
+        extension_max_tokens: int,
+    ) -> list[dict[str, object]]:
+        from vllm import SamplingParams
+
+        if not (
+            len(questions) == len(base_prompts) == len(traces)
+        ):
+            raise ValueError(
+                "questions, base_prompts, and traces must have equal lengths"
+            )
+        if extension_max_tokens < 1:
+            raise ValueError("extension_max_tokens must be at least 1")
+
+        prompts: list[str] = []
+        sampling_params: list[Any] = []
+        for base_prompt, trace in zip(base_prompts, traces):
+            if not bool(trace.get("truncated", False)):
+                raise ValueError(
+                    "extend_traces only accepts token-capped traces"
+                )
+            continuation_prompt = (
+                f"{base_prompt}{str(trace['raw_response'])}"
+            )
+            prompt_tokens = len(
+                self.tokenizer.encode(
+                    continuation_prompt,
+                    add_special_tokens=False,
+                )
+            )
+            # Reserve room to close the thought channel and sample an answer
+            # if the continuation consumes its full allowance.
+            available_tokens = (
+                self.config.max_model_len - prompt_tokens - 64
+            )
+            if available_tokens < 1:
+                raise RuntimeError(
+                    "No context space remains to extend trace "
+                    f"{trace['question_id']}"
+                )
+            prompts.append(continuation_prompt)
+            sampling_params.append(
+                SamplingParams(
+                    temperature=1.0,
+                    top_p=0.95,
+                    top_k=64,
+                    max_tokens=min(
+                        extension_max_tokens,
+                        available_tokens,
+                    ),
+                    seed=int(
+                        trace.get("run_seed", self.config.seed)
+                    ),
+                    skip_special_tokens=False,
+                    spaces_between_special_tokens=False,
+                )
+            )
+
+        outputs = self.llm.generate(
+            prompts,
+            sampling_params=sampling_params,
+            use_tqdm=True,
+        )
+        if len(outputs) != len(traces):
+            raise RuntimeError(
+                f"Expected {len(traces)} trace extensions, got {len(outputs)}"
+            )
+
+        records: list[dict[str, object]] = []
+        for question, trace, output in zip(
+            questions,
+            traces,
+            outputs,
+        ):
+            if not output.outputs:
+                raise RuntimeError(
+                    f"No extension generated for question "
+                    f"{question.question_id}"
+                )
+            completion = output.outputs[0]
+            records.append(
+                merge_trace_extension(
+                    trace=trace,
+                    continuation_text=completion.text,
+                    continuation_token_count=len(completion.token_ids),
+                    finish_reason=completion.finish_reason,
+                    tokenizer=self.tokenizer,
+                    valid_labels=question.labels,
+                )
+            )
+        return records
+
+    def force_close_traces(
         self,
         questions: Sequence[MultipleChoiceQuestion],
         base_prompts: Sequence[str],
@@ -249,11 +383,110 @@ class GemmaProbeRunner:
     ) -> list[dict[str, object]]:
         from vllm import SamplingParams
 
+        if not (
+            len(questions) == len(base_prompts) == len(traces)
+        ):
+            raise ValueError(
+                "questions, base_prompts, and traces must have equal lengths"
+            )
         prompts: list[str] = []
         sampling_params: list[Any] = []
-        metadata: list[tuple[MultipleChoiceQuestion, int, int, int, dict[str, int]]] = []
+        for question, base_prompt, trace in zip(
+            questions,
+            base_prompts,
+            traces,
+        ):
+            raw_response = str(trace["raw_response"])
+            closure = "" if THOUGHT_END in raw_response else THOUGHT_END
+            answer_tokens = validate_answer_tokens(
+                self.tokenizer,
+                question.labels,
+            )
+            prompts.append(f"{base_prompt}{raw_response}{closure}")
+            sampling_params.append(
+                SamplingParams(
+                    temperature=1.0,
+                    top_p=0.95,
+                    top_k=64,
+                    max_tokens=1,
+                    seed=int(
+                        trace.get("run_seed", self.config.seed)
+                    ),
+                    allowed_token_ids=list(answer_tokens.values()),
+                    skip_special_tokens=False,
+                    spaces_between_special_tokens=False,
+                )
+            )
 
-        for question, base_prompt, trace in zip(questions, base_prompts, traces):
+        outputs = self.llm.generate(
+            prompts,
+            sampling_params=sampling_params,
+            use_tqdm=True,
+        )
+        if len(outputs) != len(traces):
+            raise RuntimeError(
+                f"Expected {len(traces)} forced answers, got {len(outputs)}"
+            )
+
+        records: list[dict[str, object]] = []
+        for question, trace, output in zip(
+            questions,
+            traces,
+            outputs,
+        ):
+            if not output.outputs:
+                raise RuntimeError(
+                    f"No forced answer generated for question "
+                    f"{question.question_id}"
+                )
+            completion = output.outputs[0]
+            records.append(
+                force_close_trace(
+                    trace=trace,
+                    answer_text=completion.text,
+                    answer_token_count=len(completion.token_ids),
+                    tokenizer=self.tokenizer,
+                    valid_labels=question.labels,
+                )
+            )
+        return records
+
+    def probe_trajectories(
+        self,
+        questions: Sequence[MultipleChoiceQuestion],
+        base_prompts: Sequence[str],
+        traces: Sequence[dict[str, object]],
+        seeds: Sequence[int] | None = None,
+    ) -> list[dict[str, object]]:
+        from vllm import SamplingParams
+
+        prompts: list[str] = []
+        sampling_params: list[Any] = []
+        metadata: list[
+            tuple[
+                MultipleChoiceQuestion,
+                int,
+                int,
+                int,
+                dict[str, int],
+                int,
+            ]
+        ] = []
+
+        request_seeds = (
+            list(seeds)
+            if seeds is not None
+            else [self.config.seed] * len(questions)
+        )
+        if len(request_seeds) != len(questions):
+            raise ValueError("seeds must match the number of questions")
+
+        for question, base_prompt, trace, seed in zip(
+            questions,
+            base_prompts,
+            traces,
+            request_seeds,
+        ):
             reasoning = str(trace["reasoning_trace"])
             prefixes = build_decile_prefixes(reasoning, self.tokenizer)
             answer_tokens = validate_answer_tokens(self.tokenizer, question.labels)
@@ -267,7 +500,7 @@ class GemmaProbeRunner:
                         top_p=1.0,
                         top_k=0,
                         max_tokens=1,
-                        seed=self.config.seed,
+                        seed=seed,
                         logprobs=len(token_ids),
                         logprob_token_ids=token_ids,
                         skip_special_tokens=False,
@@ -281,6 +514,7 @@ class GemmaProbeRunner:
                         prefix_token_count,
                         int(trace["trace_token_count"]),
                         answer_tokens,
+                        seed,
                     )
                 )
 
@@ -296,7 +530,14 @@ class GemmaProbeRunner:
 
         records: list[dict[str, object]] = []
         for output, item in zip(outputs, metadata):
-            question, decile, prefix_token_count, trace_token_count, answer_tokens = item
+            (
+                question,
+                decile,
+                prefix_token_count,
+                trace_token_count,
+                answer_tokens,
+                seed,
+            ) = item
             if not output.outputs:
                 raise RuntimeError(f"No probe output for question {question.question_id}")
             completion = output.outputs[0]
@@ -320,6 +561,7 @@ class GemmaProbeRunner:
                     "answer": question.answer,
                     "category": question.category,
                     "source": question.source,
+                    "run_seed": seed,
                     "decile": decile,
                     "prefix_token_count": prefix_token_count,
                     "trace_token_count": trace_token_count,
@@ -337,3 +579,114 @@ class GemmaProbeRunner:
                 }
             )
         return records
+
+
+def merge_trace_extension(
+    trace: dict[str, object],
+    continuation_text: str,
+    continuation_token_count: int,
+    finish_reason: str | None,
+    tokenizer: Any,
+    valid_labels: Sequence[str],
+) -> dict[str, object]:
+    original_response = str(trace["raw_response"])
+    merged_response = f"{original_response}{continuation_text}"
+    if not merged_response.startswith(original_response):
+        raise RuntimeError("Extended response does not preserve its prefix")
+
+    parsed = parse_gemma_response(merged_response)
+    generated_answer = extract_answer_letter(
+        parsed.answer_text,
+        valid_labels,
+    )
+    reasoning_token_ids = tokenizer.encode(
+        parsed.reasoning,
+        add_special_tokens=False,
+    )
+    previous_extension_tokens = int(
+        trace.get("extension_generated_token_count", 0)
+    )
+    record = dict(trace)
+    record.update(
+        {
+            "raw_response": merged_response,
+            "reasoning_trace": parsed.reasoning,
+            "generated_answer_text": parsed.answer_text,
+            "generated_answer": generated_answer,
+            "trace_token_count": len(reasoning_token_ids),
+            "generated_token_count": int(
+                trace["generated_token_count"]
+            )
+            + continuation_token_count,
+            "finish_reason": finish_reason,
+            "truncated": (
+                finish_reason == "length"
+                and generated_answer is None
+            ),
+            "extended": True,
+            "extension_rounds": int(
+                trace.get("extension_rounds", 0)
+            )
+            + 1,
+            "extension_generated_token_count": (
+                previous_extension_tokens + continuation_token_count
+            ),
+            "original_trace_token_count": int(
+                trace.get(
+                    "original_trace_token_count",
+                    trace["trace_token_count"],
+                )
+            ),
+            "original_generated_token_count": int(
+                trace.get(
+                    "original_generated_token_count",
+                    trace["generated_token_count"],
+                )
+            ),
+            "original_finish_reason": trace.get(
+                "original_finish_reason",
+                trace.get("finish_reason"),
+            ),
+        }
+    )
+    return record
+
+
+def force_close_trace(
+    trace: dict[str, object],
+    answer_text: str,
+    answer_token_count: int,
+    tokenizer: Any,
+    valid_labels: Sequence[str],
+) -> dict[str, object]:
+    raw_response = str(trace["raw_response"])
+    closure = "" if THOUGHT_END in raw_response else THOUGHT_END
+    merged_response = f"{raw_response}{closure}{answer_text}"
+    parsed = parse_gemma_response(merged_response)
+    reasoning_token_ids = tokenizer.encode(
+        parsed.reasoning,
+        add_special_tokens=False,
+    )
+    record = dict(trace)
+    record.update(
+        {
+            "raw_response": merged_response,
+            "reasoning_trace": parsed.reasoning,
+            "generated_answer_text": parsed.answer_text,
+            "generated_answer": extract_answer_letter(
+                parsed.answer_text,
+                valid_labels,
+            ),
+            "trace_token_count": len(reasoning_token_ids),
+            "generated_token_count": int(
+                trace["generated_token_count"]
+            )
+            + answer_token_count,
+            "finish_reason": "forced_close",
+            "truncated": False,
+            "extended": True,
+            "forced_completion": True,
+            "forced_answer_token_count": answer_token_count,
+        }
+    )
+    return record
