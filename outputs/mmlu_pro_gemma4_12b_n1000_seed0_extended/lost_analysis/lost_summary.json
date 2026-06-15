@@ -1,0 +1,220 @@
+{
+  "category_rates": [
+    {
+      "category": "engineering",
+      "complete_questions": 72,
+      "endpoint_lost": 0,
+      "endpoint_lost_rate": 0.0,
+      "ever_correct_final_wrong": 16,
+      "ever_correct_final_wrong_rate": 0.2222222222222222,
+      "robust_loss": 0,
+      "robust_loss_rate": 0.0
+    },
+    {
+      "category": "physics",
+      "complete_questions": 71,
+      "endpoint_lost": 0,
+      "endpoint_lost_rate": 0.0,
+      "ever_correct_final_wrong": 14,
+      "ever_correct_final_wrong_rate": 0.19718309859154928,
+      "robust_loss": 0,
+      "robust_loss_rate": 0.0
+    },
+    {
+      "category": "chemistry",
+      "complete_questions": 72,
+      "endpoint_lost": 0,
+      "endpoint_lost_rate": 0.0,
+      "ever_correct_final_wrong": 14,
+      "ever_correct_final_wrong_rate": 0.19444444444444445,
+      "robust_loss": 0,
+      "robust_loss_rate": 0.0
+    },
+    {
+      "category": "health",
+      "complete_questions": 71,
+      "endpoint_lost": 3,
+      "endpoint_lost_rate": 0.04225352112676056,
+      "ever_correct_final_wrong": 13,
+      "ever_correct_final_wrong_rate": 0.18309859154929578,
+      "robust_loss": 0,
+      "robust_loss_rate": 0.0
+    },
+    {
+      "category": "law",
+      "complete_questions": 71,
+      "endpoint_lost": 3,
+      "endpoint_lost_rate": 0.04225352112676056,
+      "ever_correct_final_wrong": 10,
+      "ever_correct_final_wrong_rate": 0.14084507042253522,
+      "robust_loss": 4,
+      "robust_loss_rate": 0.056338028169014086
+    },
+    {
+      "category": "business",
+      "complete_questions": 72,
+      "endpoint_lost": 3,
+      "endpoint_lost_rate": 0.041666666666666664,
+      "ever_correct_final_wrong": 9,
+      "ever_correct_final_wrong_rate": 0.125,
+      "robust_loss": 3,
+      "robust_loss_rate": 0.041666666666666664
+    },
+    {
+      "category": "computer science",
+      "complete_questions": 72,
+      "endpoint_lost": 3,
+      "endpoint_lost_rate": 0.041666666666666664,
+      "ever_correct_final_wrong": 9,
+      "ever_correct_final_wrong_rate": 0.125,
+      "robust_loss": 0,
+      "robust_loss_rate": 0.0
+    },
+    {
+      "category": "history",
+      "complete_questions": 71,
+      "endpoint_lost": 4,
+      "endpoint_lost_rate": 0.056338028169014086,
+      "ever_correct_final_wrong": 8,
+      "ever_correct_final_wrong_rate": 0.11267605633802817,
+      "robust_loss": 4,
+      "robust_loss_rate": 0.056338028169014086
+    },
+    {
+      "category": "math",
+      "complete_questions": 71,
+      "endpoint_lost": 0,
+      "endpoint_lost_rate": 0.0,
+      "ever_correct_final_wrong": 8,
+      "ever_correct_final_wrong_rate": 0.11267605633802817,
+      "robust_loss": 0,
+      "robust_loss_rate": 0.0
+    },
+    {
+      "category": "philosophy",
+      "complete_questions": 71,
+      "endpoint_lost": 4,
+      "endpoint_lost_rate": 0.056338028169014086,
+      "ever_correct_final_wrong": 6,
+      "ever_correct_final_wrong_rate": 0.08450704225352113,
+      "robust_loss": 2,
+      "robust_loss_rate": 0.028169014084507043
+    },
+    {
+      "category": "other",
+      "complete_questions": 71,
+      "endpoint_lost": 4,
+      "endpoint_lost_rate": 0.056338028169014086,
+      "ever_correct_final_wrong": 5,
+      "ever_correct_final_wrong_rate": 0.07042253521126761,
+      "robust_loss": 1,
+      "robust_loss_rate": 0.014084507042253521
+    },
+    {
+      "category": "economics",
+      "complete_questions": 72,
+      "endpoint_lost": 3,
+      "endpoint_lost_rate": 0.041666666666666664,
+      "ever_correct_final_wrong": 4,
+      "ever_correct_final_wrong_rate": 0.05555555555555555,
+      "robust_loss": 1,
+      "robust_loss_rate": 0.013888888888888888
+    },
+    {
+      "category": "psychology",
+      "complete_questions": 71,
+      "endpoint_lost": 0,
+      "endpoint_lost_rate": 0.0,
+      "ever_correct_final_wrong": 3,
+      "ever_correct_final_wrong_rate": 0.04225352112676056,
+      "robust_loss": 3,
+      "robust_loss_rate": 0.04225352112676056
+    },
+    {
+      "category": "biology",
+      "complete_questions": 72,
+      "endpoint_lost": 0,
+      "endpoint_lost_rate": 0.0,
+      "ever_correct_final_wrong": 3,
+      "ever_correct_final_wrong_rate": 0.041666666666666664,
+      "robust_loss": 0,
+      "robust_loss_rate": 0.0
+    }
+  ],
+  "comparison_groups": {
+    "ever correct, final wrong": {
+      "count": 122,
+      "flips_mean": 4.131147540983607,
+      "flips_median": 4.0,
+      "trace_tokens_mean": 7607.270491803279,
+      "trace_tokens_median": 5155.0
+    },
+    "final correct": {
+      "count": 731,
+      "flips_mean": 1.716826265389877,
+      "flips_median": 1.0,
+      "trace_tokens_mean": 3247.4651162790697,
+      "trace_tokens_median": 1694.0
+    },
+    "never correct": {
+      "count": 147,
+      "flips_mean": 1.8299319727891157,
+      "flips_median": 1.0,
+      "trace_tokens_mean": 6048.680272108843,
+      "trace_tokens_median": 3730.0
+    }
+  },
+  "complete_question_count": 1000,
+  "definitions": {
+    "endpoint_lost": "Correct at decile 0 and wrong at decile 100.",
+    "ever_correct_final_wrong": "Correct at one or more probe deciles and wrong at decile 100.",
+    "robust_loss": "Ever-correct/final-wrong with a pre-final raw correct-answer probability >= 0.5, final valid-letter mass >= 0.5, and agreement between the final probe and generated answer."
+  },
+  "endpoint_lost_count": 27,
+  "ever_correct_final_wrong_count": 122,
+  "first_correct_decile_counts": {
+    "0": 27,
+    "10": 45,
+    "20": 17,
+    "30": 9,
+    "40": 8,
+    "50": 9,
+    "60": 4,
+    "70": 1,
+    "90": 2
+  },
+  "flip_count_distribution": {
+    "1": 15,
+    "2": 28,
+    "3": 11,
+    "4": 13,
+    "5": 10,
+    "6": 24,
+    "7": 16,
+    "8": 3,
+    "9": 2
+  },
+  "gained_then_lost_count": 95,
+  "generated_final_correct_count": 56,
+  "generated_final_wrong_count": 62,
+  "last_correct_decile_counts": {
+    "0": 20,
+    "10": 11,
+    "20": 9,
+    "30": 3,
+    "40": 5,
+    "50": 8,
+    "60": 9,
+    "70": 9,
+    "80": 11,
+    "90": 37
+  },
+  "median_final_choice_probability_mass": 0.0059008286282522734,
+  "normalized_reversal_candidate_count": 37,
+  "probe_generation_agreement_rate": 0.45901639344262296,
+  "robust_endpoint_lost_count": 1,
+  "robust_gained_then_lost_count": 17,
+  "robust_loss_count": 18,
+  "robust_self_correction_language_count": 17,
+  "robust_simulated_retrieval_language_count": 14
+}

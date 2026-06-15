@@ -1,0 +1,87 @@
+{
+  "category_rates": [
+    {
+      "category": "gpqa-diamond",
+      "complete_questions": 198,
+      "endpoint_lost": 11,
+      "endpoint_lost_rate": 0.05555555555555555,
+      "ever_correct_final_wrong": 57,
+      "ever_correct_final_wrong_rate": 0.2878787878787879,
+      "robust_loss": 2,
+      "robust_loss_rate": 0.010101010101010102
+    }
+  ],
+  "comparison_groups": {
+    "ever correct, final wrong": {
+      "count": 57,
+      "flips_mean": 4.0701754385964914,
+      "flips_median": 4.0,
+      "trace_tokens_mean": 10583.894736842105,
+      "trace_tokens_median": 8822.0
+    },
+    "final correct": {
+      "count": 111,
+      "flips_mean": 2.3873873873873874,
+      "flips_median": 2.0,
+      "trace_tokens_mean": 8381.504504504504,
+      "trace_tokens_median": 5588.0
+    },
+    "never correct": {
+      "count": 30,
+      "flips_mean": 2.466666666666667,
+      "flips_median": 3.0,
+      "trace_tokens_mean": 13301.766666666666,
+      "trace_tokens_median": 12239.5
+    }
+  },
+  "complete_question_count": 198,
+  "definitions": {
+    "endpoint_lost": "Correct at decile 0 and wrong at decile 100.",
+    "ever_correct_final_wrong": "Correct at one or more probe deciles and wrong at decile 100.",
+    "robust_loss": "Ever-correct/final-wrong with a pre-final raw correct-answer probability >= 0.5, final valid-letter mass >= 0.5, and agreement between the final probe and generated answer."
+  },
+  "endpoint_lost_count": 11,
+  "ever_correct_final_wrong_count": 57,
+  "first_correct_decile_counts": {
+    "0": 11,
+    "10": 18,
+    "20": 12,
+    "30": 5,
+    "40": 3,
+    "50": 2,
+    "60": 6
+  },
+  "flip_count_distribution": {
+    "1": 5,
+    "2": 12,
+    "3": 6,
+    "4": 14,
+    "5": 2,
+    "6": 12,
+    "7": 2,
+    "8": 3,
+    "9": 1
+  },
+  "gained_then_lost_count": 46,
+  "generated_final_correct_count": 34,
+  "generated_final_wrong_count": 22,
+  "last_correct_decile_counts": {
+    "0": 1,
+    "10": 4,
+    "20": 3,
+    "30": 2,
+    "50": 4,
+    "60": 5,
+    "70": 8,
+    "80": 6,
+    "90": 24
+  },
+  "median_final_choice_probability_mass": 0.0023291098773927693,
+  "normalized_reversal_candidate_count": 15,
+  "probe_generation_agreement_rate": 0.3684210526315789,
+  "robust_endpoint_lost_count": 0,
+  "robust_gained_then_lost_count": 2,
+  "robust_loss_count": 2,
+  "robust_self_correction_language_count": 2,
+  "robust_simulated_retrieval_language_count": 2
+}

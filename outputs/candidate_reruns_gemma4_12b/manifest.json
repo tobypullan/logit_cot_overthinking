@@ -1,0 +1,201 @@
+{
+  "max_model_len": 20480,
+  "max_num_seqs": 16,
+  "model": "google/gemma-4-12B-it",
+  "runs": {
+    "gpqa_diamond/seed_0": {
+      "complete_trace_count": 7,
+      "trace_count": 8,
+      "validation_passed": true
+    },
+    "gpqa_diamond/seed_1": {
+      "complete_trace_count": 8,
+      "trace_count": 8,
+      "validation_passed": true
+    },
+    "gpqa_diamond/seed_2": {
+      "complete_trace_count": 7,
+      "trace_count": 8,
+      "validation_passed": true
+    },
+    "gpqa_diamond/seed_3": {
+      "complete_trace_count": 8,
+      "trace_count": 8,
+      "validation_passed": true
+    },
+    "gpqa_diamond/seed_4": {
+      "complete_trace_count": 7,
+      "trace_count": 8,
+      "validation_passed": true
+    },
+    "gpqa_diamond/seed_5": {
+      "complete_trace_count": 6,
+      "trace_count": 8,
+      "validation_passed": true
+    },
+    "gpqa_diamond/seed_6": {
+      "complete_trace_count": 8,
+      "trace_count": 8,
+      "validation_passed": true
+    },
+    "gpqa_diamond/seed_7": {
+      "complete_trace_count": 5,
+      "trace_count": 8,
+      "validation_passed": true
+    },
+    "gpqa_diamond/seed_8": {
+      "complete_trace_count": 7,
+      "trace_count": 8,
+      "validation_passed": true
+    },
+    "gpqa_diamond/seed_9": {
+      "complete_trace_count": 6,
+      "trace_count": 8,
+      "validation_passed": true
+    },
+    "mmlu_pro/seed_0": {
+      "complete_trace_count": 16,
+      "trace_count": 17,
+      "validation_passed": true
+    },
+    "mmlu_pro/seed_1": {
+      "complete_trace_count": 16,
+      "trace_count": 17,
+      "validation_passed": true
+    },
+    "mmlu_pro/seed_2": {
+      "complete_trace_count": 17,
+      "trace_count": 17,
+      "validation_passed": true
+    },
+    "mmlu_pro/seed_3": {
+      "complete_trace_count": 16,
+      "trace_count": 17,
+      "validation_passed": true
+    },
+    "mmlu_pro/seed_4": {
+      "complete_trace_count": 16,
+      "trace_count": 17,
+      "validation_passed": true
+    },
+    "mmlu_pro/seed_5": {
+      "complete_trace_count": 17,
+      "trace_count": 17,
+      "validation_passed": true
+    },
+    "mmlu_pro/seed_6": {
+      "complete_trace_count": 17,
+      "trace_count": 17,
+      "validation_passed": true
+    },
+    "mmlu_pro/seed_7": {
+      "complete_trace_count": 17,
+      "trace_count": 17,
+      "validation_passed": true
+    },
+    "mmlu_pro/seed_8": {
+      "complete_trace_count": 16,
+      "trace_count": 17,
+      "validation_passed": true
+    },
+    "mmlu_pro/seed_9": {
+      "complete_trace_count": 17,
+      "trace_count": 17,
+      "validation_passed": true
+    }
+  },
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "sources": {
+    "gpqa_diamond": {
+      "candidate_count": 8,
+      "candidate_flag": "normalized_reversal_candidate",
+      "dataset": "fingertap/GPQA-Diamond",
+      "dataset_format": "gpqa-diamond",
+      "positions": [
+        70,
+        87,
+        95,
+        101,
+        107,
+        119,
+        133,
+        158
+      ],
+      "question_ids": [
+        "gpqa-diamond-070",
+        "gpqa-diamond-087",
+        "gpqa-diamond-095",
+        "gpqa-diamond-101",
+        "gpqa-diamond-107",
+        "gpqa-diamond-119",
+        "gpqa-diamond-133",
+        "gpqa-diamond-158"
+      ]
+    },
+    "mmlu_pro": {
+      "candidate_count": 17,
+      "candidate_flag": "robust_loss",
+      "dataset": "TIGER-Lab/MMLU-Pro",
+      "dataset_format": "mmlu-pro",
+      "positions": [
+        46,
+        589,
+        1049,
+        1099,
+        1395,
+        1806,
+        2099,
+        2359,
+        2603,
+        4578,
+        4614,
+        4671,
+        4802,
+        5663,
+        6813,
+        10953,
+        11019
+      ],
+      "question_ids": [
+        "116",
+        "665",
+        "1130",
+        "1181",
+        "1486",
+        "1902",
+        "2199",
+        "2462",
+        "2714",
+        "4710",
+        "4746",
+        "4809",
+        "4941",
+        "5820",
+        "6980",
+        "11174",
+        "11240"
+      ]
+    }
+  },
+  "timings_seconds": {
+    "model_initialization": 57.455,
+    "output_processing": 0.687,
+    "total": 1933.773,
+    "trace_generation": 1759.205,
+    "trajectory_probing": 116.426
+  },
+  "total_probe_row_count": 2750,
+  "total_trace_count": 250,
+  "trace_max_tokens": 16384
+}

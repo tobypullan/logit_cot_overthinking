@@ -1,0 +1,99 @@
+{
+  "candidate_rerun": true,
+  "category_counts": {
+    "business": 2,
+    "economics": 1,
+    "history": 4,
+    "law": 4,
+    "other": 1,
+    "philosophy": 2,
+    "psychology": 3
+  },
+  "complete_trace_count": 17,
+  "config": {
+    "candidate_flag": "robust_loss",
+    "dataset": "TIGER-Lab/MMLU-Pro",
+    "dataset_format": "mmlu-pro",
+    "gpu_memory_utilization": 0.9,
+    "max_model_len": 20480,
+    "max_num_seqs": 16,
+    "model": "google/gemma-4-12B-it",
+    "num_rows": 17,
+    "output_dir": "outputs/candidate_reruns_gemma4_12b/mmlu_pro/seed_7",
+    "resume_traces": false,
+    "row_indices": [
+      46,
+      589,
+      1049,
+      1099,
+      1395,
+      1806,
+      2099,
+      2359,
+      2603,
+      4578,
+      4614,
+      4671,
+      4802,
+      5663,
+      6813,
+      10953,
+      11019
+    ],
+    "seed": 7,
+    "selection": "indices",
+    "split": "test",
+    "start_row": 0,
+    "trace_max_tokens": 16384
+  },
+  "outcome_counts": {
+    "gained": 8,
+    "lost": 1,
+    "stable_wrong": 8
+  },
+  "outcome_counts_complete_traces": {
+    "gained": 8,
+    "lost": 1,
+    "stable_wrong": 8
+  },
+  "per_decile_accuracy": {
+    "0": 0.058823529411764705,
+    "10": 0.5882352941176471,
+    "100": 0.47058823529411764,
+    "20": 0.5882352941176471,
+    "30": 0.6470588235294118,
+    "40": 0.6470588235294118,
+    "50": 0.47058823529411764,
+    "60": 0.47058823529411764,
+    "70": 0.47058823529411764,
+    "80": 0.4117647058823529,
+    "90": 0.4117647058823529
+  },
+  "per_decile_accuracy_complete_traces": {
+    "0": 0.058823529411764705,
+    "10": 0.5882352941176471,
+    "100": 0.47058823529411764,
+    "20": 0.5882352941176471,
+    "30": 0.6470588235294118,
+    "40": 0.6470588235294118,
+    "50": 0.47058823529411764,
+    "60": 0.47058823529411764,
+    "70": 0.47058823529411764,
+    "80": 0.4117647058823529,
+    "90": 0.4117647058823529
+  },
+  "trace_completion_rate": 1.0,
+  "trace_count": 17,
+  "trajectory_row_count": 187,
+  "truncated_trace_count": 0,
+  "validation": {
+    "checks": {
+      "finite_valid_choice_probabilities": true,
+      "full_trace_coverage_at_decile_100": true,
+      "predictions_within_valid_choices": true,
+      "trace_count_matches_selection": true,
+      "trajectory_row_count": true
+    },
+    "passed": true
+  }
+}

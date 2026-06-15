@@ -1,0 +1,93 @@
+{
+  "category_counts": {
+    "gpqa-diamond": 8
+  },
+  "complete_trace_count": 8,
+  "config": {
+    "candidate_flag": "normalized_reversal_candidate",
+    "dataset": "fingertap/GPQA-Diamond",
+    "dataset_format": "gpqa-diamond",
+    "gpu_memory_utilization": 0.9,
+    "max_model_len": 49152,
+    "max_num_seqs": 4,
+    "model": "google/gemma-4-12B-it",
+    "num_rows": 8,
+    "output_dir": "outputs/extension_smoke_gpqa_seed0",
+    "resume_traces": false,
+    "row_indices": [
+      70,
+      87,
+      95,
+      101,
+      107,
+      119,
+      133,
+      158
+    ],
+    "seed": 0,
+    "selection": "indices",
+    "split": "test",
+    "start_row": 0,
+    "trace_max_tokens": 32768
+  },
+  "outcome_counts": {
+    "gained": 1,
+    "lost": 1,
+    "stable_correct": 3,
+    "stable_wrong": 3
+  },
+  "outcome_counts_complete_traces": {
+    "gained": 1,
+    "lost": 1,
+    "stable_correct": 3,
+    "stable_wrong": 3
+  },
+  "per_decile_accuracy": {
+    "0": 0.5,
+    "10": 0.25,
+    "100": 0.5,
+    "20": 0.25,
+    "30": 0.25,
+    "40": 0.375,
+    "50": 0.375,
+    "60": 0.625,
+    "70": 0.75,
+    "80": 0.75,
+    "90": 0.5
+  },
+  "per_decile_accuracy_complete_traces": {
+    "0": 0.5,
+    "10": 0.25,
+    "100": 0.5,
+    "20": 0.25,
+    "30": 0.25,
+    "40": 0.375,
+    "50": 0.375,
+    "60": 0.625,
+    "70": 0.75,
+    "80": 0.75,
+    "90": 0.5
+  },
+  "trace_completion_rate": 1.0,
+  "trace_count": 8,
+  "trace_extension": {
+    "extended_trace_count": 1,
+    "extension_max_tokens": 16384,
+    "forced_completion_count": 1,
+    "max_extension_rounds": 1,
+    "remaining_truncated_trace_count": 0,
+    "source_dir": "outputs/candidate_reruns_gemma4_12b/gpqa_diamond/seed_0"
+  },
+  "trajectory_row_count": 88,
+  "truncated_trace_count": 0,
+  "validation": {
+    "checks": {
+      "finite_valid_choice_probabilities": true,
+      "full_trace_coverage_at_decile_100": true,
+      "predictions_within_valid_choices": true,
+      "trace_count_matches_selection": true,
+      "trajectory_row_count": true
+    },
+    "passed": true
+  }
+}

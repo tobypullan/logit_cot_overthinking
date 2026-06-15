@@ -1,0 +1,85 @@
+{
+  "candidate_rerun": true,
+  "category_counts": {
+    "gpqa-diamond": 8
+  },
+  "complete_trace_count": 7,
+  "config": {
+    "candidate_flag": "normalized_reversal_candidate",
+    "dataset": "fingertap/GPQA-Diamond",
+    "dataset_format": "gpqa-diamond",
+    "gpu_memory_utilization": 0.9,
+    "max_model_len": 20480,
+    "max_num_seqs": 16,
+    "model": "google/gemma-4-12B-it",
+    "num_rows": 8,
+    "output_dir": "outputs/candidate_reruns_gemma4_12b/gpqa_diamond/seed_4",
+    "resume_traces": false,
+    "row_indices": [
+      70,
+      87,
+      95,
+      101,
+      107,
+      119,
+      133,
+      158
+    ],
+    "seed": 4,
+    "selection": "indices",
+    "split": "test",
+    "start_row": 0,
+    "trace_max_tokens": 16384
+  },
+  "outcome_counts": {
+    "gained": 1,
+    "lost": 1,
+    "stable_correct": 3,
+    "stable_wrong": 3
+  },
+  "outcome_counts_complete_traces": {
+    "gained": 1,
+    "stable_correct": 3,
+    "stable_wrong": 3
+  },
+  "per_decile_accuracy": {
+    "0": 0.5,
+    "10": 0.5,
+    "100": 0.5,
+    "20": 0.375,
+    "30": 0.625,
+    "40": 0.75,
+    "50": 0.375,
+    "60": 0.375,
+    "70": 0.5,
+    "80": 0.5,
+    "90": 0.5
+  },
+  "per_decile_accuracy_complete_traces": {
+    "0": 0.42857142857142855,
+    "10": 0.42857142857142855,
+    "100": 0.5714285714285714,
+    "20": 0.2857142857142857,
+    "30": 0.5714285714285714,
+    "40": 0.7142857142857143,
+    "50": 0.42857142857142855,
+    "60": 0.42857142857142855,
+    "70": 0.5714285714285714,
+    "80": 0.5714285714285714,
+    "90": 0.5714285714285714
+  },
+  "trace_completion_rate": 0.875,
+  "trace_count": 8,
+  "trajectory_row_count": 88,
+  "truncated_trace_count": 1,
+  "validation": {
+    "checks": {
+      "finite_valid_choice_probabilities": true,
+      "full_trace_coverage_at_decile_100": true,
+      "predictions_within_valid_choices": true,
+      "trace_count_matches_selection": true,
+      "trajectory_row_count": true
+    },
+    "passed": true
+  }
+}

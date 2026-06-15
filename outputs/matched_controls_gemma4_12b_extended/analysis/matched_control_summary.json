@@ -1,0 +1,2668 @@
+{
+  "attempt_count": 1500,
+  "checkpoint_count": 6176,
+  "cohorts": [
+    {
+      "attempt_count": 250,
+      "baseline_cohort": "final_correct",
+      "broad_loss_count": 44,
+      "broad_loss_rate": 0.176,
+      "dataset": "gpqa_diamond",
+      "dataset_label": "GPQA Diamond",
+      "final_accuracy": 0.788,
+      "mean_flips": 2.336,
+      "mean_repetition_score": 0.17705954576987118,
+      "median_trace_tokens": 10065.5,
+      "retrieval_rate": 0.464,
+      "self_correction_rate": 0.98
+    },
+    {
+      "attempt_count": 250,
+      "baseline_cohort": "loss",
+      "broad_loss_count": 117,
+      "broad_loss_rate": 0.468,
+      "dataset": "gpqa_diamond",
+      "dataset_label": "GPQA Diamond",
+      "final_accuracy": 0.436,
+      "mean_flips": 3.368,
+      "mean_repetition_score": 0.19126410543160385,
+      "median_trace_tokens": 11502.0,
+      "retrieval_rate": 0.508,
+      "self_correction_rate": 1.0
+    },
+    {
+      "attempt_count": 250,
+      "baseline_cohort": "stable_wrong",
+      "broad_loss_count": 40,
+      "broad_loss_rate": 0.16,
+      "dataset": "gpqa_diamond",
+      "dataset_label": "GPQA Diamond",
+      "final_accuracy": 0.216,
+      "mean_flips": 2.48,
+      "mean_repetition_score": 0.17690645814824896,
+      "median_trace_tokens": 11422.0,
+      "retrieval_rate": 0.788,
+      "self_correction_rate": 1.0
+    },
+    {
+      "attempt_count": 250,
+      "baseline_cohort": "final_correct",
+      "broad_loss_count": 13,
+      "broad_loss_rate": 0.052,
+      "dataset": "mmlu_pro",
+      "dataset_label": "MMLU-Pro",
+      "final_accuracy": 0.864,
+      "mean_flips": 1.996,
+      "mean_repetition_score": 0.17277049243825648,
+      "median_trace_tokens": 4583.5,
+      "retrieval_rate": 0.676,
+      "self_correction_rate": 0.968
+    },
+    {
+      "attempt_count": 250,
+      "baseline_cohort": "loss",
+      "broad_loss_count": 117,
+      "broad_loss_rate": 0.468,
+      "dataset": "mmlu_pro",
+      "dataset_label": "MMLU-Pro",
+      "final_accuracy": 0.456,
+      "mean_flips": 2.924,
+      "mean_repetition_score": 0.19214372995816156,
+      "median_trace_tokens": 5750.0,
+      "retrieval_rate": 0.668,
+      "self_correction_rate": 0.98
+    },
+    {
+      "attempt_count": 250,
+      "baseline_cohort": "stable_wrong",
+      "broad_loss_count": 47,
+      "broad_loss_rate": 0.188,
+      "dataset": "mmlu_pro",
+      "dataset_label": "MMLU-Pro",
+      "final_accuracy": 0.152,
+      "mean_flips": 2.56,
+      "mean_repetition_score": 0.16150587086409388,
+      "median_trace_tokens": 5040.5,
+      "retrieval_rate": 0.804,
+      "self_correction_rate": 0.996
+    }
+  ],
+  "forced_completion_count": 26,
+  "matched_contrasts": [
+    {
+      "ci_high": 0.43200000000000005,
+      "ci_low": 0.156,
+      "comparison": "loss_vs_final_correct",
+      "dataset": "gpqa_diamond",
+      "match_count": 25,
+      "risk_difference": 0.29200000000000004
+    },
+    {
+      "ci_high": 0.44800000000000006,
+      "ci_low": 0.168,
+      "comparison": "loss_vs_stable_wrong",
+      "dataset": "gpqa_diamond",
+      "match_count": 25,
+      "risk_difference": 0.308
+    },
+    {
+      "ci_high": 0.524,
+      "ci_low": 0.312,
+      "comparison": "loss_vs_final_correct",
+      "dataset": "mmlu_pro",
+      "match_count": 25,
+      "risk_difference": 0.4159999999999999
+    },
+    {
+      "ci_high": 0.40800000000000003,
+      "ci_low": 0.15200000000000002,
+      "comparison": "loss_vs_stable_wrong",
+      "dataset": "mmlu_pro",
+      "match_count": 25,
+      "risk_difference": 0.28
+    }
+  ],
+  "predictive_coefficients": [
+    {
+      "coefficient": -0.22284452544560168,
+      "dataset": "combined",
+      "decile": 10,
+      "feature": "current_normalized_correct_probability"
+    },
+    {
+      "coefficient": 0.23546521598293307,
+      "dataset": "combined",
+      "decile": 10,
+      "feature": "flips_so_far"
+    },
+    {
+      "coefficient": 0.35647299849151964,
+      "dataset": "combined",
+      "decile": 10,
+      "feature": "log_trace_token_count"
+    },
+    {
+      "coefficient": 0.12141790555945722,
+      "dataset": "combined",
+      "decile": 10,
+      "feature": "normalized_confidence_decline"
+    },
+    {
+      "coefficient": 0.17456373947196724,
+      "dataset": "combined",
+      "decile": 10,
+      "feature": "prefix_repetition_score"
+    },
+    {
+      "coefficient": 0.29184794688118043,
+      "dataset": "combined",
+      "decile": 10,
+      "feature": "prefix_self_correction"
+    },
+    {
+      "coefficient": 0.2291550479609777,
+      "dataset": "combined",
+      "decile": 10,
+      "feature": "prefix_simulated_retrieval"
+    },
+    {
+      "coefficient": -0.2354652159829337,
+      "dataset": "combined",
+      "decile": 10,
+      "feature": "stable_correct_streak"
+    },
+    {
+      "coefficient": -0.2354652159829337,
+      "dataset": "combined",
+      "decile": 10,
+      "feature": "time_since_first_correct"
+    },
+    {
+      "coefficient": -0.20438063315007343,
+      "dataset": "combined",
+      "decile": 20,
+      "feature": "current_normalized_correct_probability"
+    },
+    {
+      "coefficient": 0.30285381270364076,
+      "dataset": "combined",
+      "decile": 20,
+      "feature": "flips_so_far"
+    },
+    {
+      "coefficient": 0.5285764610619372,
+      "dataset": "combined",
+      "decile": 20,
+      "feature": "log_trace_token_count"
+    },
+    {
+      "coefficient": 0.23662921075594587,
+      "dataset": "combined",
+      "decile": 20,
+      "feature": "normalized_confidence_decline"
+    },
+    {
+      "coefficient": -0.006084704657909991,
+      "dataset": "combined",
+      "decile": 20,
+      "feature": "prefix_repetition_score"
+    },
+    {
+      "coefficient": 0.23665324559127857,
+      "dataset": "combined",
+      "decile": 20,
+      "feature": "prefix_self_correction"
+    },
+    {
+      "coefficient": 0.031918377476942775,
+      "dataset": "combined",
+      "decile": 20,
+      "feature": "prefix_simulated_retrieval"
+    },
+    {
+      "coefficient": 0.3362262476934935,
+      "dataset": "combined",
+      "decile": 20,
+      "feature": "stable_correct_streak"
+    },
+    {
+      "coefficient": -0.7393867490996289,
+      "dataset": "combined",
+      "decile": 20,
+      "feature": "time_since_first_correct"
+    },
+    {
+      "coefficient": -0.11972017262498502,
+      "dataset": "combined",
+      "decile": 30,
+      "feature": "current_normalized_correct_probability"
+    },
+    {
+      "coefficient": -0.14532852190748813,
+      "dataset": "combined",
+      "decile": 30,
+      "feature": "flips_so_far"
+    },
+    {
+      "coefficient": 0.5274944596968791,
+      "dataset": "combined",
+      "decile": 30,
+      "feature": "log_trace_token_count"
+    },
+    {
+      "coefficient": 0.17085542235005718,
+      "dataset": "combined",
+      "decile": 30,
+      "feature": "normalized_confidence_decline"
+    },
+    {
+      "coefficient": 0.07881310717519671,
+      "dataset": "combined",
+      "decile": 30,
+      "feature": "prefix_repetition_score"
+    },
+    {
+      "coefficient": 0.13763556998006332,
+      "dataset": "combined",
+      "decile": 30,
+      "feature": "prefix_self_correction"
+    },
+    {
+      "coefficient": -0.004020662225267474,
+      "dataset": "combined",
+      "decile": 30,
+      "feature": "prefix_simulated_retrieval"
+    },
+    {
+      "coefficient": -0.6458419946666334,
+      "dataset": "combined",
+      "decile": 30,
+      "feature": "stable_correct_streak"
+    },
+    {
+      "coefficient": -0.21403815508997667,
+      "dataset": "combined",
+      "decile": 30,
+      "feature": "time_since_first_correct"
+    },
+    {
+      "coefficient": 0.18773910496051627,
+      "dataset": "combined",
+      "decile": 40,
+      "feature": "current_normalized_correct_probability"
+    },
+    {
+      "coefficient": 0.05878207738606291,
+      "dataset": "combined",
+      "decile": 40,
+      "feature": "flips_so_far"
+    },
+    {
+      "coefficient": 0.687179843145531,
+      "dataset": "combined",
+      "decile": 40,
+      "feature": "log_trace_token_count"
+    },
+    {
+      "coefficient": 0.4639814231992084,
+      "dataset": "combined",
+      "decile": 40,
+      "feature": "normalized_confidence_decline"
+    },
+    {
+      "coefficient": 0.05737059889956163,
+      "dataset": "combined",
+      "decile": 40,
+      "feature": "prefix_repetition_score"
+    },
+    {
+      "coefficient": 0.15114819762799342,
+      "dataset": "combined",
+      "decile": 40,
+      "feature": "prefix_self_correction"
+    },
+    {
+      "coefficient": -0.12274058212808023,
+      "dataset": "combined",
+      "decile": 40,
+      "feature": "prefix_simulated_retrieval"
+    },
+    {
+      "coefficient": -0.4232422666539387,
+      "dataset": "combined",
+      "decile": 40,
+      "feature": "stable_correct_streak"
+    },
+    {
+      "coefficient": -0.36150291929546063,
+      "dataset": "combined",
+      "decile": 40,
+      "feature": "time_since_first_correct"
+    },
+    {
+      "coefficient": 0.07545500309333733,
+      "dataset": "combined",
+      "decile": 50,
+      "feature": "current_normalized_correct_probability"
+    },
+    {
+      "coefficient": 0.12727636239059348,
+      "dataset": "combined",
+      "decile": 50,
+      "feature": "flips_so_far"
+    },
+    {
+      "coefficient": 0.4955171518877668,
+      "dataset": "combined",
+      "decile": 50,
+      "feature": "log_trace_token_count"
+    },
+    {
+      "coefficient": 0.41132063656949364,
+      "dataset": "combined",
+      "decile": 50,
+      "feature": "normalized_confidence_decline"
+    },
+    {
+      "coefficient": 0.01816597172162903,
+      "dataset": "combined",
+      "decile": 50,
+      "feature": "prefix_repetition_score"
+    },
+    {
+      "coefficient": 0.21751146911233912,
+      "dataset": "combined",
+      "decile": 50,
+      "feature": "prefix_self_correction"
+    },
+    {
+      "coefficient": -0.12450433739794205,
+      "dataset": "combined",
+      "decile": 50,
+      "feature": "prefix_simulated_retrieval"
+    },
+    {
+      "coefficient": -0.21940501875807525,
+      "dataset": "combined",
+      "decile": 50,
+      "feature": "stable_correct_streak"
+    },
+    {
+      "coefficient": -0.42287504814703436,
+      "dataset": "combined",
+      "decile": 50,
+      "feature": "time_since_first_correct"
+    },
+    {
+      "coefficient": -0.11139293905736292,
+      "dataset": "combined",
+      "decile": 60,
+      "feature": "current_normalized_correct_probability"
+    },
+    {
+      "coefficient": 0.12269452932252589,
+      "dataset": "combined",
+      "decile": 60,
+      "feature": "flips_so_far"
+    },
+    {
+      "coefficient": 0.23445513399797027,
+      "dataset": "combined",
+      "decile": 60,
+      "feature": "log_trace_token_count"
+    },
+    {
+      "coefficient": 0.4306422467185785,
+      "dataset": "combined",
+      "decile": 60,
+      "feature": "normalized_confidence_decline"
+    },
+    {
+      "coefficient": 0.035398203570122376,
+      "dataset": "combined",
+      "decile": 60,
+      "feature": "prefix_repetition_score"
+    },
+    {
+      "coefficient": 0.14698781262849772,
+      "dataset": "combined",
+      "decile": 60,
+      "feature": "prefix_self_correction"
+    },
+    {
+      "coefficient": -0.10439783198179246,
+      "dataset": "combined",
+      "decile": 60,
+      "feature": "prefix_simulated_retrieval"
+    },
+    {
+      "coefficient": -0.40796760475136595,
+      "dataset": "combined",
+      "decile": 60,
+      "feature": "stable_correct_streak"
+    },
+    {
+      "coefficient": -0.35436431314650485,
+      "dataset": "combined",
+      "decile": 60,
+      "feature": "time_since_first_correct"
+    },
+    {
+      "coefficient": -0.08396706802228653,
+      "dataset": "combined",
+      "decile": 70,
+      "feature": "current_normalized_correct_probability"
+    },
+    {
+      "coefficient": 0.24144770513597358,
+      "dataset": "combined",
+      "decile": 70,
+      "feature": "flips_so_far"
+    },
+    {
+      "coefficient": 0.09209783614758012,
+      "dataset": "combined",
+      "decile": 70,
+      "feature": "log_trace_token_count"
+    },
+    {
+      "coefficient": 0.4413711400653287,
+      "dataset": "combined",
+      "decile": 70,
+      "feature": "normalized_confidence_decline"
+    },
+    {
+      "coefficient": 0.3049633898381844,
+      "dataset": "combined",
+      "decile": 70,
+      "feature": "prefix_repetition_score"
+    },
+    {
+      "coefficient": 0.619582938565082,
+      "dataset": "combined",
+      "decile": 70,
+      "feature": "prefix_self_correction"
+    },
+    {
+      "coefficient": -0.24258067744757428,
+      "dataset": "combined",
+      "decile": 70,
+      "feature": "prefix_simulated_retrieval"
+    },
+    {
+      "coefficient": -0.48928497570714385,
+      "dataset": "combined",
+      "decile": 70,
+      "feature": "stable_correct_streak"
+    },
+    {
+      "coefficient": -0.3201705593798075,
+      "dataset": "combined",
+      "decile": 70,
+      "feature": "time_since_first_correct"
+    },
+    {
+      "coefficient": -0.024550091847856635,
+      "dataset": "combined",
+      "decile": 80,
+      "feature": "current_normalized_correct_probability"
+    },
+    {
+      "coefficient": 0.2032964690675816,
+      "dataset": "combined",
+      "decile": 80,
+      "feature": "flips_so_far"
+    },
+    {
+      "coefficient": -0.18280260593666936,
+      "dataset": "combined",
+      "decile": 80,
+      "feature": "log_trace_token_count"
+    },
+    {
+      "coefficient": 0.3338983740495939,
+      "dataset": "combined",
+      "decile": 80,
+      "feature": "normalized_confidence_decline"
+    },
+    {
+      "coefficient": 0.3084229198054777,
+      "dataset": "combined",
+      "decile": 80,
+      "feature": "prefix_repetition_score"
+    },
+    {
+      "coefficient": 0.2718323403135994,
+      "dataset": "combined",
+      "decile": 80,
+      "feature": "prefix_self_correction"
+    },
+    {
+      "coefficient": -0.18142957948123342,
+      "dataset": "combined",
+      "decile": 80,
+      "feature": "prefix_simulated_retrieval"
+    },
+    {
+      "coefficient": -0.904436574520896,
+      "dataset": "combined",
+      "decile": 80,
+      "feature": "stable_correct_streak"
+    },
+    {
+      "coefficient": -0.3602277686442249,
+      "dataset": "combined",
+      "decile": 80,
+      "feature": "time_since_first_correct"
+    },
+    {
+      "coefficient": -0.3445861209246187,
+      "dataset": "combined",
+      "decile": 90,
+      "feature": "current_normalized_correct_probability"
+    },
+    {
+      "coefficient": 0.19510917024092164,
+      "dataset": "combined",
+      "decile": 90,
+      "feature": "flips_so_far"
+    },
+    {
+      "coefficient": -0.33561057132133676,
+      "dataset": "combined",
+      "decile": 90,
+      "feature": "log_trace_token_count"
+    },
+    {
+      "coefficient": 0.12158653877757968,
+      "dataset": "combined",
+      "decile": 90,
+      "feature": "normalized_confidence_decline"
+    },
+    {
+      "coefficient": 0.218303758688796,
+      "dataset": "combined",
+      "decile": 90,
+      "feature": "prefix_repetition_score"
+    },
+    {
+      "coefficient": 0.2505800365711849,
+      "dataset": "combined",
+      "decile": 90,
+      "feature": "prefix_self_correction"
+    },
+    {
+      "coefficient": -0.3308863559279551,
+      "dataset": "combined",
+      "decile": 90,
+      "feature": "prefix_simulated_retrieval"
+    },
+    {
+      "coefficient": -1.1901289812018259,
+      "dataset": "combined",
+      "decile": 90,
+      "feature": "stable_correct_streak"
+    },
+    {
+      "coefficient": -0.19032777175288426,
+      "dataset": "combined",
+      "decile": 90,
+      "feature": "time_since_first_correct"
+    },
+    {
+      "coefficient": 0.0769202959613525,
+      "dataset": "gpqa_diamond",
+      "decile": 10,
+      "feature": "current_normalized_correct_probability"
+    },
+    {
+      "coefficient": 0.3045149189169053,
+      "dataset": "gpqa_diamond",
+      "decile": 10,
+      "feature": "flips_so_far"
+    },
+    {
+      "coefficient": 0.18387812704744416,
+      "dataset": "gpqa_diamond",
+      "decile": 10,
+      "feature": "log_trace_token_count"
+    },
+    {
+      "coefficient": 0.12212516883211788,
+      "dataset": "gpqa_diamond",
+      "decile": 10,
+      "feature": "normalized_confidence_decline"
+    },
+    {
+      "coefficient": 0.12808735795852938,
+      "dataset": "gpqa_diamond",
+      "decile": 10,
+      "feature": "prefix_repetition_score"
+    },
+    {
+      "coefficient": 0.31424846409894663,
+      "dataset": "gpqa_diamond",
+      "decile": 10,
+      "feature": "prefix_self_correction"
+    },
+    {
+      "coefficient": -0.036781055010815335,
+      "dataset": "gpqa_diamond",
+      "decile": 10,
+      "feature": "prefix_simulated_retrieval"
+    },
+    {
+      "coefficient": -0.30451491891690646,
+      "dataset": "gpqa_diamond",
+      "decile": 10,
+      "feature": "stable_correct_streak"
+    },
+    {
+      "coefficient": -0.3045149189169062,
+      "dataset": "gpqa_diamond",
+      "decile": 10,
+      "feature": "time_since_first_correct"
+    },
+    {
+      "coefficient": 0.04120079169222364,
+      "dataset": "gpqa_diamond",
+      "decile": 20,
+      "feature": "current_normalized_correct_probability"
+    },
+    {
+      "coefficient": 0.7242835046710181,
+      "dataset": "gpqa_diamond",
+      "decile": 20,
+      "feature": "flips_so_far"
+    },
+    {
+      "coefficient": 0.30087277590620076,
+      "dataset": "gpqa_diamond",
+      "decile": 20,
+      "feature": "log_trace_token_count"
+    },
+    {
+      "coefficient": 0.2362675248648889,
+      "dataset": "gpqa_diamond",
+      "decile": 20,
+      "feature": "normalized_confidence_decline"
+    },
+    {
+      "coefficient": -0.014445862320207972,
+      "dataset": "gpqa_diamond",
+      "decile": 20,
+      "feature": "prefix_repetition_score"
+    },
+    {
+      "coefficient": 0.1925842983472782,
+      "dataset": "gpqa_diamond",
+      "decile": 20,
+      "feature": "prefix_self_correction"
+    },
+    {
+      "coefficient": -0.0222283808808798,
+      "dataset": "gpqa_diamond",
+      "decile": 20,
+      "feature": "prefix_simulated_retrieval"
+    },
+    {
+      "coefficient": 0.7660021359580993,
+      "dataset": "gpqa_diamond",
+      "decile": 20,
+      "feature": "stable_correct_streak"
+    },
+    {
+      "coefficient": -1.0038281854176136,
+      "dataset": "gpqa_diamond",
+      "decile": 20,
+      "feature": "time_since_first_correct"
+    },
+    {
+      "coefficient": -0.058690816188321025,
+      "dataset": "gpqa_diamond",
+      "decile": 30,
+      "feature": "current_normalized_correct_probability"
+    },
+    {
+      "coefficient": 0.05586858129267804,
+      "dataset": "gpqa_diamond",
+      "decile": 30,
+      "feature": "flips_so_far"
+    },
+    {
+      "coefficient": 0.2531295461531551,
+      "dataset": "gpqa_diamond",
+      "decile": 30,
+      "feature": "log_trace_token_count"
+    },
+    {
+      "coefficient": 0.13699446183217176,
+      "dataset": "gpqa_diamond",
+      "decile": 30,
+      "feature": "normalized_confidence_decline"
+    },
+    {
+      "coefficient": 0.0997922069133617,
+      "dataset": "gpqa_diamond",
+      "decile": 30,
+      "feature": "prefix_repetition_score"
+    },
+    {
+      "coefficient": 0.28597845449919146,
+      "dataset": "gpqa_diamond",
+      "decile": 30,
+      "feature": "prefix_self_correction"
+    },
+    {
+      "coefficient": 0.005301472219172711,
+      "dataset": "gpqa_diamond",
+      "decile": 30,
+      "feature": "prefix_simulated_retrieval"
+    },
+    {
+      "coefficient": -0.3987192862668942,
+      "dataset": "gpqa_diamond",
+      "decile": 30,
+      "feature": "stable_correct_streak"
+    },
+    {
+      "coefficient": -0.4588461367652436,
+      "dataset": "gpqa_diamond",
+      "decile": 30,
+      "feature": "time_since_first_correct"
+    },
+    {
+      "coefficient": 0.3959911110975317,
+      "dataset": "gpqa_diamond",
+      "decile": 40,
+      "feature": "current_normalized_correct_probability"
+    },
+    {
+      "coefficient": 0.3146445797037079,
+      "dataset": "gpqa_diamond",
+      "decile": 40,
+      "feature": "flips_so_far"
+    },
+    {
+      "coefficient": 0.37218005135323934,
+      "dataset": "gpqa_diamond",
+      "decile": 40,
+      "feature": "log_trace_token_count"
+    },
+    {
+      "coefficient": 0.6222161967787879,
+      "dataset": "gpqa_diamond",
+      "decile": 40,
+      "feature": "normalized_confidence_decline"
+    },
+    {
+      "coefficient": -0.031237632242879065,
+      "dataset": "gpqa_diamond",
+      "decile": 40,
+      "feature": "prefix_repetition_score"
+    },
+    {
+      "coefficient": 0.4827316840502953,
+      "dataset": "gpqa_diamond",
+      "decile": 40,
+      "feature": "prefix_self_correction"
+    },
+    {
+      "coefficient": -0.20829751082024522,
+      "dataset": "gpqa_diamond",
+      "decile": 40,
+      "feature": "prefix_simulated_retrieval"
+    },
+    {
+      "coefficient": -0.039165529206918036,
+      "dataset": "gpqa_diamond",
+      "decile": 40,
+      "feature": "stable_correct_streak"
+    },
+    {
+      "coefficient": -0.7216360560755863,
+      "dataset": "gpqa_diamond",
+      "decile": 40,
+      "feature": "time_since_first_correct"
+    },
+    {
+      "coefficient": 0.13587930023766676,
+      "dataset": "gpqa_diamond",
+      "decile": 50,
+      "feature": "current_normalized_correct_probability"
+    },
+    {
+      "coefficient": 0.2610059664052883,
+      "dataset": "gpqa_diamond",
+      "decile": 50,
+      "feature": "flips_so_far"
+    },
+    {
+      "coefficient": 0.3068015804419865,
+      "dataset": "gpqa_diamond",
+      "decile": 50,
+      "feature": "log_trace_token_count"
+    },
+    {
+      "coefficient": 0.5630807363567387,
+      "dataset": "gpqa_diamond",
+      "decile": 50,
+      "feature": "normalized_confidence_decline"
+    },
+    {
+      "coefficient": 0.05037180999846046,
+      "dataset": "gpqa_diamond",
+      "decile": 50,
+      "feature": "prefix_repetition_score"
+    },
+    {
+      "coefficient": 0.4192376569128425,
+      "dataset": "gpqa_diamond",
+      "decile": 50,
+      "feature": "prefix_self_correction"
+    },
+    {
+      "coefficient": -0.0966701871381308,
+      "dataset": "gpqa_diamond",
+      "decile": 50,
+      "feature": "prefix_simulated_retrieval"
+    },
+    {
+      "coefficient": -0.013350873454179454,
+      "dataset": "gpqa_diamond",
+      "decile": 50,
+      "feature": "stable_correct_streak"
+    },
+    {
+      "coefficient": -0.6756762916959678,
+      "dataset": "gpqa_diamond",
+      "decile": 50,
+      "feature": "time_since_first_correct"
+    },
+    {
+      "coefficient": -0.22707414751152388,
+      "dataset": "gpqa_diamond",
+      "decile": 60,
+      "feature": "current_normalized_correct_probability"
+    },
+    {
+      "coefficient": 0.16155456039678615,
+      "dataset": "gpqa_diamond",
+      "decile": 60,
+      "feature": "flips_so_far"
+    },
+    {
+      "coefficient": -0.11228983050260832,
+      "dataset": "gpqa_diamond",
+      "decile": 60,
+      "feature": "log_trace_token_count"
+    },
+    {
+      "coefficient": 0.36925080979387775,
+      "dataset": "gpqa_diamond",
+      "decile": 60,
+      "feature": "normalized_confidence_decline"
+    },
+    {
+      "coefficient": 0.06796286409475234,
+      "dataset": "gpqa_diamond",
+      "decile": 60,
+      "feature": "prefix_repetition_score"
+    },
+    {
+      "coefficient": 0.4031615503805079,
+      "dataset": "gpqa_diamond",
+      "decile": 60,
+      "feature": "prefix_self_correction"
+    },
+    {
+      "coefficient": 0.010317022995151005,
+      "dataset": "gpqa_diamond",
+      "decile": 60,
+      "feature": "prefix_simulated_retrieval"
+    },
+    {
+      "coefficient": -0.2984087477271052,
+      "dataset": "gpqa_diamond",
+      "decile": 60,
+      "feature": "stable_correct_streak"
+    },
+    {
+      "coefficient": -0.3986223931695212,
+      "dataset": "gpqa_diamond",
+      "decile": 60,
+      "feature": "time_since_first_correct"
+    },
+    {
+      "coefficient": -0.15628271172019587,
+      "dataset": "gpqa_diamond",
+      "decile": 70,
+      "feature": "current_normalized_correct_probability"
+    },
+    {
+      "coefficient": 0.08386607096888221,
+      "dataset": "gpqa_diamond",
+      "decile": 70,
+      "feature": "flips_so_far"
+    },
+    {
+      "coefficient": -0.14747258698778654,
+      "dataset": "gpqa_diamond",
+      "decile": 70,
+      "feature": "log_trace_token_count"
+    },
+    {
+      "coefficient": 0.30964403022427445,
+      "dataset": "gpqa_diamond",
+      "decile": 70,
+      "feature": "normalized_confidence_decline"
+    },
+    {
+      "coefficient": 0.3033253348926662,
+      "dataset": "gpqa_diamond",
+      "decile": 70,
+      "feature": "prefix_repetition_score"
+    },
+    {
+      "coefficient": 0.551254750851821,
+      "dataset": "gpqa_diamond",
+      "decile": 70,
+      "feature": "prefix_self_correction"
+    },
+    {
+      "coefficient": -0.16212435654037194,
+      "dataset": "gpqa_diamond",
+      "decile": 70,
+      "feature": "prefix_simulated_retrieval"
+    },
+    {
+      "coefficient": -0.5151539313995853,
+      "dataset": "gpqa_diamond",
+      "decile": 70,
+      "feature": "stable_correct_streak"
+    },
+    {
+      "coefficient": -0.3402822803480414,
+      "dataset": "gpqa_diamond",
+      "decile": 70,
+      "feature": "time_since_first_correct"
+    },
+    {
+      "coefficient": 0.023636821986090698,
+      "dataset": "gpqa_diamond",
+      "decile": 80,
+      "feature": "current_normalized_correct_probability"
+    },
+    {
+      "coefficient": -0.05181972430229163,
+      "dataset": "gpqa_diamond",
+      "decile": 80,
+      "feature": "flips_so_far"
+    },
+    {
+      "coefficient": -0.43652306871962165,
+      "dataset": "gpqa_diamond",
+      "decile": 80,
+      "feature": "log_trace_token_count"
+    },
+    {
+      "coefficient": 0.306256759120145,
+      "dataset": "gpqa_diamond",
+      "decile": 80,
+      "feature": "normalized_confidence_decline"
+    },
+    {
+      "coefficient": 0.38784330068756956,
+      "dataset": "gpqa_diamond",
+      "decile": 80,
+      "feature": "prefix_repetition_score"
+    },
+    {
+      "coefficient": 0.5626584207770928,
+      "dataset": "gpqa_diamond",
+      "decile": 80,
+      "feature": "prefix_self_correction"
+    },
+    {
+      "coefficient": 0.000972231323816418,
+      "dataset": "gpqa_diamond",
+      "decile": 80,
+      "feature": "prefix_simulated_retrieval"
+    },
+    {
+      "coefficient": -1.0754329274809202,
+      "dataset": "gpqa_diamond",
+      "decile": 80,
+      "feature": "stable_correct_streak"
+    },
+    {
+      "coefficient": -0.27041646389859003,
+      "dataset": "gpqa_diamond",
+      "decile": 80,
+      "feature": "time_since_first_correct"
+    },
+    {
+      "coefficient": -0.4866884092208791,
+      "dataset": "gpqa_diamond",
+      "decile": 90,
+      "feature": "current_normalized_correct_probability"
+    },
+    {
+      "coefficient": 0.0925888080605489,
+      "dataset": "gpqa_diamond",
+      "decile": 90,
+      "feature": "flips_so_far"
+    },
+    {
+      "coefficient": -0.6300148859764837,
+      "dataset": "gpqa_diamond",
+      "decile": 90,
+      "feature": "log_trace_token_count"
+    },
+    {
+      "coefficient": 0.10133299968549234,
+      "dataset": "gpqa_diamond",
+      "decile": 90,
+      "feature": "normalized_confidence_decline"
+    },
+    {
+      "coefficient": 0.30575125211774334,
+      "dataset": "gpqa_diamond",
+      "decile": 90,
+      "feature": "prefix_repetition_score"
+    },
+    {
+      "coefficient": 0.47875763646116065,
+      "dataset": "gpqa_diamond",
+      "decile": 90,
+      "feature": "prefix_self_correction"
+    },
+    {
+      "coefficient": -0.2529716538897013,
+      "dataset": "gpqa_diamond",
+      "decile": 90,
+      "feature": "prefix_simulated_retrieval"
+    },
+    {
+      "coefficient": -1.3119748635641075,
+      "dataset": "gpqa_diamond",
+      "decile": 90,
+      "feature": "stable_correct_streak"
+    },
+    {
+      "coefficient": -0.16714429940921094,
+      "dataset": "gpqa_diamond",
+      "decile": 90,
+      "feature": "time_since_first_correct"
+    },
+    {
+      "coefficient": -0.4376440971986922,
+      "dataset": "mmlu_pro",
+      "decile": 10,
+      "feature": "current_normalized_correct_probability"
+    },
+    {
+      "coefficient": 0.3089473199167989,
+      "dataset": "mmlu_pro",
+      "decile": 10,
+      "feature": "flips_so_far"
+    },
+    {
+      "coefficient": 0.19703751555701768,
+      "dataset": "mmlu_pro",
+      "decile": 10,
+      "feature": "log_trace_token_count"
+    },
+    {
+      "coefficient": 0.3101547340212255,
+      "dataset": "mmlu_pro",
+      "decile": 10,
+      "feature": "normalized_confidence_decline"
+    },
+    {
+      "coefficient": 0.3879781617835431,
+      "dataset": "mmlu_pro",
+      "decile": 10,
+      "feature": "prefix_repetition_score"
+    },
+    {
+      "coefficient": 0.1525218433727955,
+      "dataset": "mmlu_pro",
+      "decile": 10,
+      "feature": "prefix_self_correction"
+    },
+    {
+      "coefficient": 0.47821346832419404,
+      "dataset": "mmlu_pro",
+      "decile": 10,
+      "feature": "prefix_simulated_retrieval"
+    },
+    {
+      "coefficient": -0.30894731991679925,
+      "dataset": "mmlu_pro",
+      "decile": 10,
+      "feature": "stable_correct_streak"
+    },
+    {
+      "coefficient": -0.308947319916799,
+      "dataset": "mmlu_pro",
+      "decile": 10,
+      "feature": "time_since_first_correct"
+    },
+    {
+      "coefficient": -0.36400521645812123,
+      "dataset": "mmlu_pro",
+      "decile": 20,
+      "feature": "current_normalized_correct_probability"
+    },
+    {
+      "coefficient": 0.03774898404392843,
+      "dataset": "mmlu_pro",
+      "decile": 20,
+      "feature": "flips_so_far"
+    },
+    {
+      "coefficient": 0.4794932291743529,
+      "dataset": "mmlu_pro",
+      "decile": 20,
+      "feature": "log_trace_token_count"
+    },
+    {
+      "coefficient": 0.2770118343436069,
+      "dataset": "mmlu_pro",
+      "decile": 20,
+      "feature": "normalized_confidence_decline"
+    },
+    {
+      "coefficient": 0.021743329205406014,
+      "dataset": "mmlu_pro",
+      "decile": 20,
+      "feature": "prefix_repetition_score"
+    },
+    {
+      "coefficient": 0.20933563615754025,
+      "dataset": "mmlu_pro",
+      "decile": 20,
+      "feature": "prefix_self_correction"
+    },
+    {
+      "coefficient": 0.16681916815155387,
+      "dataset": "mmlu_pro",
+      "decile": 20,
+      "feature": "prefix_simulated_retrieval"
+    },
+    {
+      "coefficient": 0.04442766848004139,
+      "dataset": "mmlu_pro",
+      "decile": 20,
+      "feature": "stable_correct_streak"
+    },
+    {
+      "coefficient": -0.4630297295662998,
+      "dataset": "mmlu_pro",
+      "decile": 20,
+      "feature": "time_since_first_correct"
+    },
+    {
+      "coefficient": -0.1457502885388779,
+      "dataset": "mmlu_pro",
+      "decile": 30,
+      "feature": "current_normalized_correct_probability"
+    },
+    {
+      "coefficient": -0.021298893017899993,
+      "dataset": "mmlu_pro",
+      "decile": 30,
+      "feature": "flips_so_far"
+    },
+    {
+      "coefficient": 0.5355348428817785,
+      "dataset": "mmlu_pro",
+      "decile": 30,
+      "feature": "log_trace_token_count"
+    },
+    {
+      "coefficient": 0.2563452001185686,
+      "dataset": "mmlu_pro",
+      "decile": 30,
+      "feature": "normalized_confidence_decline"
+    },
+    {
+      "coefficient": 0.12512995870798574,
+      "dataset": "mmlu_pro",
+      "decile": 30,
+      "feature": "prefix_repetition_score"
+    },
+    {
+      "coefficient": 0.044725120387530216,
+      "dataset": "mmlu_pro",
+      "decile": 30,
+      "feature": "prefix_self_correction"
+    },
+    {
+      "coefficient": 0.06985601139629231,
+      "dataset": "mmlu_pro",
+      "decile": 30,
+      "feature": "prefix_simulated_retrieval"
+    },
+    {
+      "coefficient": -0.6151033936323983,
+      "dataset": "mmlu_pro",
+      "decile": 30,
+      "feature": "stable_correct_streak"
+    },
+    {
+      "coefficient": -0.05307458185735976,
+      "dataset": "mmlu_pro",
+      "decile": 30,
+      "feature": "time_since_first_correct"
+    },
+    {
+      "coefficient": 0.0008604567862293578,
+      "dataset": "mmlu_pro",
+      "decile": 40,
+      "feature": "current_normalized_correct_probability"
+    },
+    {
+      "coefficient": 0.030958097258495666,
+      "dataset": "mmlu_pro",
+      "decile": 40,
+      "feature": "flips_so_far"
+    },
+    {
+      "coefficient": 0.7356171800733406,
+      "dataset": "mmlu_pro",
+      "decile": 40,
+      "feature": "log_trace_token_count"
+    },
+    {
+      "coefficient": 0.3135932830147914,
+      "dataset": "mmlu_pro",
+      "decile": 40,
+      "feature": "normalized_confidence_decline"
+    },
+    {
+      "coefficient": 0.2171309719317232,
+      "dataset": "mmlu_pro",
+      "decile": 40,
+      "feature": "prefix_repetition_score"
+    },
+    {
+      "coefficient": -0.14475373706211764,
+      "dataset": "mmlu_pro",
+      "decile": 40,
+      "feature": "prefix_self_correction"
+    },
+    {
+      "coefficient": 0.030670144031958762,
+      "dataset": "mmlu_pro",
+      "decile": 40,
+      "feature": "prefix_simulated_retrieval"
+    },
+    {
+      "coefficient": -0.5620533846234859,
+      "dataset": "mmlu_pro",
+      "decile": 40,
+      "feature": "stable_correct_streak"
+    },
+    {
+      "coefficient": -0.12353612570677956,
+      "dataset": "mmlu_pro",
+      "decile": 40,
+      "feature": "time_since_first_correct"
+    },
+    {
+      "coefficient": 0.0029746936998938716,
+      "dataset": "mmlu_pro",
+      "decile": 50,
+      "feature": "current_normalized_correct_probability"
+    },
+    {
+      "coefficient": 0.15779296307478965,
+      "dataset": "mmlu_pro",
+      "decile": 50,
+      "feature": "flips_so_far"
+    },
+    {
+      "coefficient": 0.31147875571575095,
+      "dataset": "mmlu_pro",
+      "decile": 50,
+      "feature": "log_trace_token_count"
+    },
+    {
+      "coefficient": 0.20672001249259556,
+      "dataset": "mmlu_pro",
+      "decile": 50,
+      "feature": "normalized_confidence_decline"
+    },
+    {
+      "coefficient": 0.1751944375246055,
+      "dataset": "mmlu_pro",
+      "decile": 50,
+      "feature": "prefix_repetition_score"
+    },
+    {
+      "coefficient": 0.10876443405599803,
+      "dataset": "mmlu_pro",
+      "decile": 50,
+      "feature": "prefix_self_correction"
+    },
+    {
+      "coefficient": -0.07994707322801783,
+      "dataset": "mmlu_pro",
+      "decile": 50,
+      "feature": "prefix_simulated_retrieval"
+    },
+    {
+      "coefficient": -0.2650056264723724,
+      "dataset": "mmlu_pro",
+      "decile": 50,
+      "feature": "stable_correct_streak"
+    },
+    {
+      "coefficient": -0.22321532364420174,
+      "dataset": "mmlu_pro",
+      "decile": 50,
+      "feature": "time_since_first_correct"
+    },
+    {
+      "coefficient": 0.017382843479665185,
+      "dataset": "mmlu_pro",
+      "decile": 60,
+      "feature": "current_normalized_correct_probability"
+    },
+    {
+      "coefficient": 0.29916383800589824,
+      "dataset": "mmlu_pro",
+      "decile": 60,
+      "feature": "flips_so_far"
+    },
+    {
+      "coefficient": 0.4481334475205889,
+      "dataset": "mmlu_pro",
+      "decile": 60,
+      "feature": "log_trace_token_count"
+    },
+    {
+      "coefficient": 0.46641983824055516,
+      "dataset": "mmlu_pro",
+      "decile": 60,
+      "feature": "normalized_confidence_decline"
+    },
+    {
+      "coefficient": 0.17320842431153302,
+      "dataset": "mmlu_pro",
+      "decile": 60,
+      "feature": "prefix_repetition_score"
+    },
+    {
+      "coefficient": -0.11701588155419858,
+      "dataset": "mmlu_pro",
+      "decile": 60,
+      "feature": "prefix_self_correction"
+    },
+    {
+      "coefficient": -0.12202114209083563,
+      "dataset": "mmlu_pro",
+      "decile": 60,
+      "feature": "prefix_simulated_retrieval"
+    },
+    {
+      "coefficient": -0.28679807428041854,
+      "dataset": "mmlu_pro",
+      "decile": 60,
+      "feature": "stable_correct_streak"
+    },
+    {
+      "coefficient": -0.288796159630444,
+      "dataset": "mmlu_pro",
+      "decile": 60,
+      "feature": "time_since_first_correct"
+    },
+    {
+      "coefficient": -0.025772771950637118,
+      "dataset": "mmlu_pro",
+      "decile": 70,
+      "feature": "current_normalized_correct_probability"
+    },
+    {
+      "coefficient": 0.6545068653018914,
+      "dataset": "mmlu_pro",
+      "decile": 70,
+      "feature": "flips_so_far"
+    },
+    {
+      "coefficient": 0.3061358531210391,
+      "dataset": "mmlu_pro",
+      "decile": 70,
+      "feature": "log_trace_token_count"
+    },
+    {
+      "coefficient": 0.5993780768157967,
+      "dataset": "mmlu_pro",
+      "decile": 70,
+      "feature": "normalized_confidence_decline"
+    },
+    {
+      "coefficient": 0.3835720669198387,
+      "dataset": "mmlu_pro",
+      "decile": 70,
+      "feature": "prefix_repetition_score"
+    },
+    {
+      "coefficient": 0.4576424655412925,
+      "dataset": "mmlu_pro",
+      "decile": 70,
+      "feature": "prefix_self_correction"
+    },
+    {
+      "coefficient": -0.16304725620555405,
+      "dataset": "mmlu_pro",
+      "decile": 70,
+      "feature": "prefix_simulated_retrieval"
+    },
+    {
+      "coefficient": -0.2181930645933992,
+      "dataset": "mmlu_pro",
+      "decile": 70,
+      "feature": "stable_correct_streak"
+    },
+    {
+      "coefficient": -0.1762113192841874,
+      "dataset": "mmlu_pro",
+      "decile": 70,
+      "feature": "time_since_first_correct"
+    },
+    {
+      "coefficient": -0.35528851047647264,
+      "dataset": "mmlu_pro",
+      "decile": 80,
+      "feature": "current_normalized_correct_probability"
+    },
+    {
+      "coefficient": 0.6338792369348416,
+      "dataset": "mmlu_pro",
+      "decile": 80,
+      "feature": "flips_so_far"
+    },
+    {
+      "coefficient": 0.0361540373052636,
+      "dataset": "mmlu_pro",
+      "decile": 80,
+      "feature": "log_trace_token_count"
+    },
+    {
+      "coefficient": 0.16273618153638233,
+      "dataset": "mmlu_pro",
+      "decile": 80,
+      "feature": "normalized_confidence_decline"
+    },
+    {
+      "coefficient": 0.3566210851977164,
+      "dataset": "mmlu_pro",
+      "decile": 80,
+      "feature": "prefix_repetition_score"
+    },
+    {
+      "coefficient": -0.09735505134634612,
+      "dataset": "mmlu_pro",
+      "decile": 80,
+      "feature": "prefix_self_correction"
+    },
+    {
+      "coefficient": -0.19813926765945314,
+      "dataset": "mmlu_pro",
+      "decile": 80,
+      "feature": "prefix_simulated_retrieval"
+    },
+    {
+      "coefficient": -0.43650789978468724,
+      "dataset": "mmlu_pro",
+      "decile": 80,
+      "feature": "stable_correct_streak"
+    },
+    {
+      "coefficient": -0.3077447724967969,
+      "dataset": "mmlu_pro",
+      "decile": 80,
+      "feature": "time_since_first_correct"
+    },
+    {
+      "coefficient": -0.06108172001536026,
+      "dataset": "mmlu_pro",
+      "decile": 90,
+      "feature": "current_normalized_correct_probability"
+    },
+    {
+      "coefficient": 0.422861259549881,
+      "dataset": "mmlu_pro",
+      "decile": 90,
+      "feature": "flips_so_far"
+    },
+    {
+      "coefficient": 0.5008522025850415,
+      "dataset": "mmlu_pro",
+      "decile": 90,
+      "feature": "log_trace_token_count"
+    },
+    {
+      "coefficient": 0.12046263305280921,
+      "dataset": "mmlu_pro",
+      "decile": 90,
+      "feature": "normalized_confidence_decline"
+    },
+    {
+      "coefficient": -0.07117615039855435,
+      "dataset": "mmlu_pro",
+      "decile": 90,
+      "feature": "prefix_repetition_score"
+    },
+    {
+      "coefficient": -0.06582896517072313,
+      "dataset": "mmlu_pro",
+      "decile": 90,
+      "feature": "prefix_self_correction"
+    },
+    {
+      "coefficient": -0.26674446678030833,
+      "dataset": "mmlu_pro",
+      "decile": 90,
+      "feature": "prefix_simulated_retrieval"
+    },
+    {
+      "coefficient": -0.799295291727728,
+      "dataset": "mmlu_pro",
+      "decile": 90,
+      "feature": "stable_correct_streak"
+    },
+    {
+      "coefficient": -0.11491825089970438,
+      "dataset": "mmlu_pro",
+      "decile": 90,
+      "feature": "time_since_first_correct"
+    }
+  ],
+  "predictive_metrics": [
+    {
+      "auc": 0.5469871440965376,
+      "brier": 0.17753347072554143,
+      "dataset": "combined",
+      "decile": 10,
+      "loss_rate": 0.2326454033771107,
+      "model": "confidence",
+      "question_count": 101,
+      "row_count": 533
+    },
+    {
+      "auc": 0.6398572442621658,
+      "brier": 0.17264462105241227,
+      "dataset": "combined",
+      "decile": 10,
+      "loss_rate": 0.2326454033771107,
+      "model": "instability",
+      "question_count": 101,
+      "row_count": 533
+    },
+    {
+      "auc": 0.6986946920104109,
+      "brier": 0.16894670926714744,
+      "dataset": "combined",
+      "decile": 10,
+      "loss_rate": 0.2326454033771107,
+      "model": "instability_plus_length",
+      "question_count": 101,
+      "row_count": 533
+    },
+    {
+      "auc": 0.6922273049925073,
+      "brier": 0.1684592329435273,
+      "dataset": "combined",
+      "decile": 10,
+      "loss_rate": 0.2326454033771107,
+      "model": "full_prefix",
+      "question_count": 101,
+      "row_count": 533
+    },
+    {
+      "auc": 0.6002351557907113,
+      "brier": 0.1601504494426871,
+      "dataset": "combined",
+      "decile": 20,
+      "loss_rate": 0.20588235294117646,
+      "model": "confidence",
+      "question_count": 112,
+      "row_count": 612
+    },
+    {
+      "auc": 0.6627474034881442,
+      "brier": 0.15642544439023992,
+      "dataset": "combined",
+      "decile": 20,
+      "loss_rate": 0.20588235294117646,
+      "model": "instability",
+      "question_count": 112,
+      "row_count": 612
+    },
+    {
+      "auc": 0.7245737801293357,
+      "brier": 0.15241746790758814,
+      "dataset": "combined",
+      "decile": 20,
+      "loss_rate": 0.20588235294117646,
+      "model": "instability_plus_length",
+      "question_count": 112,
+      "row_count": 612
+    },
+    {
+      "auc": 0.6962571036645111,
+      "brier": 0.15651113639547054,
+      "dataset": "combined",
+      "decile": 20,
+      "loss_rate": 0.20588235294117646,
+      "model": "full_prefix",
+      "question_count": 112,
+      "row_count": 612
+    },
+    {
+      "auc": 0.6593065693430656,
+      "brier": 0.15823081426266286,
+      "dataset": "combined",
+      "decile": 30,
+      "loss_rate": 0.2085235920852359,
+      "model": "confidence",
+      "question_count": 113,
+      "row_count": 657
+    },
+    {
+      "auc": 0.710822571588995,
+      "brier": 0.14810214867402846,
+      "dataset": "combined",
+      "decile": 30,
+      "loss_rate": 0.2085235920852359,
+      "model": "instability",
+      "question_count": 113,
+      "row_count": 657
+    },
+    {
+      "auc": 0.7575940482874789,
+      "brier": 0.1460633370818657,
+      "dataset": "combined",
+      "decile": 30,
+      "loss_rate": 0.2085235920852359,
+      "model": "instability_plus_length",
+      "question_count": 113,
+      "row_count": 657
+    },
+    {
+      "auc": 0.7346294216732173,
+      "brier": 0.1484278475384958,
+      "dataset": "combined",
+      "decile": 30,
+      "loss_rate": 0.2085235920852359,
+      "model": "full_prefix",
+      "question_count": 113,
+      "row_count": 657
+    },
+    {
+      "auc": 0.6483887850467289,
+      "brier": 0.14789840584446443,
+      "dataset": "combined",
+      "decile": 40,
+      "loss_rate": 0.1893939393939394,
+      "model": "confidence",
+      "question_count": 116,
+      "row_count": 660
+    },
+    {
+      "auc": 0.7211663551401869,
+      "brier": 0.14257983629632998,
+      "dataset": "combined",
+      "decile": 40,
+      "loss_rate": 0.1893939393939394,
+      "model": "instability",
+      "question_count": 116,
+      "row_count": 660
+    },
+    {
+      "auc": 0.7820112149532711,
+      "brier": 0.13731580002780133,
+      "dataset": "combined",
+      "decile": 40,
+      "loss_rate": 0.1893939393939394,
+      "model": "instability_plus_length",
+      "question_count": 116,
+      "row_count": 660
+    },
+    {
+      "auc": 0.7617495327102803,
+      "brier": 0.1398298552554398,
+      "dataset": "combined",
+      "decile": 40,
+      "loss_rate": 0.1893939393939394,
+      "model": "full_prefix",
+      "question_count": 116,
+      "row_count": 660
+    },
+    {
+      "auc": 0.7319163477310006,
+      "brier": 0.13612060924605554,
+      "dataset": "combined",
+      "decile": 50,
+      "loss_rate": 0.17366946778711484,
+      "model": "confidence",
+      "question_count": 120,
+      "row_count": 714
+    },
+    {
+      "auc": 0.7313559322033898,
+      "brier": 0.13060802341702943,
+      "dataset": "combined",
+      "decile": 50,
+      "loss_rate": 0.17366946778711484,
+      "model": "instability",
+      "question_count": 120,
+      "row_count": 714
+    },
+    {
+      "auc": 0.7640924002186987,
+      "brier": 0.12871192136090565,
+      "dataset": "combined",
+      "decile": 50,
+      "loss_rate": 0.17366946778711484,
+      "model": "instability_plus_length",
+      "question_count": 120,
+      "row_count": 714
+    },
+    {
+      "auc": 0.7553717878622198,
+      "brier": 0.12906992838237466,
+      "dataset": "combined",
+      "decile": 50,
+      "loss_rate": 0.17366946778711484,
+      "model": "full_prefix",
+      "question_count": 120,
+      "row_count": 714
+    },
+    {
+      "auc": 0.7435587089593767,
+      "brier": 0.12502712104973096,
+      "dataset": "combined",
+      "decile": 60,
+      "loss_rate": 0.16689847009735745,
+      "model": "confidence",
+      "question_count": 125,
+      "row_count": 719
+    },
+    {
+      "auc": 0.7775876460767946,
+      "brier": 0.12036857126483397,
+      "dataset": "combined",
+      "decile": 60,
+      "loss_rate": 0.16689847009735745,
+      "model": "instability",
+      "question_count": 125,
+      "row_count": 719
+    },
+    {
+      "auc": 0.7896911519198665,
+      "brier": 0.12185835836031791,
+      "dataset": "combined",
+      "decile": 60,
+      "loss_rate": 0.16689847009735745,
+      "model": "instability_plus_length",
+      "question_count": 125,
+      "row_count": 719
+    },
+    {
+      "auc": 0.7769476905954369,
+      "brier": 0.12318074018715505,
+      "dataset": "combined",
+      "decile": 60,
+      "loss_rate": 0.16689847009735745,
+      "model": "full_prefix",
+      "question_count": 125,
+      "row_count": 719
+    },
+    {
+      "auc": 0.7898354448813164,
+      "brier": 0.11156486671906606,
+      "dataset": "combined",
+      "decile": 70,
+      "loss_rate": 0.14749661705006767,
+      "model": "confidence",
+      "question_count": 130,
+      "row_count": 739
+    },
+    {
+      "auc": 0.8168632590650939,
+      "brier": 0.10432107107212453,
+      "dataset": "combined",
+      "decile": 70,
+      "loss_rate": 0.14749661705006767,
+      "model": "instability",
+      "question_count": 130,
+      "row_count": 739
+    },
+    {
+      "auc": 0.8206057958351536,
+      "brier": 0.10547446896008203,
+      "dataset": "combined",
+      "decile": 70,
+      "loss_rate": 0.14749661705006767,
+      "model": "instability_plus_length",
+      "question_count": 130,
+      "row_count": 739
+    },
+    {
+      "auc": 0.8266637541866899,
+      "brier": 0.10421685113160861,
+      "dataset": "combined",
+      "decile": 70,
+      "loss_rate": 0.14749661705006767,
+      "model": "full_prefix",
+      "question_count": 130,
+      "row_count": 739
+    },
+    {
+      "auc": 0.7180049254418013,
+      "brier": 0.11981573688864444,
+      "dataset": "combined",
+      "decile": 80,
+      "loss_rate": 0.14732724902216426,
+      "model": "confidence",
+      "question_count": 133,
+      "row_count": 767
+    },
+    {
+      "auc": 0.8168114530053314,
+      "brier": 0.10306189790234008,
+      "dataset": "combined",
+      "decile": 80,
+      "loss_rate": 0.14732724902216426,
+      "model": "instability",
+      "question_count": 133,
+      "row_count": 767
+    },
+    {
+      "auc": 0.8098562961760168,
+      "brier": 0.10436193022945575,
+      "dataset": "combined",
+      "decile": 80,
+      "loss_rate": 0.14732724902216426,
+      "model": "instability_plus_length",
+      "question_count": 133,
+      "row_count": 767
+    },
+    {
+      "auc": 0.8117912911693865,
+      "brier": 0.10350332928336098,
+      "dataset": "combined",
+      "decile": 80,
+      "loss_rate": 0.14732724902216426,
+      "model": "full_prefix",
+      "question_count": 133,
+      "row_count": 767
+    },
+    {
+      "auc": 0.787495103251441,
+      "brier": 0.1055881902196143,
+      "dataset": "combined",
+      "decile": 90,
+      "loss_rate": 0.13806451612903226,
+      "model": "confidence",
+      "question_count": 134,
+      "row_count": 775
+    },
+    {
+      "auc": 0.8415831887626616,
+      "brier": 0.0922903530677803,
+      "dataset": "combined",
+      "decile": 90,
+      "loss_rate": 0.13806451612903226,
+      "model": "instability",
+      "question_count": 134,
+      "row_count": 775
+    },
+    {
+      "auc": 0.8353992948682075,
+      "brier": 0.0925584604592341,
+      "dataset": "combined",
+      "decile": 90,
+      "loss_rate": 0.13806451612903226,
+      "model": "instability_plus_length",
+      "question_count": 134,
+      "row_count": 775
+    },
+    {
+      "auc": 0.8412753931389557,
+      "brier": 0.09262790921223926,
+      "dataset": "combined",
+      "decile": 90,
+      "loss_rate": 0.13806451612903226,
+      "model": "full_prefix",
+      "question_count": 134,
+      "row_count": 775
+    },
+    {
+      "auc": 0.567082806573957,
+      "brier": 0.16005869454799002,
+      "dataset": "mmlu_pro",
+      "decile": 10,
+      "loss_rate": 0.19858156028368795,
+      "model": "confidence",
+      "question_count": 47,
+      "row_count": 282
+    },
+    {
+      "auc": 0.5321586599241467,
+      "brier": 0.16477770576148995,
+      "dataset": "mmlu_pro",
+      "decile": 10,
+      "loss_rate": 0.19858156028368795,
+      "model": "instability",
+      "question_count": 47,
+      "row_count": 282
+    },
+    {
+      "auc": 0.668141592920354,
+      "brier": 0.1645538553057433,
+      "dataset": "mmlu_pro",
+      "decile": 10,
+      "loss_rate": 0.19858156028368795,
+      "model": "instability_plus_length",
+      "question_count": 47,
+      "row_count": 282
+    },
+    {
+      "auc": 0.6593710493046776,
+      "brier": 0.15725020359234024,
+      "dataset": "mmlu_pro",
+      "decile": 10,
+      "loss_rate": 0.19858156028368795,
+      "model": "full_prefix",
+      "question_count": 47,
+      "row_count": 282
+    },
+    {
+      "auc": 0.6657062363939045,
+      "brier": 0.1353258144528506,
+      "dataset": "mmlu_pro",
+      "decile": 20,
+      "loss_rate": 0.17220543806646527,
+      "model": "confidence",
+      "question_count": 55,
+      "row_count": 331
+    },
+    {
+      "auc": 0.6767831988730951,
+      "brier": 0.13862206779719194,
+      "dataset": "mmlu_pro",
+      "decile": 20,
+      "loss_rate": 0.17220543806646527,
+      "model": "instability",
+      "question_count": 55,
+      "row_count": 331
+    },
+    {
+      "auc": 0.7273658599052375,
+      "brier": 0.14083007928507713,
+      "dataset": "mmlu_pro",
+      "decile": 20,
+      "loss_rate": 0.17220543806646527,
+      "model": "instability_plus_length",
+      "question_count": 55,
+      "row_count": 331
+    },
+    {
+      "auc": 0.6663465232424126,
+      "brier": 0.14424902397900907,
+      "dataset": "mmlu_pro",
+      "decile": 20,
+      "loss_rate": 0.17220543806646527,
+      "model": "full_prefix",
+      "question_count": 55,
+      "row_count": 331
+    },
+    {
+      "auc": 0.6614291058735503,
+      "brier": 0.1289804961812753,
+      "dataset": "mmlu_pro",
+      "decile": 30,
+      "loss_rate": 0.15384615384615385,
+      "model": "confidence",
+      "question_count": 57,
+      "row_count": 351
+    },
+    {
+      "auc": 0.6654196283825914,
+      "brier": 0.13110456623941916,
+      "dataset": "mmlu_pro",
+      "decile": 30,
+      "loss_rate": 0.15384615384615385,
+      "model": "instability",
+      "question_count": 57,
+      "row_count": 351
+    },
+    {
+      "auc": 0.731076194039157,
+      "brier": 0.1338940278059933,
+      "dataset": "mmlu_pro",
+      "decile": 30,
+      "loss_rate": 0.15384615384615385,
+      "model": "instability_plus_length",
+      "question_count": 57,
+      "row_count": 351
+    },
+    {
+      "auc": 0.680695847362514,
+      "brier": 0.1356896981143377,
+      "dataset": "mmlu_pro",
+      "decile": 30,
+      "loss_rate": 0.15384615384615385,
+      "model": "full_prefix",
+      "question_count": 57,
+      "row_count": 351
+    },
+    {
+      "auc": 0.656478277585544,
+      "brier": 0.11525843862948826,
+      "dataset": "mmlu_pro",
+      "decile": 40,
+      "loss_rate": 0.14285714285714285,
+      "model": "confidence",
+      "question_count": 57,
+      "row_count": 357
+    },
+    {
+      "auc": 0.7336921696783288,
+      "brier": 0.1133450047974615,
+      "dataset": "mmlu_pro",
+      "decile": 40,
+      "loss_rate": 0.14285714285714285,
+      "model": "instability",
+      "question_count": 57,
+      "row_count": 357
+    },
+    {
+      "auc": 0.7740612584903243,
+      "brier": 0.1125945425032715,
+      "dataset": "mmlu_pro",
+      "decile": 40,
+      "loss_rate": 0.14285714285714285,
+      "model": "instability_plus_length",
+      "question_count": 57,
+      "row_count": 357
+    },
+    {
+      "auc": 0.7400999615532488,
+      "brier": 0.11718877554126243,
+      "dataset": "mmlu_pro",
+      "decile": 40,
+      "loss_rate": 0.14285714285714285,
+      "model": "full_prefix",
+      "question_count": 57,
+      "row_count": 357
+    },
+    {
+      "auc": 0.6671324018629408,
+      "brier": 0.1063068640795467,
+      "dataset": "mmlu_pro",
+      "decile": 50,
+      "loss_rate": 0.11873350923482849,
+      "model": "confidence",
+      "question_count": 60,
+      "row_count": 379
+    },
+    {
+      "auc": 0.698270126413839,
+      "brier": 0.10225465255149381,
+      "dataset": "mmlu_pro",
+      "decile": 50,
+      "loss_rate": 0.11873350923482849,
+      "model": "instability",
+      "question_count": 60,
+      "row_count": 379
+    },
+    {
+      "auc": 0.7005322687957418,
+      "brier": 0.10697302771348603,
+      "dataset": "mmlu_pro",
+      "decile": 50,
+      "loss_rate": 0.11873350923482849,
+      "model": "instability_plus_length",
+      "question_count": 60,
+      "row_count": 379
+    },
+    {
+      "auc": 0.6782435129740519,
+      "brier": 0.109497899528794,
+      "dataset": "mmlu_pro",
+      "decile": 50,
+      "loss_rate": 0.11873350923482849,
+      "model": "full_prefix",
+      "question_count": 60,
+      "row_count": 379
+    },
+    {
+      "auc": 0.7207009857612268,
+      "brier": 0.09297005765192347,
+      "dataset": "mmlu_pro",
+      "decile": 60,
+      "loss_rate": 0.11702127659574468,
+      "model": "confidence",
+      "question_count": 62,
+      "row_count": 376
+    },
+    {
+      "auc": 0.7937431544359255,
+      "brier": 0.08633466383298267,
+      "dataset": "mmlu_pro",
+      "decile": 60,
+      "loss_rate": 0.11702127659574468,
+      "model": "instability",
+      "question_count": 62,
+      "row_count": 376
+    },
+    {
+      "auc": 0.8094194961664841,
+      "brier": 0.08740547852128469,
+      "dataset": "mmlu_pro",
+      "decile": 60,
+      "loss_rate": 0.11702127659574468,
+      "model": "instability_plus_length",
+      "question_count": 62,
+      "row_count": 376
+    },
+    {
+      "auc": 0.7667031763417306,
+      "brier": 0.09475709891238299,
+      "dataset": "mmlu_pro",
+      "decile": 60,
+      "loss_rate": 0.11702127659574468,
+      "model": "full_prefix",
+      "question_count": 62,
+      "row_count": 376
+    },
+    {
+      "auc": 0.7732589048378522,
+      "brier": 0.08680227090883398,
+      "dataset": "mmlu_pro",
+      "decile": 70,
+      "loss_rate": 0.11398963730569948,
+      "model": "confidence",
+      "question_count": 64,
+      "row_count": 386
+    },
+    {
+      "auc": 0.86217437533227,
+      "brier": 0.07694151755811762,
+      "dataset": "mmlu_pro",
+      "decile": 70,
+      "loss_rate": 0.11398963730569948,
+      "model": "instability",
+      "question_count": 64,
+      "row_count": 386
+    },
+    {
+      "auc": 0.8763955342902712,
+      "brier": 0.07701710145363701,
+      "dataset": "mmlu_pro",
+      "decile": 70,
+      "loss_rate": 0.11398963730569948,
+      "model": "instability_plus_length",
+      "question_count": 64,
+      "row_count": 386
+    },
+    {
+      "auc": 0.8751993620414673,
+      "brier": 0.07819285585842393,
+      "dataset": "mmlu_pro",
+      "decile": 70,
+      "loss_rate": 0.11398963730569948,
+      "model": "full_prefix",
+      "question_count": 64,
+      "row_count": 386
+    },
+    {
+      "auc": 0.697071241873869,
+      "brier": 0.09128666037515107,
+      "dataset": "mmlu_pro",
+      "decile": 80,
+      "loss_rate": 0.11025641025641025,
+      "model": "confidence",
+      "question_count": 65,
+      "row_count": 390
+    },
+    {
+      "auc": 0.8533610347831915,
+      "brier": 0.074988314035185,
+      "dataset": "mmlu_pro",
+      "decile": 80,
+      "loss_rate": 0.11025641025641025,
+      "model": "instability",
+      "question_count": 65,
+      "row_count": 390
+    },
+    {
+      "auc": 0.8573151933516521,
+      "brier": 0.07639056958436467,
+      "dataset": "mmlu_pro",
+      "decile": 80,
+      "loss_rate": 0.11025641025641025,
+      "model": "instability_plus_length",
+      "question_count": 65,
+      "row_count": 390
+    },
+    {
+      "auc": 0.8511493867703237,
+      "brier": 0.07900615546647038,
+      "dataset": "mmlu_pro",
+      "decile": 80,
+      "loss_rate": 0.11025641025641025,
+      "model": "full_prefix",
+      "question_count": 65,
+      "row_count": 390
+    },
+    {
+      "auc": 0.7628579997001049,
+      "brier": 0.08821965565506905,
+      "dataset": "mmlu_pro",
+      "decile": 90,
+      "loss_rate": 0.10236220472440945,
+      "model": "confidence",
+      "question_count": 66,
+      "row_count": 381
+    },
+    {
+      "auc": 0.8373069425701004,
+      "brier": 0.07576456452088269,
+      "dataset": "mmlu_pro",
+      "decile": 90,
+      "loss_rate": 0.10236220472440945,
+      "model": "instability",
+      "question_count": 66,
+      "row_count": 381
+    },
+    {
+      "auc": 0.8488529014844804,
+      "brier": 0.07870635207765538,
+      "dataset": "mmlu_pro",
+      "decile": 90,
+      "loss_rate": 0.10236220472440945,
+      "model": "instability_plus_length",
+      "question_count": 66,
+      "row_count": 381
+    },
+    {
+      "auc": 0.8466036887089519,
+      "brier": 0.07781042186453337,
+      "dataset": "mmlu_pro",
+      "decile": 90,
+      "loss_rate": 0.10236220472440945,
+      "model": "full_prefix",
+      "question_count": 66,
+      "row_count": 381
+    },
+    {
+      "auc": 0.3739151398264224,
+      "brier": 0.20249767688848425,
+      "dataset": "gpqa_diamond",
+      "decile": 10,
+      "loss_rate": 0.27091633466135456,
+      "model": "confidence",
+      "question_count": 54,
+      "row_count": 251
+    },
+    {
+      "auc": 0.6400675024108003,
+      "brier": 0.17795848300307637,
+      "dataset": "gpqa_diamond",
+      "decile": 10,
+      "loss_rate": 0.27091633466135456,
+      "model": "instability",
+      "question_count": 54,
+      "row_count": 251
+    },
+    {
+      "auc": 0.6634522661523626,
+      "brier": 0.19017314245912825,
+      "dataset": "gpqa_diamond",
+      "decile": 10,
+      "loss_rate": 0.27091633466135456,
+      "model": "instability_plus_length",
+      "question_count": 54,
+      "row_count": 251
+    },
+    {
+      "auc": 0.6428801028608164,
+      "brier": 0.20202261422679588,
+      "dataset": "gpqa_diamond",
+      "decile": 10,
+      "loss_rate": 0.27091633466135456,
+      "model": "full_prefix",
+      "question_count": 54,
+      "row_count": 251
+    },
+    {
+      "auc": 0.4471561389116762,
+      "brier": 0.18752859474193712,
+      "dataset": "gpqa_diamond",
+      "decile": 20,
+      "loss_rate": 0.24555160142348753,
+      "model": "confidence",
+      "question_count": 57,
+      "row_count": 281
+    },
+    {
+      "auc": 0.6973612250478535,
+      "brier": 0.16932184582873666,
+      "dataset": "gpqa_diamond",
+      "decile": 20,
+      "loss_rate": 0.24555160142348753,
+      "model": "instability",
+      "question_count": 57,
+      "row_count": 281
+    },
+    {
+      "auc": 0.7167076838939022,
+      "brier": 0.1742524001604771,
+      "dataset": "gpqa_diamond",
+      "decile": 20,
+      "loss_rate": 0.24555160142348753,
+      "model": "instability_plus_length",
+      "question_count": 57,
+      "row_count": 281
+    },
+    {
+      "auc": 0.6904566584632212,
+      "brier": 0.1815000436781988,
+      "dataset": "gpqa_diamond",
+      "decile": 20,
+      "loss_rate": 0.24555160142348753,
+      "model": "full_prefix",
+      "question_count": 57,
+      "row_count": 281
+    },
+    {
+      "auc": 0.5785833918634178,
+      "brier": 0.1948076873731338,
+      "dataset": "gpqa_diamond",
+      "decile": 30,
+      "loss_rate": 0.27124183006535946,
+      "model": "confidence",
+      "question_count": 56,
+      "row_count": 306
+    },
+    {
+      "auc": 0.6996055972770003,
+      "brier": 0.18233379822967916,
+      "dataset": "gpqa_diamond",
+      "decile": 30,
+      "loss_rate": 0.27124183006535946,
+      "model": "instability",
+      "question_count": 56,
+      "row_count": 306
+    },
+    {
+      "auc": 0.6996596250472743,
+      "brier": 0.18728873407199165,
+      "dataset": "gpqa_diamond",
+      "decile": 30,
+      "loss_rate": 0.27124183006535946,
+      "model": "instability_plus_length",
+      "question_count": 56,
+      "row_count": 306
+    },
+    {
+      "auc": 0.6791831001134583,
+      "brier": 0.19232479818467105,
+      "dataset": "gpqa_diamond",
+      "decile": 30,
+      "loss_rate": 0.27124183006535946,
+      "model": "full_prefix",
+      "question_count": 56,
+      "row_count": 306
+    },
+    {
+      "auc": 0.5856249262362799,
+      "brier": 0.18546653486825368,
+      "dataset": "gpqa_diamond",
+      "decile": 40,
+      "loss_rate": 0.24422442244224424,
+      "model": "confidence",
+      "question_count": 59,
+      "row_count": 303
+    },
+    {
+      "auc": 0.7093119320193556,
+      "brier": 0.1749809433842567,
+      "dataset": "gpqa_diamond",
+      "decile": 40,
+      "loss_rate": 0.24422442244224424,
+      "model": "instability",
+      "question_count": 59,
+      "row_count": 303
+    },
+    {
+      "auc": 0.721291160155789,
+      "brier": 0.17629358432838255,
+      "dataset": "gpqa_diamond",
+      "decile": 40,
+      "loss_rate": 0.24422442244224424,
+      "model": "instability_plus_length",
+      "question_count": 59,
+      "row_count": 303
+    },
+    {
+      "auc": 0.6845273220819073,
+      "brier": 0.18093017690909913,
+      "dataset": "gpqa_diamond",
+      "decile": 40,
+      "loss_rate": 0.24422442244224424,
+      "model": "full_prefix",
+      "question_count": 59,
+      "row_count": 303
+    },
+    {
+      "auc": 0.6696004746835443,
+      "brier": 0.17051207165235177,
+      "dataset": "gpqa_diamond",
+      "decile": 50,
+      "loss_rate": 0.23582089552238805,
+      "model": "confidence",
+      "question_count": 60,
+      "row_count": 335
+    },
+    {
+      "auc": 0.7306665348101266,
+      "brier": 0.1634258970033715,
+      "dataset": "gpqa_diamond",
+      "decile": 50,
+      "loss_rate": 0.23582089552238805,
+      "model": "instability",
+      "question_count": 60,
+      "row_count": 335
+    },
+    {
+      "auc": 0.732001582278481,
+      "brier": 0.16206596646579097,
+      "dataset": "gpqa_diamond",
+      "decile": 50,
+      "loss_rate": 0.23582089552238805,
+      "model": "instability_plus_length",
+      "question_count": 60,
+      "row_count": 335
+    },
+    {
+      "auc": 0.7308148734177216,
+      "brier": 0.1624406898011605,
+      "dataset": "gpqa_diamond",
+      "decile": 50,
+      "loss_rate": 0.23582089552238805,
+      "model": "full_prefix",
+      "question_count": 60,
+      "row_count": 335
+    },
+    {
+      "auc": 0.6813522570471121,
+      "brier": 0.1608713680141491,
+      "dataset": "gpqa_diamond",
+      "decile": 60,
+      "loss_rate": 0.22157434402332363,
+      "model": "confidence",
+      "question_count": 63,
+      "row_count": 343
+    },
+    {
+      "auc": 0.7258525527301399,
+      "brier": 0.1619789597126486,
+      "dataset": "gpqa_diamond",
+      "decile": 60,
+      "loss_rate": 0.22157434402332363,
+      "model": "instability",
+      "question_count": 63,
+      "row_count": 343
+    },
+    {
+      "auc": 0.7156022077666075,
+      "brier": 0.1634081048962112,
+      "dataset": "gpqa_diamond",
+      "decile": 60,
+      "loss_rate": 0.22157434402332363,
+      "model": "instability_plus_length",
+      "question_count": 63,
+      "row_count": 343
+    },
+    {
+      "auc": 0.7163906958407255,
+      "brier": 0.1637613681693264,
+      "dataset": "gpqa_diamond",
+      "decile": 60,
+      "loss_rate": 0.22157434402332363,
+      "model": "full_prefix",
+      "question_count": 63,
+      "row_count": 343
+    },
+    {
+      "auc": 0.7034722222222223,
+      "brier": 0.14004435885026456,
+      "dataset": "gpqa_diamond",
+      "decile": 70,
+      "loss_rate": 0.18413597733711048,
+      "model": "confidence",
+      "question_count": 66,
+      "row_count": 353
+    },
+    {
+      "auc": 0.732318376068376,
+      "brier": 0.1430022202249611,
+      "dataset": "gpqa_diamond",
+      "decile": 70,
+      "loss_rate": 0.18413597733711048,
+      "model": "instability",
+      "question_count": 66,
+      "row_count": 353
+    },
+    {
+      "auc": 0.7216346153846154,
+      "brier": 0.1451374183597958,
+      "dataset": "gpqa_diamond",
+      "decile": 70,
+      "loss_rate": 0.18413597733711048,
+      "model": "instability_plus_length",
+      "question_count": 66,
+      "row_count": 353
+    },
+    {
+      "auc": 0.7270833333333333,
+      "brier": 0.14588002628351013,
+      "dataset": "gpqa_diamond",
+      "decile": 70,
+      "loss_rate": 0.18413597733711048,
+      "model": "full_prefix",
+      "question_count": 66,
+      "row_count": 353
+    },
+    {
+      "auc": 0.5853885528152629,
+      "brier": 0.15041518566265255,
+      "dataset": "gpqa_diamond",
+      "decile": 80,
+      "loss_rate": 0.1856763925729443,
+      "model": "confidence",
+      "question_count": 68,
+      "row_count": 377
+    },
+    {
+      "auc": 0.7545369939506748,
+      "brier": 0.13605691503542508,
+      "dataset": "gpqa_diamond",
+      "decile": 80,
+      "loss_rate": 0.1856763925729443,
+      "model": "instability",
+      "question_count": 68,
+      "row_count": 377
+    },
+    {
+      "auc": 0.7476966030711959,
+      "brier": 0.1372540997087964,
+      "dataset": "gpqa_diamond",
+      "decile": 80,
+      "loss_rate": 0.1856763925729443,
+      "model": "instability_plus_length",
+      "question_count": 68,
+      "row_count": 377
+    },
+    {
+      "auc": 0.762354583527222,
+      "brier": 0.1364398572323346,
+      "dataset": "gpqa_diamond",
+      "decile": 80,
+      "loss_rate": 0.1856763925729443,
+      "model": "full_prefix",
+      "question_count": 68,
+      "row_count": 377
+    },
+    {
+      "auc": 0.7187387224828582,
+      "brier": 0.12560809893003977,
+      "dataset": "gpqa_diamond",
+      "decile": 90,
+      "loss_rate": 0.17258883248730963,
+      "model": "confidence",
+      "question_count": 68,
+      "row_count": 394
+    },
+    {
+      "auc": 0.8030043305665825,
+      "brier": 0.11710257856771214,
+      "dataset": "gpqa_diamond",
+      "decile": 90,
+      "loss_rate": 0.17258883248730963,
+      "model": "instability",
+      "question_count": 68,
+      "row_count": 394
+    },
+    {
+      "auc": 0.8135600866113316,
+      "brier": 0.1133917615822256,
+      "dataset": "gpqa_diamond",
+      "decile": 90,
+      "loss_rate": 0.17258883248730963,
+      "model": "instability_plus_length",
+      "question_count": 68,
+      "row_count": 394
+    },
+    {
+      "auc": 0.8225369902562252,
+      "brier": 0.11224010339010922,
+      "dataset": "gpqa_diamond",
+      "decile": 90,
+      "loss_rate": 0.17258883248730963,
+      "model": "full_prefix",
+      "question_count": 68,
+      "row_count": 394
+    }
+  ],
+  "question_count": 150
+}

@@ -1,0 +1,95 @@
+{
+  "category_counts": {
+    "biology": 72,
+    "business": 72,
+    "chemistry": 72,
+    "computer science": 72,
+    "economics": 72,
+    "engineering": 72,
+    "health": 71,
+    "history": 71,
+    "law": 71,
+    "math": 71,
+    "other": 71,
+    "philosophy": 71,
+    "physics": 71,
+    "psychology": 71
+  },
+  "complete_trace_count": 1000,
+  "config": {
+    "dataset": "TIGER-Lab/MMLU-Pro",
+    "gpu_memory_utilization": 0.9,
+    "max_model_len": 49152,
+    "max_num_seqs": 16,
+    "model": "google/gemma-4-12B-it",
+    "num_rows": 1000,
+    "output_dir": "outputs/mmlu_pro_gemma4_12b_n1000_seed0_extended",
+    "resume_traces": true,
+    "seed": 0,
+    "selection": "balanced-categories",
+    "split": "test",
+    "start_row": 0,
+    "trace_max_tokens": 32768
+  },
+  "outcome_counts": {
+    "gained": 590,
+    "lost": 27,
+    "stable_correct": 141,
+    "stable_wrong": 242
+  },
+  "outcome_counts_complete_traces": {
+    "gained": 590,
+    "lost": 27,
+    "stable_correct": 141,
+    "stable_wrong": 242
+  },
+  "per_decile_accuracy": {
+    "0": 0.168,
+    "10": 0.502,
+    "100": 0.731,
+    "20": 0.585,
+    "30": 0.641,
+    "40": 0.692,
+    "50": 0.719,
+    "60": 0.734,
+    "70": 0.738,
+    "80": 0.734,
+    "90": 0.751
+  },
+  "per_decile_accuracy_complete_traces": {
+    "0": 0.168,
+    "10": 0.502,
+    "100": 0.731,
+    "20": 0.585,
+    "30": 0.641,
+    "40": 0.692,
+    "50": 0.719,
+    "60": 0.734,
+    "70": 0.738,
+    "80": 0.734,
+    "90": 0.751
+  },
+  "trace_completion_rate": 1.0,
+  "trace_count": 1000,
+  "trace_extension": {
+    "extended_trace_count": 51,
+    "extension_max_tokens": 16384,
+    "forced_answers_constrained_to_valid_labels": true,
+    "forced_completion_count": 3,
+    "max_extension_rounds": 1,
+    "remaining_truncated_trace_count": 0,
+    "source_dir": "outputs/mmlu_pro_gemma4_12b_n1000_seed0"
+  },
+  "trajectory_row_count": 11000,
+  "truncated_trace_count": 0,
+  "validation": {
+    "checks": {
+      "finite_valid_choice_probabilities": true,
+      "full_trace_coverage_at_decile_100": true,
+      "predictions_within_valid_choices": true,
+      "trace_count_matches_selection": true,
+      "trajectory_row_count": true
+    },
+    "passed": true
+  }
+}

@@ -1,0 +1,40 @@
+{
+  "datasets": {
+    "gpqa_diamond": {
+      "correct_to_wrong_count": 2,
+      "criterion": "normalized_reversal_candidate",
+      "criterion_count": 7,
+      "ever_correct_final_wrong_count": 12,
+      "extended_trace_count": 41,
+      "forced_completion_count": 4,
+      "label": "GPQA Diamond",
+      "maximum_extended_trace_tokens": 32764,
+      "median_extended_trace_tokens": 20909.0,
+      "naturally_completed_count": 37,
+      "new_final_correct_count": 20,
+      "old_final_correct_count": 16,
+      "prediction_changed_count": 15,
+      "prediction_changed_rate": 0.36585365853658536,
+      "wrong_to_correct_count": 6
+    },
+    "mmlu_pro": {
+      "correct_to_wrong_count": 5,
+      "criterion": "robust_loss",
+      "criterion_count": 1,
+      "ever_correct_final_wrong_count": 13,
+      "extended_trace_count": 51,
+      "forced_completion_count": 3,
+      "label": "MMLU-Pro",
+      "maximum_extended_trace_tokens": 32765,
+      "median_extended_trace_tokens": 20928.0,
+      "naturally_completed_count": 48,
+      "new_final_correct_count": 22,
+      "old_final_correct_count": 18,
+      "prediction_changed_count": 20,
+      "prediction_changed_rate": 0.39215686274509803,
+      "wrong_to_correct_count": 9
+    }
+  },
+  "extended_trace_count": 92,
+  "forced_completion_count": 7
+}

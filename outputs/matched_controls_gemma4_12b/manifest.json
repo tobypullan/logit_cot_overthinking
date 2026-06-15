@@ -1,0 +1,150 @@
+{
+  "matching": {
+    "gpqa_diamond": {
+      "cohort_counts": {
+        "final_correct": 25,
+        "loss": 25,
+        "stable_wrong": 25
+      },
+      "max_absolute_log_token_distance": 0.07598379105272812,
+      "median_absolute_log_token_distance": 0.0032198465597375048
+    },
+    "mmlu_pro": {
+      "cohort_counts": {
+        "final_correct": 25,
+        "loss": 25,
+        "stable_wrong": 25
+      },
+      "max_absolute_log_token_distance": 0.26876282377513405,
+      "median_absolute_log_token_distance": 0.006947918768797301
+    }
+  },
+  "max_model_len": 20480,
+  "model": "google/gemma-4-12B-it",
+  "per_cohort_per_dataset": 25,
+  "question_count": 150,
+  "runs": {
+    "gpqa_diamond/seed_0": {
+      "trace_count": 75,
+      "truncated_trace_count": 22,
+      "validation_passed": true
+    },
+    "gpqa_diamond/seed_1": {
+      "trace_count": 75,
+      "truncated_trace_count": 17,
+      "validation_passed": true
+    },
+    "gpqa_diamond/seed_2": {
+      "trace_count": 75,
+      "truncated_trace_count": 25,
+      "validation_passed": true
+    },
+    "gpqa_diamond/seed_3": {
+      "trace_count": 75,
+      "truncated_trace_count": 18,
+      "validation_passed": true
+    },
+    "gpqa_diamond/seed_4": {
+      "trace_count": 75,
+      "truncated_trace_count": 19,
+      "validation_passed": true
+    },
+    "gpqa_diamond/seed_5": {
+      "trace_count": 75,
+      "truncated_trace_count": 23,
+      "validation_passed": true
+    },
+    "gpqa_diamond/seed_6": {
+      "trace_count": 75,
+      "truncated_trace_count": 17,
+      "validation_passed": true
+    },
+    "gpqa_diamond/seed_7": {
+      "trace_count": 75,
+      "truncated_trace_count": 22,
+      "validation_passed": true
+    },
+    "gpqa_diamond/seed_8": {
+      "trace_count": 75,
+      "truncated_trace_count": 19,
+      "validation_passed": true
+    },
+    "gpqa_diamond/seed_9": {
+      "trace_count": 75,
+      "truncated_trace_count": 25,
+      "validation_passed": true
+    },
+    "mmlu_pro/seed_0": {
+      "trace_count": 75,
+      "truncated_trace_count": 8,
+      "validation_passed": true
+    },
+    "mmlu_pro/seed_1": {
+      "trace_count": 75,
+      "truncated_trace_count": 9,
+      "validation_passed": true
+    },
+    "mmlu_pro/seed_2": {
+      "trace_count": 75,
+      "truncated_trace_count": 7,
+      "validation_passed": true
+    },
+    "mmlu_pro/seed_3": {
+      "trace_count": 75,
+      "truncated_trace_count": 8,
+      "validation_passed": true
+    },
+    "mmlu_pro/seed_4": {
+      "trace_count": 75,
+      "truncated_trace_count": 5,
+      "validation_passed": true
+    },
+    "mmlu_pro/seed_5": {
+      "trace_count": 75,
+      "truncated_trace_count": 6,
+      "validation_passed": true
+    },
+    "mmlu_pro/seed_6": {
+      "trace_count": 75,
+      "truncated_trace_count": 10,
+      "validation_passed": true
+    },
+    "mmlu_pro/seed_7": {
+      "trace_count": 75,
+      "truncated_trace_count": 8,
+      "validation_passed": true
+    },
+    "mmlu_pro/seed_8": {
+      "trace_count": 75,
+      "truncated_trace_count": 8,
+      "validation_passed": true
+    },
+    "mmlu_pro/seed_9": {
+      "trace_count": 75,
+      "truncated_trace_count": 6,
+      "validation_passed": true
+    }
+  },
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ],
+  "timings_seconds": {
+    "output_processing": 1.989,
+    "selection_and_model_initialization": 60.55,
+    "total": 12132.756,
+    "trace_generation": 11065.382,
+    "trajectory_probing": 1004.834
+  },
+  "total_probe_row_count": 16500,
+  "total_trace_count": 1500,
+  "trace_max_tokens": 16384
+}

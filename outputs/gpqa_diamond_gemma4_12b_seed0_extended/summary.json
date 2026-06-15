@@ -1,0 +1,83 @@
+{
+  "category_counts": {
+    "gpqa-diamond": 198
+  },
+  "complete_trace_count": 198,
+  "config": {
+    "dataset": "fingertap/GPQA-Diamond",
+    "dataset_format": "gpqa-diamond",
+    "gpu_memory_utilization": 0.9,
+    "max_model_len": 49152,
+    "max_num_seqs": 16,
+    "model": "google/gemma-4-12B-it",
+    "num_rows": 198,
+    "output_dir": "outputs/gpqa_diamond_gemma4_12b_seed0_extended",
+    "resume_traces": false,
+    "seed": 0,
+    "selection": "contiguous",
+    "split": "test",
+    "start_row": 0,
+    "trace_max_tokens": 32768
+  },
+  "outcome_counts": {
+    "gained": 67,
+    "lost": 11,
+    "stable_correct": 44,
+    "stable_wrong": 76
+  },
+  "outcome_counts_complete_traces": {
+    "gained": 67,
+    "lost": 11,
+    "stable_correct": 44,
+    "stable_wrong": 76
+  },
+  "per_decile_accuracy": {
+    "0": 0.2777777777777778,
+    "10": 0.37373737373737376,
+    "100": 0.5606060606060606,
+    "20": 0.45454545454545453,
+    "30": 0.46464646464646464,
+    "40": 0.5202020202020202,
+    "50": 0.5050505050505051,
+    "60": 0.5606060606060606,
+    "70": 0.5909090909090909,
+    "80": 0.5757575757575758,
+    "90": 0.6161616161616161
+  },
+  "per_decile_accuracy_complete_traces": {
+    "0": 0.2777777777777778,
+    "10": 0.37373737373737376,
+    "100": 0.5606060606060606,
+    "20": 0.45454545454545453,
+    "30": 0.46464646464646464,
+    "40": 0.5202020202020202,
+    "50": 0.5050505050505051,
+    "60": 0.5606060606060606,
+    "70": 0.5909090909090909,
+    "80": 0.5757575757575758,
+    "90": 0.6161616161616161
+  },
+  "trace_completion_rate": 1.0,
+  "trace_count": 198,
+  "trace_extension": {
+    "extended_trace_count": 41,
+    "extension_max_tokens": 16384,
+    "forced_answers_constrained_to_valid_labels": true,
+    "forced_completion_count": 4,
+    "max_extension_rounds": 1,
+    "remaining_truncated_trace_count": 0,
+    "source_dir": "outputs/gpqa_diamond_gemma4_12b_seed0"
+  },
+  "trajectory_row_count": 2178,
+  "truncated_trace_count": 0,
+  "validation": {
+    "checks": {
+      "finite_valid_choice_probabilities": true,
+      "full_trace_coverage_at_decile_100": true,
+      "predictions_within_valid_choices": true,
+      "trace_count_matches_selection": true,
+      "trajectory_row_count": true
+    },
+    "passed": true
+  }
+}

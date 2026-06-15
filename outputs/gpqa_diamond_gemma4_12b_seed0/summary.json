@@ -1,0 +1,86 @@
+{
+  "category_counts": {
+    "gpqa-diamond": 198
+  },
+  "complete_trace_count": 157,
+  "config": {
+    "dataset": "fingertap/GPQA-Diamond",
+    "dataset_format": "gpqa-diamond",
+    "gpu_memory_utilization": 0.9,
+    "max_model_len": 20480,
+    "max_num_seqs": 16,
+    "model": "google/gemma-4-12B-it",
+    "num_rows": 198,
+    "output_dir": "outputs/gpqa_diamond_gemma4_12b_seed0",
+    "resume_traces": false,
+    "seed": 0,
+    "selection": "contiguous",
+    "split": "test",
+    "start_row": 0,
+    "trace_max_tokens": 16384
+  },
+  "outcome_counts": {
+    "gained": 62,
+    "lost": 10,
+    "stable_correct": 45,
+    "stable_wrong": 81
+  },
+  "outcome_counts_complete_traces": {
+    "gained": 54,
+    "lost": 6,
+    "stable_correct": 37,
+    "stable_wrong": 60
+  },
+  "per_decile_accuracy": {
+    "0": 0.2777777777777778,
+    "10": 0.3787878787878788,
+    "100": 0.5404040404040404,
+    "20": 0.4292929292929293,
+    "30": 0.4494949494949495,
+    "40": 0.51010101010101,
+    "50": 0.5050505050505051,
+    "60": 0.5606060606060606,
+    "70": 0.5606060606060606,
+    "80": 0.5656565656565656,
+    "90": 0.6262626262626263
+  },
+  "per_decile_accuracy_complete_traces": {
+    "0": 0.27388535031847133,
+    "10": 0.4140127388535032,
+    "100": 0.5796178343949044,
+    "20": 0.4840764331210191,
+    "30": 0.5031847133757962,
+    "40": 0.5668789808917197,
+    "50": 0.554140127388535,
+    "60": 0.6114649681528662,
+    "70": 0.6369426751592356,
+    "80": 0.6178343949044586,
+    "90": 0.6878980891719745
+  },
+  "timings_seconds": {
+    "dataset_loading": 0.78,
+    "model_initialization": 55.686,
+    "output_processing": 0.094,
+    "total_before_summary_write": 2089.681,
+    "trace_generation": 1903.247,
+    "trajectory_probing": 129.874
+  },
+  "trace_completion_rate": 0.7929292929292929,
+  "trace_count": 198,
+  "trace_reuse": {
+    "generated": 198,
+    "reused": 0
+  },
+  "trajectory_row_count": 2178,
+  "truncated_trace_count": 41,
+  "validation": {
+    "checks": {
+      "finite_valid_choice_probabilities": true,
+      "full_trace_coverage_at_decile_100": true,
+      "predictions_within_valid_choices": true,
+      "trace_count_matches_selection": true,
+      "trajectory_row_count": true
+    },
+    "passed": true
+  }
+}

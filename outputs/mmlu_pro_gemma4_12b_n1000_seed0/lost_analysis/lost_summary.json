@@ -1,0 +1,217 @@
+{
+  "category_rates": [
+    {
+      "category": "chemistry",
+      "complete_questions": 66,
+      "endpoint_lost": 0,
+      "endpoint_lost_rate": 0.0,
+      "ever_correct_final_wrong": 14,
+      "ever_correct_final_wrong_rate": 0.21212121212121213,
+      "robust_loss": 0,
+      "robust_loss_rate": 0.0
+    },
+    {
+      "category": "engineering",
+      "complete_questions": 41,
+      "endpoint_lost": 0,
+      "endpoint_lost_rate": 0.0,
+      "ever_correct_final_wrong": 8,
+      "ever_correct_final_wrong_rate": 0.1951219512195122,
+      "robust_loss": 0,
+      "robust_loss_rate": 0.0
+    },
+    {
+      "category": "health",
+      "complete_questions": 71,
+      "endpoint_lost": 3,
+      "endpoint_lost_rate": 0.04225352112676056,
+      "ever_correct_final_wrong": 13,
+      "ever_correct_final_wrong_rate": 0.18309859154929578,
+      "robust_loss": 0,
+      "robust_loss_rate": 0.0
+    },
+    {
+      "category": "physics",
+      "complete_questions": 66,
+      "endpoint_lost": 0,
+      "endpoint_lost_rate": 0.0,
+      "ever_correct_final_wrong": 12,
+      "ever_correct_final_wrong_rate": 0.18181818181818182,
+      "robust_loss": 0,
+      "robust_loss_rate": 0.0
+    },
+    {
+      "category": "law",
+      "complete_questions": 71,
+      "endpoint_lost": 3,
+      "endpoint_lost_rate": 0.04225352112676056,
+      "ever_correct_final_wrong": 10,
+      "ever_correct_final_wrong_rate": 0.14084507042253522,
+      "robust_loss": 4,
+      "robust_loss_rate": 0.056338028169014086
+    },
+    {
+      "category": "computer science",
+      "complete_questions": 72,
+      "endpoint_lost": 3,
+      "endpoint_lost_rate": 0.041666666666666664,
+      "ever_correct_final_wrong": 9,
+      "ever_correct_final_wrong_rate": 0.125,
+      "robust_loss": 0,
+      "robust_loss_rate": 0.0
+    },
+    {
+      "category": "math",
+      "complete_questions": 68,
+      "endpoint_lost": 0,
+      "endpoint_lost_rate": 0.0,
+      "ever_correct_final_wrong": 8,
+      "ever_correct_final_wrong_rate": 0.11764705882352941,
+      "robust_loss": 0,
+      "robust_loss_rate": 0.0
+    },
+    {
+      "category": "history",
+      "complete_questions": 71,
+      "endpoint_lost": 4,
+      "endpoint_lost_rate": 0.056338028169014086,
+      "ever_correct_final_wrong": 8,
+      "ever_correct_final_wrong_rate": 0.11267605633802817,
+      "robust_loss": 4,
+      "robust_loss_rate": 0.056338028169014086
+    },
+    {
+      "category": "business",
+      "complete_questions": 67,
+      "endpoint_lost": 1,
+      "endpoint_lost_rate": 0.014925373134328358,
+      "ever_correct_final_wrong": 6,
+      "ever_correct_final_wrong_rate": 0.08955223880597014,
+      "robust_loss": 2,
+      "robust_loss_rate": 0.029850746268656716
+    },
+    {
+      "category": "philosophy",
+      "complete_questions": 71,
+      "endpoint_lost": 4,
+      "endpoint_lost_rate": 0.056338028169014086,
+      "ever_correct_final_wrong": 6,
+      "ever_correct_final_wrong_rate": 0.08450704225352113,
+      "robust_loss": 2,
+      "robust_loss_rate": 0.028169014084507043
+    },
+    {
+      "category": "other",
+      "complete_questions": 71,
+      "endpoint_lost": 4,
+      "endpoint_lost_rate": 0.056338028169014086,
+      "ever_correct_final_wrong": 5,
+      "ever_correct_final_wrong_rate": 0.07042253521126761,
+      "robust_loss": 1,
+      "robust_loss_rate": 0.014084507042253521
+    },
+    {
+      "category": "economics",
+      "complete_questions": 71,
+      "endpoint_lost": 3,
+      "endpoint_lost_rate": 0.04225352112676056,
+      "ever_correct_final_wrong": 4,
+      "ever_correct_final_wrong_rate": 0.056338028169014086,
+      "robust_loss": 1,
+      "robust_loss_rate": 0.014084507042253521
+    },
+    {
+      "category": "psychology",
+      "complete_questions": 71,
+      "endpoint_lost": 0,
+      "endpoint_lost_rate": 0.0,
+      "ever_correct_final_wrong": 3,
+      "ever_correct_final_wrong_rate": 0.04225352112676056,
+      "robust_loss": 3,
+      "robust_loss_rate": 0.04225352112676056
+    },
+    {
+      "category": "biology",
+      "complete_questions": 72,
+      "endpoint_lost": 0,
+      "endpoint_lost_rate": 0.0,
+      "ever_correct_final_wrong": 3,
+      "ever_correct_final_wrong_rate": 0.041666666666666664,
+      "robust_loss": 0,
+      "robust_loss_rate": 0.0
+    }
+  ],
+  "comparison_groups": {
+    "ever correct, final wrong": {
+      "count": 109,
+      "flips_mean": 3.9357798165137616,
+      "flips_median": 4.0,
+      "trace_tokens_mean": 5680.40366972477,
+      "trace_tokens_median": 4766.0
+    },
+    "final correct": {
+      "count": 709,
+      "flips_mean": 1.6346967559943582,
+      "flips_median": 1.0,
+      "trace_tokens_mean": 2652.3074753173482,
+      "trace_tokens_median": 1614.0
+    },
+    "never correct": {
+      "count": 131,
+      "flips_mean": 1.5267175572519085,
+      "flips_median": 1.0,
+      "trace_tokens_mean": 4152.312977099236,
+      "trace_tokens_median": 3283.0
+    }
+  },
+  "complete_question_count": 949,
+  "definitions": {
+    "endpoint_lost": "Correct at decile 0 and wrong at decile 100.",
+    "ever_correct_final_wrong": "Correct at one or more probe deciles and wrong at decile 100.",
+    "robust_loss": "Ever-correct/final-wrong with a pre-final raw correct-answer probability >= 0.5, final valid-letter mass >= 0.5, and agreement between the final probe and generated answer."
+  },
+  "endpoint_lost_count": 25,
+  "ever_correct_final_wrong_count": 109,
+  "first_correct_decile_counts": {
+    "0": 25,
+    "10": 38,
+    "20": 15,
+    "30": 8,
+    "40": 8,
+    "50": 8,
+    "60": 4,
+    "70": 1,
+    "90": 2
+  },
+  "flip_count_distribution": {
+    "1": 15,
+    "2": 28,
+    "3": 9,
+    "4": 12,
+    "5": 8,
+    "6": 22,
+    "7": 11,
+    "8": 2,
+    "9": 2
+  },
+  "gained_then_lost_count": 84,
+  "last_correct_decile_counts": {
+    "0": 20,
+    "10": 10,
+    "20": 7,
+    "30": 2,
+    "40": 5,
+    "50": 6,
+    "60": 9,
+    "70": 7,
+    "80": 10,
+    "90": 33
+  },
+  "median_final_choice_probability_mass": 0.0038354306440716896,
+  "probe_generation_agreement_rate": 0.5688073394495413,
+  "robust_endpoint_lost_count": 1,
+  "robust_gained_then_lost_count": 16,
+  "robust_loss_count": 17,
+  "robust_self_correction_language_count": 16,
+  "robust_simulated_retrieval_language_count": 14
+}

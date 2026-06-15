@@ -1,0 +1,77 @@
+{
+  "candidate_count": 25,
+  "datasets": {
+    "gpqa_diamond": {
+      "attempt_count": 80,
+      "candidate_count": 8,
+      "candidate_recurrence_distribution": {
+        "0": 2,
+        "1": 4,
+        "2": 1,
+        "4": 1
+      },
+      "candidates_with_any_recurrence": 6,
+      "candidates_with_majority_recurrence": 0,
+      "criterion": "normalized_reversal_candidate",
+      "criterion_recurrence_count": 10,
+      "criterion_recurrence_rate": 0.125,
+      "ever_correct_final_wrong_count": 30,
+      "final_accuracy": 0.4625,
+      "forced_completion_count": 0,
+      "generated_accuracy": 0.4,
+      "label": "GPQA Diamond",
+      "natural_attempt_count": 80,
+      "natural_criterion_recurrence_count": 10,
+      "natural_criterion_recurrence_rate": 0.125,
+      "outcome_counts": {
+        "gained": 9,
+        "lost": 12,
+        "stable_correct": 28,
+        "stable_wrong": 31
+      }
+    },
+    "mmlu_pro": {
+      "attempt_count": 170,
+      "candidate_count": 17,
+      "candidate_recurrence_distribution": {
+        "0": 1,
+        "1": 5,
+        "2": 4,
+        "3": 4,
+        "5": 2,
+        "7": 1
+      },
+      "candidates_with_any_recurrence": 16,
+      "candidates_with_majority_recurrence": 3,
+      "criterion": "robust_loss",
+      "criterion_recurrence_count": 42,
+      "criterion_recurrence_rate": 0.24705882352941178,
+      "ever_correct_final_wrong_count": 56,
+      "final_accuracy": 0.4411764705882353,
+      "forced_completion_count": 0,
+      "generated_accuracy": 0.4411764705882353,
+      "label": "MMLU-Pro",
+      "natural_attempt_count": 170,
+      "natural_criterion_recurrence_count": 42,
+      "natural_criterion_recurrence_rate": 0.24705882352941178,
+      "outcome_counts": {
+        "gained": 75,
+        "lost": 10,
+        "stable_wrong": 85
+      }
+    }
+  },
+  "input_attempt_count": 250,
+  "seed_zero_replay": {
+    "gpqa_diamond": {
+      "candidate_count": 8,
+      "exact_trace_match_count": 0,
+      "same_final_prediction_count": 4
+    },
+    "mmlu_pro": {
+      "candidate_count": 17,
+      "exact_trace_match_count": 0,
+      "same_final_prediction_count": 8
+    }
+  }
+}
