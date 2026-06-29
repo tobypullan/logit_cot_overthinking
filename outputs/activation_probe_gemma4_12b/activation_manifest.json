@@ -1,0 +1,54 @@
+{
+  "activation_chunk_size": 500,
+  "activation_dtype": "float16",
+  "activation_max_shard_bytes": 49920128,
+  "activation_shard_count": 27,
+  "activation_shard_manifest_path": "outputs/activation_probe_gemma4_12b/activations_shards/manifest.json",
+  "activation_storage": "sharded_npy",
+  "activations_path": "outputs/activation_probe_gemma4_12b/activations_shards/manifest.json",
+  "batch_size": 1,
+  "batching": "sorted_by_prefix_token_count",
+  "example_count": 13500,
+  "examples_path": "outputs/activation_probe_gemma4_12b/activation_probe_examples.parquet",
+  "experiment": "activation_probe_extraction",
+  "hidden_size": 3840,
+  "input_root": "outputs/matched_controls_gemma4_12b_extended",
+  "layers": [
+    0,
+    4,
+    8,
+    12,
+    16,
+    20,
+    24,
+    28,
+    32,
+    36,
+    40,
+    44,
+    48
+  ],
+  "model": "google/gemma-4-12B-it",
+  "model_dtype": "bfloat16",
+  "output_dir": "outputs/activation_probe_gemma4_12b",
+  "preexisting_filled_rows": 13332,
+  "processed_rows": 168,
+  "resumed_from_partial": true,
+  "reused": false,
+  "target_positive_counts": {
+    "future_answer_flip": 3941,
+    "future_change_to_wrong": 2480,
+    "future_loss": 1085
+  },
+  "target_positive_rates": {
+    "future_answer_flip": 0.2919259259259259,
+    "future_change_to_wrong": 0.1837037037037037,
+    "future_loss": 0.08037037037037037
+  },
+  "timings_seconds": {
+    "activation_extraction": 2012.331,
+    "examples": 0.065,
+    "model_initialization": 18.303,
+    "total": 2030.699
+  }
+}

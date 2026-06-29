@@ -266,6 +266,66 @@ trajectory-analyze-matched-controls \
 Prediction is evaluated only at checkpoints where the current probe is
 correct, using five-fold cross-validation grouped by question.
 
+Two follow-up analyses probe the uncertainty-blip explanation more directly.
+The confidence-threshold recurrence analysis reruns the matched-control
+recurrence tables while requiring a high normalized correct-answer probability
+at a pre-final checkpoint, and optionally a high normalized final wrong-answer
+probability:
+
+```bash
+trajectory-analyze-confidence-recurrence \
+  --input-root outputs/matched_controls_gemma4_12b_extended
+```
+
+The early-commitment analysis estimates recoverable accuracy if traces had
+stopped at earlier checkpoints. Oracle policies use the true answer and are
+upper bounds, while the proxy policy uses only prediction confidence and
+stability:
+
+```bash
+trajectory-analyze-early-commitment \
+  --input-root outputs/matched_controls_gemma4_12b_extended
+```
+
+The branching-intervention setup selects high-confidence currently-correct
+checkpoints from traces that later go wrong and writes a branch request
+manifest. By default this is a dry run that does not load the model; add
+`--execute` to generate answer-only and continuation branches:
+
+```bash
+trajectory-run-branching-intervention \
+  --input-root outputs/matched_controls_gemma4_12b_extended \
+  --selection outputs/matched_controls_gemma4_12b/cohort_selection.parquet \
+  --output-dir outputs/branching_intervention_gemma4_12b
+```
+
+For cross-model replication, first write a model-specific command plan. The
+current runner is Gemma-specific, so non-Gemma models are listed as blocked
+until a prompt/logit adapter is added or `--adapter gemma` is explicitly used
+for a compatible checkpoint:
+
+```bash
+trajectory-plan-cross-model-replication \
+  --models google/gemma-4-12B-it \
+  --output-root outputs/cross_model_replication
+```
+
+Activation probes train layerwise linear classifiers for three deployable and
+diagnostic future-risk labels: `future_loss`, `future_change_to_wrong`, and
+`future_answer_flip`. The cheap examples stage builds labels from existing
+matched-control trajectories; the full stage also extracts hidden activations
+from Gemma and trains out-of-fold probes for halting-policy evaluation:
+
+```bash
+trajectory-train-activation-probes \
+  --input-root outputs/matched_controls_gemma4_12b_extended \
+  --output-dir outputs/activation_probe_gemma4_12b
+```
+
+Large activation caches can be stored as `activations_shards/manifest.json`
+plus row-wise `.npy` shards; the training loader accepts this layout whenever
+the monolithic `activations.npy` is absent.
+
 The implementation follows the paper's public
 [reference repository](https://github.com/AndresAlgaba/probing_reasoning_traces)
 where applicable, with Gemma-specific prompting and parsing added here.

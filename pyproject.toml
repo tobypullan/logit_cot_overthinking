@@ -35,6 +35,11 @@ trajectory-analyze-extensions = "logit_cot_overthinking.extension_analysis_cli:m
 trajectory-run-matched-controls = "logit_cot_overthinking.matched_controls_cli:main"
 trajectory-analyze-matched-controls = "logit_cot_overthinking.matched_analysis_cli:main"
 trajectory-extend-matched-controls = "logit_cot_overthinking.matched_extension_cli:main"
+trajectory-analyze-confidence-recurrence = "logit_cot_overthinking.confidence_recurrence_cli:main"
+trajectory-analyze-early-commitment = "logit_cot_overthinking.early_commitment_cli:main"
+trajectory-run-branching-intervention = "logit_cot_overthinking.branching_intervention_cli:main"
+trajectory-plan-cross-model-replication = "logit_cot_overthinking.cross_model_replication_cli:main"
+trajectory-train-activation-probes = "logit_cot_overthinking.activation_probe_cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]

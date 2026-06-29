@@ -1,0 +1,312 @@
+{
+  "axis": 0,
+  "chunk_size": 500,
+  "dtype": "float16",
+  "format": "activation_shards_v1",
+  "shape": [
+    13500,
+    13,
+    3840
+  ],
+  "shard_count": 27,
+  "shards": [
+    {
+      "bytes": 49920128,
+      "end": 500,
+      "path": "activations_00000_00500.npy",
+      "shape": [
+        500,
+        13,
+        3840
+      ],
+      "start": 0
+    },
+    {
+      "bytes": 49920128,
+      "end": 1000,
+      "path": "activations_00500_01000.npy",
+      "shape": [
+        500,
+        13,
+        3840
+      ],
+      "start": 500
+    },
+    {
+      "bytes": 49920128,
+      "end": 1500,
+      "path": "activations_01000_01500.npy",
+      "shape": [
+        500,
+        13,
+        3840
+      ],
+      "start": 1000
+    },
+    {
+      "bytes": 49920128,
+      "end": 2000,
+      "path": "activations_01500_02000.npy",
+      "shape": [
+        500,
+        13,
+        3840
+      ],
+      "start": 1500
+    },
+    {
+      "bytes": 49920128,
+      "end": 2500,
+      "path": "activations_02000_02500.npy",
+      "shape": [
+        500,
+        13,
+        3840
+      ],
+      "start": 2000
+    },
+    {
+      "bytes": 49920128,
+      "end": 3000,
+      "path": "activations_02500_03000.npy",
+      "shape": [
+        500,
+        13,
+        3840
+      ],
+      "start": 2500
+    },
+    {
+      "bytes": 49920128,
+      "end": 3500,
+      "path": "activations_03000_03500.npy",
+      "shape": [
+        500,
+        13,
+        3840
+      ],
+      "start": 3000
+    },
+    {
+      "bytes": 49920128,
+      "end": 4000,
+      "path": "activations_03500_04000.npy",
+      "shape": [
+        500,
+        13,
+        3840
+      ],
+      "start": 3500
+    },
+    {
+      "bytes": 49920128,
+      "end": 4500,
+      "path": "activations_04000_04500.npy",
+      "shape": [
+        500,
+        13,
+        3840
+      ],
+      "start": 4000
+    },
+    {
+      "bytes": 49920128,
+      "end": 5000,
+      "path": "activations_04500_05000.npy",
+      "shape": [
+        500,
+        13,
+        3840
+      ],
+      "start": 4500
+    },
+    {
+      "bytes": 49920128,
+      "end": 5500,
+      "path": "activations_05000_05500.npy",
+      "shape": [
+        500,
+        13,
+        3840
+      ],
+      "start": 5000
+    },
+    {
+      "bytes": 49920128,
+      "end": 6000,
+      "path": "activations_05500_06000.npy",
+      "shape": [
+        500,
+        13,
+        3840
+      ],
+      "start": 5500
+    },
+    {
+      "bytes": 49920128,
+      "end": 6500,
+      "path": "activations_06000_06500.npy",
+      "shape": [
+        500,
+        13,
+        3840
+      ],
+      "start": 6000
+    },
+    {
+      "bytes": 49920128,
+      "end": 7000,
+      "path": "activations_06500_07000.npy",
+      "shape": [
+        500,
+        13,
+        3840
+      ],
+      "start": 6500
+    },
+    {
+      "bytes": 49920128,
+      "end": 7500,
+      "path": "activations_07000_07500.npy",
+      "shape": [
+        500,
+        13,
+        3840
+      ],
+      "start": 7000
+    },
+    {
+      "bytes": 49920128,
+      "end": 8000,
+      "path": "activations_07500_08000.npy",
+      "shape": [
+        500,
+        13,
+        3840
+      ],
+      "start": 7500
+    },
+    {
+      "bytes": 49920128,
+      "end": 8500,
+      "path": "activations_08000_08500.npy",
+      "shape": [
+        500,
+        13,
+        3840
+      ],
+      "start": 8000
+    },
+    {
+      "bytes": 49920128,
+      "end": 9000,
+      "path": "activations_08500_09000.npy",
+      "shape": [
+        500,
+        13,
+        3840
+      ],
+      "start": 8500
+    },
+    {
+      "bytes": 49920128,
+      "end": 9500,
+      "path": "activations_09000_09500.npy",
+      "shape": [
+        500,
+        13,
+        3840
+      ],
+      "start": 9000
+    },
+    {
+      "bytes": 49920128,
+      "end": 10000,
+      "path": "activations_09500_10000.npy",
+      "shape": [
+        500,
+        13,
+        3840
+      ],
+      "start": 9500
+    },
+    {
+      "bytes": 49920128,
+      "end": 10500,
+      "path": "activations_10000_10500.npy",
+      "shape": [
+        500,
+        13,
+        3840
+      ],
+      "start": 10000
+    },
+    {
+      "bytes": 49920128,
+      "end": 11000,
+      "path": "activations_10500_11000.npy",
+      "shape": [
+        500,
+        13,
+        3840
+      ],
+      "start": 10500
+    },
+    {
+      "bytes": 49920128,
+      "end": 11500,
+      "path": "activations_11000_11500.npy",
+      "shape": [
+        500,
+        13,
+        3840
+      ],
+      "start": 11000
+    },
+    {
+      "bytes": 49920128,
+      "end": 12000,
+      "path": "activations_11500_12000.npy",
+      "shape": [
+        500,
+        13,
+        3840
+      ],
+      "start": 11500
+    },
+    {
+      "bytes": 49920128,
+      "end": 12500,
+      "path": "activations_12000_12500.npy",
+      "shape": [
+        500,
+        13,
+        3840
+      ],
+      "start": 12000
+    },
+    {
+      "bytes": 49920128,
+      "end": 13000,
+      "path": "activations_12500_13000.npy",
+      "shape": [
+        500,
+        13,
+        3840
+      ],
+      "start": 12500
+    },
+    {
+      "bytes": 49920128,
+      "end": 13500,
+      "path": "activations_13000_13500.npy",
+      "shape": [
+        500,
+        13,
+        3840
+      ],
+      "start": 13000
+    }
+  ],
+  "source_path": "../activations.npy"
+}

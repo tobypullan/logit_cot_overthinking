@@ -1,0 +1,45 @@
+{
+  "branch_max_tokens": 512,
+  "branch_modes": [
+    "answer_only",
+    "normal",
+    "short_verification",
+    "preserve_unless_decisive"
+  ],
+  "branch_request_count": 800,
+  "branch_seeds": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "candidate_count": 50,
+  "candidate_path": "outputs/branching_intervention_gemma4_12b/branch_candidates.parquet",
+  "cohorts": [
+    "loss"
+  ],
+  "deciles": [
+    30,
+    40,
+    50,
+    60,
+    70,
+    80,
+    90
+  ],
+  "dry_run": true,
+  "experiment": "branching_intervention",
+  "final_outcome": "loss",
+  "input_root": "outputs/matched_controls_gemma4_12b_extended",
+  "max_candidates_per_dataset": 25,
+  "min_current_normalized_correct_probability": 0.9,
+  "model": "google/gemma-4-12B-it",
+  "output_dir": "outputs/branching_intervention_gemma4_12b",
+  "request_jsonl_path": "outputs/branching_intervention_gemma4_12b/branch_requests.jsonl",
+  "request_path": "outputs/branching_intervention_gemma4_12b/branch_requests.parquet",
+  "selection_path": "outputs/matched_controls_gemma4_12b/cohort_selection.parquet",
+  "timings_seconds": {
+    "setup": 0.124,
+    "total": 0.124
+  }
+}

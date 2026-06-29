@@ -1,0 +1,35 @@
+{
+  "activation_dtype": "float16",
+  "activations_path": "outputs/activation_probe_gemma4_12b_smoke_sorted/activations.npy",
+  "batch_size": 4,
+  "batching": "sorted_by_prefix_token_count",
+  "example_count": 8,
+  "examples_path": "outputs/activation_probe_gemma4_12b_smoke_sorted/activation_probe_examples.parquet",
+  "experiment": "activation_probe_extraction",
+  "hidden_size": 3840,
+  "input_root": "outputs/matched_controls_gemma4_12b_extended",
+  "layers": [
+    0,
+    1
+  ],
+  "model": "google/gemma-4-12B-it",
+  "model_dtype": "bfloat16",
+  "output_dir": "outputs/activation_probe_gemma4_12b_smoke_sorted",
+  "reused": false,
+  "target_positive_counts": {
+    "future_answer_flip": 3,
+    "future_change_to_wrong": 2,
+    "future_loss": 0
+  },
+  "target_positive_rates": {
+    "future_answer_flip": 0.375,
+    "future_change_to_wrong": 0.25,
+    "future_loss": 0.0
+  },
+  "timings_seconds": {
+    "activation_extraction": 9.195,
+    "examples": 7.573,
+    "model_initialization": 18.733,
+    "total": 35.501
+  }
+}

@@ -1,0 +1,132 @@
+{
+  "activation_chunk_size": 500,
+  "activation_max_shard_bytes": 49920128,
+  "activation_shard_count": 27,
+  "activation_shard_manifest_path": "outputs/activation_probe_gemma4_12b/activations_shards/manifest.json",
+  "activation_storage": "sharded_npy",
+  "activations_path": "outputs/activation_probe_gemma4_12b/activations_shards/manifest.json",
+  "backend": "torch",
+  "batch_size": 256,
+  "best_auc_by_target": [
+    {
+      "accuracy_at_0_5": 0.6084444444444445,
+      "auc": 0.65428088683009,
+      "brier": 0.2440027236324399,
+      "layer": 28,
+      "positive_rate": 0.2919259259259259,
+      "row_count": 13500,
+      "target": "future_answer_flip"
+    },
+    {
+      "accuracy_at_0_5": 0.583925925925926,
+      "auc": 0.6100158070370587,
+      "brier": 0.25499818788186573,
+      "layer": 28,
+      "positive_rate": 0.1837037037037037,
+      "row_count": 13500,
+      "target": "future_change_to_wrong"
+    },
+    {
+      "accuracy_at_0_5": 0.5888148148148148,
+      "auc": 0.5907122905805561,
+      "brier": 0.25093075217576305,
+      "layer": 44,
+      "positive_rate": 0.08037037037037037,
+      "row_count": 13500,
+      "target": "future_loss"
+    }
+  ],
+  "best_halting_by_target": [
+    {
+      "accuracy": 0.49533333333333335,
+      "attempt_count": 1500,
+      "confidence_threshold": 0.95,
+      "delta_vs_final": 0.010000000000000009,
+      "final_accuracy": 0.48533333333333334,
+      "layer": 16.0,
+      "mean_stop_decile": 72.41333333333333,
+      "median_stop_decile": 90.0,
+      "policy_family": "probe_confidence",
+      "probe_threshold": 0.7,
+      "stop_rate": 0.5093333333333333,
+      "target": "future_loss"
+    },
+    {
+      "accuracy": 0.492,
+      "attempt_count": 1500,
+      "confidence_threshold": 0.95,
+      "delta_vs_final": 0.006666666666666654,
+      "final_accuracy": 0.48533333333333334,
+      "layer": 0.0,
+      "mean_stop_decile": 83.56666666666666,
+      "median_stop_decile": 100.0,
+      "policy_family": "probe_confidence",
+      "probe_threshold": 0.7,
+      "stop_rate": 0.31266666666666665,
+      "target": "future_answer_flip"
+    },
+    {
+      "accuracy": 0.4886666666666667,
+      "attempt_count": 1500,
+      "confidence_threshold": 0.95,
+      "delta_vs_final": 0.003333333333333355,
+      "final_accuracy": 0.48533333333333334,
+      "layer": 44.0,
+      "mean_stop_decile": 95.94,
+      "median_stop_decile": 100.0,
+      "policy_family": "probe_confidence",
+      "probe_threshold": 0.9,
+      "stop_rate": 0.076,
+      "target": "future_change_to_wrong"
+    }
+  ],
+  "epochs": 8,
+  "example_count": 13500,
+  "examples_path": "outputs/activation_probe_gemma4_12b/activation_probe_examples.parquet",
+  "experiment": "activation_probe_training",
+  "folds": 5,
+  "halting_summary_path": "outputs/activation_probe_gemma4_12b/probe_halting_summary.parquet",
+  "layers": [
+    0,
+    4,
+    8,
+    12,
+    16,
+    20,
+    24,
+    28,
+    32,
+    36,
+    40,
+    44,
+    48
+  ],
+  "metrics_path": "outputs/activation_probe_gemma4_12b/probe_metrics.parquet",
+  "model_paths": {
+    "0": "outputs/activation_probe_gemma4_12b/models/layer_000.npz",
+    "12": "outputs/activation_probe_gemma4_12b/models/layer_012.npz",
+    "16": "outputs/activation_probe_gemma4_12b/models/layer_016.npz",
+    "20": "outputs/activation_probe_gemma4_12b/models/layer_020.npz",
+    "24": "outputs/activation_probe_gemma4_12b/models/layer_024.npz",
+    "28": "outputs/activation_probe_gemma4_12b/models/layer_028.npz",
+    "32": "outputs/activation_probe_gemma4_12b/models/layer_032.npz",
+    "36": "outputs/activation_probe_gemma4_12b/models/layer_036.npz",
+    "4": "outputs/activation_probe_gemma4_12b/models/layer_004.npz",
+    "40": "outputs/activation_probe_gemma4_12b/models/layer_040.npz",
+    "44": "outputs/activation_probe_gemma4_12b/models/layer_044.npz",
+    "48": "outputs/activation_probe_gemma4_12b/models/layer_048.npz",
+    "8": "outputs/activation_probe_gemma4_12b/models/layer_008.npz"
+  },
+  "output_dir": "outputs/activation_probe_gemma4_12b",
+  "predictions_path": "outputs/activation_probe_gemma4_12b/probe_predictions.parquet",
+  "targets": [
+    "future_loss",
+    "future_change_to_wrong",
+    "future_answer_flip"
+  ],
+  "timings_seconds": {
+    "loading": 0.069,
+    "total": 451.384,
+    "training_and_evaluation": 451.314
+  }
+}

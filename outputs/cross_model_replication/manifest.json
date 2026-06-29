@@ -1,0 +1,62 @@
+{
+  "adapter": "auto",
+  "experiment": "cross_model_replication",
+  "include_branching_setup": true,
+  "model_count": 1,
+  "models": [
+    {
+      "adapter": "gemma",
+      "adapter_note": "Detected as Gemma-compatible from the model name.",
+      "blocked_commands": [],
+      "commands": [
+        {
+          "command": "trajectory-run-matched-controls --model google/gemma-4-12B-it --seeds 0-9 --per-cohort 25 --output-root outputs/cross_model_replication/google_gemma_4_12b_it/matched_controls --trace-max-tokens 16384 --max-model-len 20480 --max-num-seqs 32 --gpu-memory-utilization 0.9",
+          "stage": "matched_controls"
+        },
+        {
+          "command": "trajectory-extend-matched-controls --model google/gemma-4-12B-it --seeds 0-9 --input-root outputs/cross_model_replication/google_gemma_4_12b_it/matched_controls --output-root outputs/cross_model_replication/google_gemma_4_12b_it/matched_controls_extended --extension-max-tokens 16384 --max-model-len 49152 --max-num-seqs 16 --gpu-memory-utilization 0.9",
+          "stage": "extend_matched_controls"
+        },
+        {
+          "command": "trajectory-analyze-matched-controls --input-root outputs/cross_model_replication/google_gemma_4_12b_it/matched_controls_extended --selection outputs/cross_model_replication/google_gemma_4_12b_it/matched_controls/cohort_selection.parquet --output-dir outputs/cross_model_replication/google_gemma_4_12b_it/matched_controls_extended/analysis",
+          "stage": "matched_analysis"
+        },
+        {
+          "command": "trajectory-analyze-confidence-recurrence --input-root outputs/cross_model_replication/google_gemma_4_12b_it/matched_controls_extended --selection outputs/cross_model_replication/google_gemma_4_12b_it/matched_controls/cohort_selection.parquet --output-dir outputs/cross_model_replication/google_gemma_4_12b_it/matched_controls_extended/analysis/confidence_recurrence",
+          "stage": "confidence_recurrence"
+        },
+        {
+          "command": "trajectory-analyze-early-commitment --input-root outputs/cross_model_replication/google_gemma_4_12b_it/matched_controls_extended --selection outputs/cross_model_replication/google_gemma_4_12b_it/matched_controls/cohort_selection.parquet --output-dir outputs/cross_model_replication/google_gemma_4_12b_it/matched_controls_extended/analysis/early_commitment",
+          "stage": "early_commitment"
+        },
+        {
+          "command": "trajectory-run-branching-intervention --model google/gemma-4-12B-it --input-root outputs/cross_model_replication/google_gemma_4_12b_it/matched_controls_extended --selection outputs/cross_model_replication/google_gemma_4_12b_it/matched_controls/cohort_selection.parquet --output-dir outputs/cross_model_replication/google_gemma_4_12b_it/branching_intervention --min-current-normalized-correct-probability 0.9 --max-candidates-per-dataset 25 --branch-modes answer_only,normal,short_verification,preserve_unless_decisive --branch-seeds 0-3",
+          "stage": "branching_setup"
+        }
+      ],
+      "extended_root": "outputs/cross_model_replication/google_gemma_4_12b_it/matched_controls_extended",
+      "matched_root": "outputs/cross_model_replication/google_gemma_4_12b_it/matched_controls",
+      "model": "google/gemma-4-12B-it",
+      "model_root": "outputs/cross_model_replication/google_gemma_4_12b_it",
+      "runnable": true,
+      "selection_path": "outputs/cross_model_replication/google_gemma_4_12b_it/matched_controls/cohort_selection.parquet",
+      "slug": "google_gemma_4_12b_it"
+    }
+  ],
+  "output_root": "outputs/cross_model_replication",
+  "per_cohort": 25,
+  "replication_mode": "same matched question positions; baseline cohorts come from the source matched-selection run",
+  "runnable_model_count": 1,
+  "seeds": [
+    0,
+    1,
+    2,
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    9
+  ]
+}
