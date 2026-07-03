@@ -52,7 +52,7 @@ def _trajectory_row(
     }
 
 
-def test_build_activation_probe_examples_labels_all_three_targets(
+def test_build_activation_probe_examples_labels_all_targets(
     tmp_path: Path,
 ) -> None:
     run_dir = tmp_path / "matched" / "mmlu_pro" / "seed_0"
@@ -75,16 +75,19 @@ def test_build_activation_probe_examples_labels_all_three_targets(
     ).set_index("question_id")
 
     loss = examples.loc["loss"]
+    assert loss["current_correct"] == 1
     assert loss["future_loss"] == 1
     assert loss["future_change_to_wrong"] == 1
     assert loss["future_answer_flip"] == 1
 
     flip_good = examples.loc["flip_good"]
+    assert flip_good["current_correct"] == 0
     assert flip_good["future_loss"] == 0
     assert flip_good["future_change_to_wrong"] == 0
     assert flip_good["future_answer_flip"] == 1
 
     stable_wrong = examples.loc["stable_wrong"]
+    assert stable_wrong["current_correct"] == 0
     assert stable_wrong["future_loss"] == 0
     assert stable_wrong["future_change_to_wrong"] == 0
     assert stable_wrong["future_answer_flip"] == 0
@@ -147,11 +150,18 @@ def test_evaluate_probe_halting_combines_confidence_and_probe_score() -> None:
     probe_row = summary[
         summary["policy_family"] == "probe_confidence"
     ].iloc[0]
+    probe_only_row = summary[
+        summary["policy_family"] == "probe_only"
+    ].iloc[0]
 
     assert probe_row["accuracy"] == 1.0
     assert probe_row["final_accuracy"] == 0.5
     assert probe_row["delta_vs_final"] == 0.5
     assert probe_row["stop_rate"] == 0.5
+    assert probe_only_row["accuracy"] == 1.0
+    assert probe_only_row["final_accuracy"] == 0.5
+    assert probe_only_row["delta_vs_final"] == 0.5
+    assert probe_only_row["stop_rate"] == 0.5
 
 
 def test_train_activation_probes_numpy_backend_writes_metrics(
@@ -191,6 +201,7 @@ def test_train_activation_probes_numpy_backend_writes_metrics(
             backend="numpy",
             folds=2,
             targets=(
+                "current_correct",
                 "future_loss",
                 "future_change_to_wrong",
                 "future_answer_flip",
@@ -200,6 +211,7 @@ def test_train_activation_probes_numpy_backend_writes_metrics(
 
     metrics = pd.read_parquet(summary["metrics_path"])
     assert set(metrics["target"]) == {
+        "current_correct",
         "future_loss",
         "future_change_to_wrong",
         "future_answer_flip",

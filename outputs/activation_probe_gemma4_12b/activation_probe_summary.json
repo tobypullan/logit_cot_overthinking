@@ -1,82 +1,100 @@
 {
-  "activation_chunk_size": 500,
-  "activation_max_shard_bytes": 49920128,
-  "activation_shard_count": 27,
-  "activation_shard_manifest_path": "outputs/activation_probe_gemma4_12b/activations_shards/manifest.json",
-  "activation_storage": "sharded_npy",
   "activations_path": "outputs/activation_probe_gemma4_12b/activations_shards/manifest.json",
   "backend": "torch",
   "batch_size": 256,
   "best_auc_by_target": [
     {
-      "accuracy_at_0_5": 0.6084444444444445,
-      "auc": 0.65428088683009,
-      "brier": 0.2440027236324399,
+      "accuracy_at_0_5": 0.6099259259259259,
+      "auc": 0.6545573121525554,
+      "brier": 0.24410126294341167,
       "layer": 28,
       "positive_rate": 0.2919259259259259,
       "row_count": 13500,
       "target": "future_answer_flip"
     },
     {
-      "accuracy_at_0_5": 0.583925925925926,
-      "auc": 0.6100158070370587,
-      "brier": 0.25499818788186573,
-      "layer": 28,
+      "accuracy_at_0_5": 0.5846666666666667,
+      "auc": 0.6069683969029916,
+      "brier": 0.25649863316685567,
+      "layer": 36,
       "positive_rate": 0.1837037037037037,
       "row_count": 13500,
       "target": "future_change_to_wrong"
     },
     {
-      "accuracy_at_0_5": 0.5888148148148148,
-      "auc": 0.5907122905805561,
-      "brier": 0.25093075217576305,
+      "accuracy_at_0_5": 0.5915555555555555,
+      "auc": 0.5919897329490303,
+      "brier": 0.25122524201030166,
       "layer": 44,
       "positive_rate": 0.08037037037037037,
       "row_count": 13500,
       "target": "future_loss"
+    },
+    {
+      "accuracy_at_0_5": 0.54,
+      "auc": 0.547946064804334,
+      "brier": 0.28223764189438005,
+      "layer": 20,
+      "positive_rate": 0.4574814814814815,
+      "row_count": 13500,
+      "target": "current_correct"
     }
   ],
   "best_halting_by_target": [
     {
-      "accuracy": 0.49533333333333335,
+      "accuracy": 0.49933333333333335,
       "attempt_count": 1500,
-      "confidence_threshold": 0.95,
-      "delta_vs_final": 0.010000000000000009,
+      "confidence_threshold": 0.8,
+      "delta_vs_final": 0.014000000000000012,
       "final_accuracy": 0.48533333333333334,
-      "layer": 16.0,
-      "mean_stop_decile": 72.41333333333333,
-      "median_stop_decile": 90.0,
+      "layer": 44.0,
+      "mean_stop_decile": 95.51333333333334,
+      "median_stop_decile": 100.0,
       "policy_family": "probe_confidence",
-      "probe_threshold": 0.7,
-      "stop_rate": 0.5093333333333333,
+      "probe_threshold": 0.9,
+      "stop_rate": 0.09133333333333334,
       "target": "future_loss"
     },
     {
-      "accuracy": 0.492,
+      "accuracy": 0.496,
       "attempt_count": 1500,
-      "confidence_threshold": 0.95,
-      "delta_vs_final": 0.006666666666666654,
+      "confidence_threshold": 0.9,
+      "delta_vs_final": 0.010666666666666658,
       "final_accuracy": 0.48533333333333334,
-      "layer": 0.0,
-      "mean_stop_decile": 83.56666666666666,
-      "median_stop_decile": 100.0,
+      "layer": 20.0,
+      "mean_stop_decile": 62.20666666666666,
+      "median_stop_decile": 60.0,
       "policy_family": "probe_confidence",
       "probe_threshold": 0.7,
-      "stop_rate": 0.31266666666666665,
+      "stop_rate": 0.6373333333333333,
+      "target": "current_correct"
+    },
+    {
+      "accuracy": 0.48933333333333334,
+      "attempt_count": 1500,
+      "confidence_threshold": 0.95,
+      "delta_vs_final": 0.0040000000000000036,
+      "final_accuracy": 0.48533333333333334,
+      "layer": 16.0,
+      "mean_stop_decile": 93.86,
+      "median_stop_decile": 100.0,
+      "policy_family": "probe_confidence",
+      "probe_threshold": 0.9,
+      "stop_rate": 0.106,
       "target": "future_answer_flip"
     },
     {
       "accuracy": 0.4886666666666667,
       "attempt_count": 1500,
-      "confidence_threshold": 0.95,
+      "confidence_threshold": 0.7,
       "delta_vs_final": 0.003333333333333355,
       "final_accuracy": 0.48533333333333334,
-      "layer": 44.0,
-      "mean_stop_decile": 95.94,
+      "layer": 4.0,
+      "mean_stop_decile": 98.06,
       "median_stop_decile": 100.0,
       "policy_family": "probe_confidence",
       "probe_threshold": 0.9,
-      "stop_rate": 0.076,
+      "stop_rate": 0.03866666666666667,
       "target": "future_change_to_wrong"
     }
   ],
@@ -120,13 +138,14 @@
   "output_dir": "outputs/activation_probe_gemma4_12b",
   "predictions_path": "outputs/activation_probe_gemma4_12b/probe_predictions.parquet",
   "targets": [
+    "current_correct",
     "future_loss",
     "future_change_to_wrong",
     "future_answer_flip"
   ],
   "timings_seconds": {
-    "loading": 0.069,
-    "total": 451.384,
-    "training_and_evaluation": 451.314
+    "loading": 0.185,
+    "total": 1105.715,
+    "training_and_evaluation": 1105.53
   }
 }

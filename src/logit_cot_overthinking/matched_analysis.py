@@ -630,7 +630,7 @@ def plot_cohort_loss_rates(
         axis.bar(labels, values, color=["#b91c1c", "#15803d", "#6b7280"])
         axis.set_title(label)
         axis.set_ylim(0, 1)
-        axis.set_ylabel("Broad-loss rate across reruns")
+        axis.set_ylabel("Answer loss rate across reruns")
         axis.tick_params(axis="x", rotation=15)
         for index, value in enumerate(values):
             axis.text(

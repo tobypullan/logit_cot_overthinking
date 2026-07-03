@@ -21,6 +21,9 @@ DEFAULT_DECILES = tuple(range(10, 100, 10))
 DEFAULT_CONFIDENCE_THRESHOLDS = (0.7, 0.8, 0.9, 0.95)
 DEFAULT_PROBE_THRESHOLDS = (0.3, 0.5, 0.7, 0.9)
 PROBE_TARGETS = {
+    "current_correct": (
+        "The current prediction matches the true answer."
+    ),
     "future_loss": (
         "Current prediction is correct and the final prediction is wrong."
     ),
@@ -261,9 +264,9 @@ def _build_example_rows(
                     "answer": answer,
                     "current_prediction": prediction,
                     "final_prediction": final_prediction,
-                    "current_correct": current_correct,
                     "final_correct": final_correct,
                     "final_wrong": final_wrong,
+                    "current_correct": int(current_correct),
                     "future_loss": int(current_correct and final_wrong),
                     "future_change_to_wrong": int(
                         final_wrong and final_prediction != prediction
@@ -1103,7 +1106,9 @@ def train_activation_probes(
             .to_dict(orient="records")
         ),
         "best_halting_by_target": (
-            halting[halting["policy_family"] == "probe_confidence"]
+            halting[
+                halting["policy_family"].isin(("probe_only", "probe_confidence"))
+            ]
             .sort_values("delta_vs_final", ascending=False)
             .groupby("target")
             .head(1)
@@ -1143,7 +1148,7 @@ def evaluate_probe_halting(
         policy_family: str,
         target: str,
         layer: int | None,
-        confidence_threshold: float,
+        confidence_threshold: float | None,
         probe_threshold: float | None,
     ) -> None:
         if not rows:
@@ -1213,6 +1218,43 @@ def evaluate_probe_halting(
             key: group.sort_values("decile")
             for key, group in scored.groupby(attempt_columns, sort=False)
         }
+        for probe_threshold in probe_thresholds:
+            rows = []
+            for group in grouped_scored.values():
+                selected_rows = group[
+                    group["probe_score"].astype(float)
+                    >= float(probe_threshold)
+                ]
+                selected = (
+                    selected_rows.iloc[0]
+                    if not selected_rows.empty
+                    else None
+                )
+                final_correct = bool(group["final_correct"].iloc[0])
+                rows.append(
+                    {
+                        "selected_correct": (
+                            bool(selected["current_correct"])
+                            if selected is not None
+                            else final_correct
+                        ),
+                        "final_correct": final_correct,
+                        "stopped_early": selected is not None,
+                        "stop_decile": (
+                            int(selected["decile"])
+                            if selected is not None
+                            else 100
+                        ),
+                    }
+                )
+            summarize(
+                rows,
+                policy_family="probe_only",
+                target=str(target),
+                layer=int(layer),
+                confidence_threshold=None,
+                probe_threshold=float(probe_threshold),
+            )
         for confidence_threshold in confidence_thresholds:
             for probe_threshold in probe_thresholds:
                 rows = []
@@ -1297,7 +1339,9 @@ def write_activation_probe_report(
                 f"{float(row.positive_rate):.1%} |"
             )
     lines.extend(["", "## Best Halting Deltas", ""])
-    deployable = halting[halting["policy_family"] == "probe_confidence"]
+    deployable = halting[
+        halting["policy_family"].isin(("probe_only", "probe_confidence"))
+    ]
     if deployable.empty:
         lines.append("No probe halting policies were evaluated.")
     else:
@@ -1307,14 +1351,41 @@ def write_activation_probe_report(
             .head(5)
         )
         lines.append(
-            "| Target | Layer | Confidence | Probe | Accuracy | "
+            "| Target | Policy | Layer | Confidence | Probe | Accuracy | "
             "Delta vs final | Stop rate |"
         )
-        lines.append("|---|---:|---:|---:|---:|---:|---:|")
+        lines.append("|---|---|---:|---:|---:|---:|---:|---:|")
         for row in best_halting.itertuples(index=False):
+            confidence = (
+                ""
+                if pd.isna(row.confidence_threshold)
+                else f"{float(row.confidence_threshold):.2f}"
+            )
+            lines.append(
+                f"| `{row.target}` | {row.policy_family} | "
+                f"{int(row.layer)} | {confidence} | "
+                f"{float(row.probe_threshold):.2f} | "
+                f"{float(row.accuracy):.1%} | "
+                f"{float(row.delta_vs_final):+.1%} | "
+                f"{float(row.stop_rate):.1%} |"
+            )
+    lines.extend(["", "## Best Probe-Only Halting Deltas", ""])
+    probe_only = halting[halting["policy_family"] == "probe_only"]
+    if probe_only.empty:
+        lines.append("No probe-only halting policies were evaluated.")
+    else:
+        best_probe_only = (
+            probe_only.sort_values("delta_vs_final", ascending=False)
+            .groupby("target")
+            .head(5)
+        )
+        lines.append(
+            "| Target | Layer | Probe | Accuracy | Delta vs final | Stop rate |"
+        )
+        lines.append("|---|---:|---:|---:|---:|---:|")
+        for row in best_probe_only.itertuples(index=False):
             lines.append(
                 f"| `{row.target}` | {int(row.layer)} | "
-                f"{float(row.confidence_threshold):.2f} | "
                 f"{float(row.probe_threshold):.2f} | "
                 f"{float(row.accuracy):.1%} | "
                 f"{float(row.delta_vs_final):+.1%} | "

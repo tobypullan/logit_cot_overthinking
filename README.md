@@ -310,11 +310,12 @@ trajectory-plan-cross-model-replication \
   --output-root outputs/cross_model_replication
 ```
 
-Activation probes train layerwise linear classifiers for three deployable and
-diagnostic future-risk labels: `future_loss`, `future_change_to_wrong`, and
-`future_answer_flip`. The cheap examples stage builds labels from existing
-matched-control trajectories; the full stage also extracts hidden activations
-from Gemma and trains out-of-fold probes for halting-policy evaluation:
+Activation probes train layerwise linear classifiers for the deployable
+correctness label `current_correct` and diagnostic future-risk labels:
+`future_loss`, `future_change_to_wrong`, and `future_answer_flip`. The cheap
+examples stage builds labels from existing matched-control trajectories; the
+full stage also extracts hidden activations from Gemma and trains out-of-fold
+probes for halting-policy evaluation:
 
 ```bash
 trajectory-train-activation-probes \

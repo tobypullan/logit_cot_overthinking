@@ -101,6 +101,8 @@ Under this stricter definition, the recurrence gap shrinks but does not disappea
 | GPQA Diamond | 24.0% | 6.0% | 5.2% |
 | MMLU-Pro | 25.2% | 2.0% | 6.8% |
 
+![Grouped bar chart showing that high-confidence loss recurrence remains higher for seed-0 loss questions than matched controls](high_confidence_loss_recurrence.png)
+
 The matched risk differences are still positive. At this strict threshold:
 
 - GPQA Diamond: loss questions exceed final-correct controls by 18.0 percentage points, and stable-wrong controls by 18.8 points.
@@ -117,6 +119,36 @@ At the 80% prefix, a confidence-only predictor gets a combined AUC of 0.718. Add
 That is not magic. It is not a reliable detector of "the model is about to overthink." But it is a meaningful gap. The shape of the trajectory appears to contain information beyond a static confidence snapshot.
 
 This again pushes me away from the simplest version of the noise story. If the only thing happening were low confidence near the final decision boundary, then instability features should not help much after accounting for confidence. They do help, at least in the current artifacts.
+
+## Activation probes
+
+I also trained a more direct set of activation probes. These are different from the answer-letter probe above. The answer-letter probe asks, "what answer would the model give if stopped here?" The activation probes ask, "does the model's hidden state at this prefix look like states that later become unstable?"
+
+The training data came from the matched-control reruns: 150 selected questions, 10 seeds each, for 1,500 question-seed attempts. For each attempt I used the nine pre-final checkpoints, 10% through 90%, giving 13,500 supervised examples.
+
+For each example, I reconstructed the prompt plus reasoning prefix, ran Gemma 4 12B, and extracted the final-token hidden state at layers 0, 4, 8, ..., 48. Then I trained a linear classifier at each layer for three labels:
+
+- `future_loss`: the current prediction is correct, but the final prediction is wrong.
+- `future_change_to_wrong`: the final prediction is wrong and differs from the current prediction.
+- `future_answer_flip`: the final prediction differs from the current prediction.
+
+The labels use the true answer during training, but the probes do not need the true answer at deployment. At runtime they only need the current prefix activation. This makes them usable as risk scores, not as proof that the current answer is correct.
+
+The results are modest but above chance:
+
+| Target | Best layer | AUC | Positive rate |
+| --- | ---: | ---: | ---: |
+| `future_answer_flip` | 28 | 0.654 | 29.2% |
+| `future_change_to_wrong` | 28 | 0.610 | 18.4% |
+| `future_loss` | 44 | 0.591 | 8.0% |
+
+So the clearest activation signal is not "this correct answer will be lost"; it is the broader "this answer is likely to flip." The specific fragile-correctness target, `future_loss`, is harder and rarer.
+
+I also tested simple deployable halting rules that combine answer confidence with an activation-probe score. The policy stops at the first checkpoint where the current predicted answer has high normalized probability and the activation probe score exceeds a threshold; otherwise it uses the final answer. Thresholds were swept over answer-confidence values 0.70, 0.80, 0.90, and 0.95, and probe-score values 0.30, 0.50, 0.70, and 0.90.
+
+The best `future_loss` halting rule used layer 16, answer confidence 0.95, and probe threshold 0.70. It stopped early on 50.9% of the 1,500 attempts and improved accuracy from 48.5% to 49.5%, a +1.0 percentage point gain.
+
+That is not a useful intervention yet. But it is useful evidence about where the signal is. Hidden states contain some information about future instability, but the current probes are too weak to turn the large oracle early-stopping upper bound into a large deployable gain.
 
 ## What if we had stopped earlier?
 
@@ -179,6 +211,50 @@ The second is a GPQA Diamond organic chemistry question about an enamine/enamini
 This one is less accessible if you are not comfortable with organic chemistry, but it is qualitatively vivid. The trace repeatedly redraws the structure, loses track of carbon counting, and circles around which carbon is alkylated before selecting the wrong product. Here the peak correct-answer probability is only 0.560, so I would not use it as strong evidence against the uncertainty explanation. I would use it as an example of the kind of unstable reasoning that the aggregate tables compress away.
 
 There are also messier examples. One MMLU-Pro business question is correct at the 90% prefix and then flips to a nearby wrong interest-rate option at the end. One GPQA symmetry question has final valid-letter mass 0.998 and generated/probed agreement on the wrong answer. I would not want to build the argument on any one of these traces, but they are useful sanity checks: the broad-loss bucket contains both boring uncertainty-looking cases and cases where the late trace seems to introduce a bad reframing or bookkeeping error.
+
+Here are three more compact MMLU-Pro cases from the confidence-filtered robust set. I have not independently adjudicated every label here, so I would not lean on any one example. What matters is the pattern: the answer-letter probe is confidently correct at an intermediate prefix, then the later trace introduces a different framing or an external-looking cue and ends on the wrong answer.
+
+**Economics: externalities.** The correct answer is `G`, "Marginal social cost = marginal private cost + negative externality." The final probe and generated answer are `F`, "Marginal social benefit = marginal private benefit + positive externality." The probe is correct through the 60% prefix, with peak correct-answer probability 1.000.
+
+Early in the trace, the model states the standard relation:
+
+> Marginal Social Cost (MSC) = Marginal Private Cost (MPC) + Marginal External Cost (MEC)
+
+Later, it talks itself into treating "negative externality" as a signed negative quantity:
+
+> If "negative externality" is a negative number, then adding it ... would decrease the social cost, which is incorrect. But if "positive externality" is a positive number, then adding it ... would increase the social benefit, which is correct.
+
+The trace then ends by saying it found a source and that "the answer is F." This is a good example of the model having the right formula locally, then losing it after a semantic reframing of the option wording.
+
+**Elementary education: counting versus comparing.** The correct answer is `E`, "Counting." The final probe and generated answer are `D`, "Comparing." The probe is correct through the 30% prefix, with peak correct-answer probability 0.999 and final valid-letter mass 0.963.
+
+The trace starts by mapping the first item directly to counting:
+
+> "How many students are absent that day?" (This involves counting the number of absent students).
+
+But later the "enough snack cups" phrase pulls the whole interpretation toward comparison:
+
+> In our question, "Enough snack cups" is a comparison. Therefore, "Comparing" (D) is more likely than "Counting" (E).
+
+By the end, it has generalized that framing to all three classroom activities and concludes:
+
+> Conclusion seems to be "Comparing."
+
+**Psychology: heterogeneous work groups.** The correct answer is `B`, "more creative and better at decision-making." The final probe and generated answer are `A`, "more creative but worse at decision-making." The probe is correct through the 20% prefix, with peak correct-answer probability 0.999 and final valid-letter mass 0.965.
+
+The trace explicitly considers the correct direction:
+
+> While diversity can improve decision-making by avoiding groupthink...
+
+But then a later simulated-source check anchors it on the wrong option:
+
+> Found a test bank that says the answer is A... Wait, I just found a source that says B... The "standard" organizational behavior question often points towards A.
+
+The final line of reasoning is:
+
+> This confirms Choice A.
+
+These examples are useful because they do not look like a single token of random noise. They look more like the model has a locally answerable state, then later text changes which consideration is salient.
 
 This is why I think the next step should be thresholded and interventional rather than just more examples. If "fragile correctness" is real, it should survive stricter confidence filters and it should be possible to recover some answers by stopping or branching from high-risk checkpoints.
 

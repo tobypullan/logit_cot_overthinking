@@ -52,8 +52,9 @@ def _parse_floats(value: str) -> tuple[float, ...]:
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description=(
-            "Build hidden-state activation probes for future loss, future "
-            "change-to-wrong, and future answer flip labels."
+            "Build hidden-state activation probes for current correctness, "
+            "future loss, future change-to-wrong, and future answer flip "
+            "labels."
         )
     )
     parser.add_argument(
