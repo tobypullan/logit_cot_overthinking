@@ -1,0 +1,21 @@
+{
+  "baseline_accuracy": 0.731,
+  "baseline_correct": 731,
+  "beneficial_stop_count": 2,
+  "conditional_loss_threshold": 0.7,
+  "current_correct_threshold": 0.7,
+  "decisions_path": "outputs/activation_probe_mmlu_pro_n1000_intervention_eval_layer16/external_two_head_safety_summary.parquet",
+  "delta_accuracy": 0.001,
+  "delta_correct": 1,
+  "evaluation_dir": "outputs/activation_probe_mmlu_pro_n1000_intervention_eval_layer16",
+  "experiment": "external_two_head_intervention",
+  "harmful_stop_count": 1,
+  "intervention_accuracy": 0.732,
+  "intervention_correct": 732,
+  "layer": 16,
+  "model_dir": "outputs/two_head_intervention_mmlu_pro_n2000",
+  "neutral_stop_count": 13,
+  "question_count": 1000,
+  "stop_count": 16,
+  "stop_rate": 0.016
+}

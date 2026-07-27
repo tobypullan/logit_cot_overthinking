@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 from pathlib import Path
 
 import numpy as np
@@ -8,6 +9,7 @@ import pandas as pd
 from logit_cot_overthinking.activation_probe import (
     ProbeTrainingConfig,
     build_activation_probe_examples,
+    evaluate_candidate_intervention,
     evaluate_probe_halting,
     resolve_layers,
     train_activation_probes,
@@ -41,6 +43,7 @@ def _trajectory_row(
         "trace_token_count": 100,
         "choice_probabilities": probabilities,
         "choice_probability_mass": sum(probabilities.values()),
+        "non_choice_probability": 0.0,
         "prediction": prediction,
         "prediction_probability": probabilities[prediction],
         "correct": correct,
@@ -91,6 +94,116 @@ def test_build_activation_probe_examples_labels_all_targets(
     assert stable_wrong["future_loss"] == 0
     assert stable_wrong["future_change_to_wrong"] == 0
     assert stable_wrong["future_answer_flip"] == 0
+
+
+def test_build_robust_loss_vs_no_loss_cohort(
+    tmp_path: Path,
+) -> None:
+    run_dir = tmp_path / "run"
+    run_dir.mkdir()
+    rows = [
+        _trajectory_row(1, "robust", 10, "A", True, "B"),
+        _trajectory_row(1, "robust", 100, "B", False, "B"),
+        _trajectory_row(2, "no_loss", 10, "A", True, "A"),
+        _trajectory_row(2, "no_loss", 100, "A", True, "A"),
+        _trajectory_row(3, "nonrobust", 10, "A", True, "B"),
+        _trajectory_row(3, "nonrobust", 100, "B", False, "B"),
+    ]
+    pd.DataFrame(rows).to_parquet(
+        run_dir / "trajectory.parquet",
+        index=False,
+    )
+    traces = [
+        {
+            "position": position,
+            "question_id": question_id,
+            "question": f"Question {question_id}",
+            "options": ["alpha", "beta"],
+            "answer": "A",
+            "category": "cat",
+            "source": "test",
+            "reasoning_trace": "reasoning",
+            "generated_answer_text": generated,
+            "truncated": False,
+        }
+        for position, question_id, generated in (
+            (1, "robust", "B"),
+            (2, "no_loss", "A"),
+            (3, "nonrobust", "A"),
+        )
+    ]
+    (run_dir / "traces.jsonl").write_text(
+        "\n".join(json.dumps(trace) for trace in traces) + "\n",
+        encoding="utf-8",
+    )
+
+    examples = build_activation_probe_examples(
+        input_root=run_dir,
+        output_dir=tmp_path / "probe",
+        deciles=(10,),
+        example_cohort="robust_loss_vs_no_loss",
+    ).set_index("question_id")
+
+    assert set(examples.index) == {"robust", "no_loss"}
+    assert examples.loc["robust", "robust_loss_case"] == 1
+    assert examples.loc["no_loss", "robust_loss_case"] == 0
+    assert set(examples["current_correct"]) == {1}
+
+
+def test_build_intervention_candidates_includes_harmful_states(
+    tmp_path: Path,
+) -> None:
+    run_dir = tmp_path / "run"
+    run_dir.mkdir()
+    rows = [
+        _trajectory_row(1, "beneficial", 10, "A", True, "B"),
+        _trajectory_row(1, "beneficial", 100, "B", False, "B"),
+        _trajectory_row(2, "harmful", 10, "B", False, "A"),
+        _trajectory_row(2, "harmful", 100, "A", True, "A"),
+        _trajectory_row(3, "neutral", 10, "B", False, "B"),
+        _trajectory_row(3, "neutral", 100, "B", False, "B"),
+    ]
+    pd.DataFrame(rows).to_parquet(
+        run_dir / "trajectory.parquet",
+        index=False,
+    )
+    traces = [
+        {
+            "position": position,
+            "question_id": question_id,
+            "question": f"Question {question_id}",
+            "options": ["alpha", "beta"],
+            "answer": "A",
+            "category": "cat",
+            "source": "test",
+            "reasoning_trace": "reasoning",
+            "generated_answer_text": generated,
+            "truncated": False,
+        }
+        for position, question_id, generated in (
+            (1, "beneficial", "B"),
+            (2, "harmful", "A"),
+            (3, "neutral", "B"),
+        )
+    ]
+    (run_dir / "traces.jsonl").write_text(
+        "\n".join(json.dumps(trace) for trace in traces) + "\n",
+        encoding="utf-8",
+    )
+
+    examples = build_activation_probe_examples(
+        input_root=run_dir,
+        output_dir=tmp_path / "probe",
+        deciles=(10,),
+        example_cohort="intervention_candidates",
+        intervention_confidence_threshold=0.5,
+    ).set_index("question_id")
+
+    assert examples.loc["beneficial", "robust_stop_candidate"] == 1
+    assert examples.loc["beneficial", "intervention_utility"] == "beneficial"
+    assert examples.loc["harmful", "robust_stop_candidate"] == 0
+    assert examples.loc["harmful", "intervention_utility"] == "harmful"
+    assert examples.loc["neutral", "intervention_utility"] == "neutral"
 
 
 def test_evaluate_probe_halting_combines_confidence_and_probe_score() -> None:
@@ -162,6 +275,42 @@ def test_evaluate_probe_halting_combines_confidence_and_probe_score() -> None:
     assert probe_only_row["final_accuracy"] == 0.5
     assert probe_only_row["delta_vs_final"] == 0.5
     assert probe_only_row["stop_rate"] == 0.5
+
+
+def test_evaluate_candidate_intervention_counts_benefit_and_harm() -> None:
+    examples = pd.DataFrame(
+        {
+            "example_index": [0, 1],
+            "decile": [20, 20],
+            "normalized_prediction_probability": [0.95, 0.95],
+            "current_correct": [True, False],
+            "final_correct": [False, True],
+            "intervention_utility": ["beneficial", "harmful"],
+        }
+    )
+    predictions = pd.DataFrame(
+        {
+            "example_index": [0, 1],
+            "layer": [36, 36],
+            "target": ["robust_stop_candidate"] * 2,
+            "score": [0.9, 0.1],
+        }
+    )
+
+    result = evaluate_candidate_intervention(
+        examples,
+        predictions,
+        probe_thresholds=(0.5,),
+        fallback_attempt_count=1,
+        fallback_correct_count=1,
+    ).iloc[0]
+
+    assert result["attempt_count"] == 3
+    assert result["accuracy"] == 1.0
+    assert result["final_accuracy"] == 2 / 3
+    assert result["delta_vs_final"] == 1 / 3
+    assert result["beneficial_stop_count"] == 1
+    assert result["harmful_stop_count"] == 0
 
 
 def test_train_activation_probes_numpy_backend_writes_metrics(

@@ -41,6 +41,15 @@ def test_gpqa_configuration_is_valid() -> None:
     ).validate()
 
 
+def test_swe_qa_configuration_is_valid() -> None:
+    ProbeConfig(
+        dataset="lailaelkoussy/swe-qa",
+        dataset_format="swe-qa",
+        split="noisy_oracle",
+        selection="balanced-categories",
+    ).validate()
+
+
 def test_configuration_rejects_invalid_dataset_format() -> None:
     with pytest.raises(ValueError, match="dataset_format"):
         ProbeConfig(dataset_format="unknown").validate()

@@ -132,6 +132,28 @@ def build_summary(
         dtype="string",
     )
     category_counts = trace_categories.value_counts().sort_index().to_dict()
+    repository_counts = (
+        pd.Series(
+            [str(record.get("repository", "")) for record in trace_records],
+            dtype="string",
+        )
+        .replace("", pd.NA)
+        .dropna()
+        .value_counts()
+        .sort_index()
+        .to_dict()
+    )
+    question_type_counts = (
+        pd.Series(
+            [str(record.get("question_type", "")) for record in trace_records],
+            dtype="string",
+        )
+        .replace("", pd.NA)
+        .dropna()
+        .value_counts()
+        .sort_index()
+        .to_dict()
+    )
     truncated_trace_count = sum(
         bool(record.get("truncated", False)) for record in trace_records
     )
@@ -164,6 +186,8 @@ def build_summary(
         "trace_count": len(trace_records),
         "trajectory_row_count": len(dataframe),
         "category_counts": category_counts,
+        "repository_counts": repository_counts,
+        "question_type_counts": question_type_counts,
         "truncated_trace_count": truncated_trace_count,
         "complete_trace_count": len(trace_records) - truncated_trace_count,
         "trace_completion_rate": (

@@ -1,0 +1,57 @@
+{
+  "activation_dtype": "float16",
+  "activations_path": "outputs/activation_probe_mmlu_pro_n2000_robust_loss/activations.npy",
+  "batch_size": 1,
+  "batching": "sorted_by_prefix_token_count",
+  "cohort_negative_ratio": 3.0,
+  "example_cohort": "robust_loss_vs_no_loss",
+  "example_count": 424,
+  "examples_path": "outputs/activation_probe_mmlu_pro_n2000_robust_loss/activation_probe_examples.parquet",
+  "experiment": "activation_probe_extraction",
+  "hidden_size": 3840,
+  "input_root": "outputs/mmlu_pro_gemma4_12b_n2000_disjoint_seed0",
+  "layers": [
+    0,
+    4,
+    8,
+    12,
+    16,
+    20,
+    24,
+    28,
+    32,
+    36,
+    40,
+    44,
+    48
+  ],
+  "model": "google/gemma-4-12B-it",
+  "model_dtype": "bfloat16",
+  "output_dir": "outputs/activation_probe_mmlu_pro_n2000_robust_loss",
+  "preexisting_filled_rows": 0,
+  "processed_rows": 424,
+  "resumed_from_partial": false,
+  "reused": false,
+  "robust_confidence_threshold": 0.5,
+  "robust_final_choice_mass_threshold": 0.5,
+  "target_positive_counts": {
+    "current_correct": 424,
+    "future_answer_flip": 106,
+    "future_change_to_wrong": 106,
+    "future_loss": 106,
+    "robust_loss_case": 106
+  },
+  "target_positive_rates": {
+    "current_correct": 1.0,
+    "future_answer_flip": 0.25,
+    "future_change_to_wrong": 0.25,
+    "future_loss": 0.25,
+    "robust_loss_case": 0.25
+  },
+  "timings_seconds": {
+    "activation_extraction": 212.03,
+    "examples": 0.043,
+    "model_initialization": 12.374,
+    "total": 224.448
+  }
+}

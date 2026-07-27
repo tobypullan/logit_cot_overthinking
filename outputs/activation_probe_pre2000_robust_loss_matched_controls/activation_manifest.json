@@ -1,0 +1,26 @@
+{
+  "experiment": "activation_probe_extraction_reused_subset",
+  "source": "outputs/activation_probe_gemma4_12b",
+  "example_count": 408,
+  "layers": [
+    0,
+    4,
+    8,
+    12,
+    16,
+    20,
+    24,
+    28,
+    32,
+    36,
+    40,
+    44,
+    48
+  ],
+  "hidden_size": 3840,
+  "example_cohort": "robust_loss_vs_no_loss",
+  "cohort_negative_ratio": 3.0,
+  "target_positive_counts": {
+    "robust_loss_case": 102
+  }
+}

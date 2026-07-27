@@ -27,10 +27,11 @@ class ProbeConfig:
             "auto",
             "mmlu-pro",
             "gpqa-diamond",
+            "swe-qa",
         }:
             raise ValueError(
                 "dataset_format must be 'auto', 'mmlu-pro', or "
-                "'gpqa-diamond'"
+                "'gpqa-diamond', or 'swe-qa'"
             )
         if self.selection not in {
             "contiguous",

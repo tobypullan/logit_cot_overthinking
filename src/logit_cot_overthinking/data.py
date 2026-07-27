@@ -23,6 +23,9 @@ class MultipleChoiceQuestion:
     answer: str
     category: str
     source: str
+    context: str = ""
+    repository: str = ""
+    question_type: str = ""
 
     @property
     def labels(self) -> tuple[str, ...]:
@@ -30,10 +33,18 @@ class MultipleChoiceQuestion:
 
     @property
     def prompt(self) -> str:
-        return format_question(self.question, self.options)
+        return format_question(
+            self.question,
+            self.options,
+            context=self.context,
+        )
 
 
-def format_question(question: str, options: Sequence[str]) -> str:
+def format_question(
+    question: str,
+    options: Sequence[str],
+    context: str = "",
+) -> str:
     if not options:
         raise ValueError("A multiple-choice question must have at least one option")
     if len(options) > len(ascii_uppercase):
@@ -42,7 +53,17 @@ def format_question(question: str, options: Sequence[str]) -> str:
     choices = "\n".join(
         f"{ascii_uppercase[index]}. {option}" for index, option in enumerate(options)
     )
-    return f"{question.strip()}\n\n{choices}"
+    question_block = f"{question.strip()}\n\n{choices}"
+    if not context.strip():
+        return question_block
+    return (
+        "Code context:\n"
+        "<code>\n"
+        f"{context.strip()}\n"
+        "</code>\n\n"
+        "Question:\n"
+        f"{question_block}"
+    )
 
 
 def select_balanced_category_indices(
@@ -89,6 +110,42 @@ def select_balanced_category_indices(
     return sorted(selected)
 
 
+def select_balanced_category_indices_excluding(
+    categories: Sequence[str],
+    num_rows: int,
+    seed: int,
+    excluded_indices: Sequence[int],
+) -> list[int]:
+    excluded = [int(index) for index in excluded_indices]
+    if len(set(excluded)) != len(excluded):
+        raise ValueError("Excluded row indices must not contain duplicates")
+    invalid = [
+        index
+        for index in excluded
+        if index < 0 or index >= len(categories)
+    ]
+    if invalid:
+        raise IndexError(
+            f"Excluded row indices outside dataset: {invalid}"
+        )
+
+    excluded_set = set(excluded)
+    remaining_indices = [
+        index
+        for index in range(len(categories))
+        if index not in excluded_set
+    ]
+    remaining_categories = [
+        categories[index] for index in remaining_indices
+    ]
+    relative_indices = select_balanced_category_indices(
+        remaining_categories,
+        num_rows=num_rows,
+        seed=seed,
+    )
+    return sorted(remaining_indices[index] for index in relative_indices)
+
+
 def parse_gpqa_diamond_question(
     formatted_question: str,
 ) -> tuple[str, tuple[str, ...]]:
@@ -124,11 +181,56 @@ def _resolve_dataset_format(
     columns = set(column_names)
     if {"question_id", "question", "options", "answer"}.issubset(columns):
         return "mmlu-pro"
+    if {
+        "question",
+        "options",
+        "code",
+        "correct_answer",
+        "repo",
+        "category",
+    }.issubset(columns):
+        return "swe-qa"
     if columns == {"question", "answer"}:
         return "gpqa-diamond"
     raise ValueError(
         "Could not auto-detect dataset format from columns "
         f"{sorted(columns)}; pass --dataset-format explicitly"
+    )
+
+
+def parse_swe_qa_options(options: object) -> tuple[str, ...]:
+    if not isinstance(options, dict):
+        raise ValueError("SWE-QA options must be a mapping from labels to text")
+    normalized = {
+        str(label).strip().upper(): str(option).strip()
+        for label, option in options.items()
+    }
+    expected = tuple(ascii_uppercase[: len(normalized)])
+    if set(normalized) != set(expected) or len(normalized) < 2:
+        raise ValueError(
+            "SWE-QA option labels must be contiguous from A; "
+            f"got {tuple(normalized)}"
+        )
+    parsed = tuple(normalized[label] for label in expected)
+    if any(not option for option in parsed):
+        raise ValueError("SWE-QA options must not be empty")
+    return parsed
+
+
+def _balanced_selection_categories(
+    dataset: object,
+    resolved_format: str,
+) -> list[str]:
+    if resolved_format == "mmlu-pro":
+        return [str(category) for category in dataset["category"]]
+    if resolved_format == "swe-qa":
+        return [
+            f"{row['repo']}::{row['category']}"
+            for row in dataset
+        ]
+    raise ValueError(
+        "balanced-categories selection is only supported for MMLU-Pro "
+        "and SWE-QA"
     )
 
 
@@ -176,16 +278,12 @@ def load_questions(
                 f"{len(dataset)} rows: {invalid}"
             )
     elif selection == "balanced-categories":
-        if resolved_format != "mmlu-pro":
-            raise ValueError(
-                "balanced-categories selection is only supported for MMLU-Pro"
-            )
         if start_row != 0:
             raise ValueError(
                 "start_row must be 0 when using balanced-categories selection"
             )
         selected_indices = select_balanced_category_indices(
-            dataset["category"],
+            _balanced_selection_categories(dataset, resolved_format),
             num_rows,
             seed,
         )
@@ -195,22 +293,36 @@ def load_questions(
     selected = dataset.select(selected_indices)
     questions: list[MultipleChoiceQuestion] = []
     for position, row in zip(selected_indices, selected):
+        context = ""
+        repository = ""
+        question_type = ""
         if resolved_format == "mmlu-pro":
             question_id = str(row["question_id"])
             question = str(row["question"])
             options = tuple(str(option) for option in row["options"])
             category = str(row.get("category", ""))
             source = str(row.get("src", ""))
-        else:
+            answer = str(row["answer"]).strip().upper()
+        elif resolved_format == "gpqa-diamond":
             question, options = parse_gpqa_diamond_question(
                 str(row["question"])
             )
             question_id = f"gpqa-diamond-{position:03d}"
             category = "gpqa-diamond"
             source = dataset_name
+            answer = str(row["answer"]).strip().upper()
+        else:
+            question_id = f"swe-qa-{position:05d}"
+            question = str(row["question"])
+            options = parse_swe_qa_options(row["options"])
+            context = str(row["code"])
+            repository = str(row["repo"])
+            question_type = str(row["category"])
+            category = f"{repository}::{question_type}"
+            source = dataset_name
+            answer = str(row["correct_answer"]).strip().upper()
 
         labels = tuple(ascii_uppercase[: len(options)])
-        answer = str(row["answer"]).strip().upper()
         if answer not in labels:
             raise ValueError(
                 f"Question {question_id} has answer {answer!r} outside {labels}"
@@ -224,6 +336,9 @@ def load_questions(
                 answer=answer,
                 category=category,
                 source=source,
+                context=context,
+                repository=repository,
+                question_type=question_type,
             )
         )
     return questions

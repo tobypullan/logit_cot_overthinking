@@ -355,6 +355,9 @@ def _question_from_trace(trace: dict[str, object]) -> MultipleChoiceQuestion:
         answer=str(trace["answer"]),
         category=str(trace.get("category", "")),
         source=str(trace.get("source", "")),
+        context=str(trace.get("context", "")),
+        repository=str(trace.get("repository", "")),
+        question_type=str(trace.get("question_type", "")),
     )
 
 

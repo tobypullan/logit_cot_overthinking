@@ -1,0 +1,9 @@
+{
+  "beneficial_candidate_count": 34,
+  "candidate_count": 1984,
+  "complete_question_count": 1990,
+  "confidence_threshold": 0.9,
+  "harmful_candidate_count": 247,
+  "missing_candidate_count": 6,
+  "missing_candidate_final_correct_count": 1
+}

@@ -1,0 +1,64 @@
+{
+  "activations_path": "outputs/activation_probe_mmlu_pro_n2000_robust_loss/activations.npy",
+  "backend": "torch",
+  "batch_size": 128,
+  "best_auc_by_target": [
+    {
+      "accuracy_at_0_5": 0.785377358490566,
+      "auc": 0.8871781179541949,
+      "brier": 0.153799160260375,
+      "layer": 36,
+      "positive_rate": 0.25,
+      "row_count": 424,
+      "target": "robust_loss_case"
+    }
+  ],
+  "best_halting_by_target": [],
+  "epochs": 16,
+  "example_count": 424,
+  "examples_path": "outputs/activation_probe_mmlu_pro_n2000_robust_loss/activation_probe_examples.parquet",
+  "experiment": "activation_probe_training",
+  "folds": 5,
+  "halting_summary_path": "outputs/activation_probe_mmlu_pro_n2000_robust_loss/probe_halting_summary.parquet",
+  "layers": [
+    0,
+    4,
+    8,
+    12,
+    16,
+    20,
+    24,
+    28,
+    32,
+    36,
+    40,
+    44,
+    48
+  ],
+  "metrics_path": "outputs/activation_probe_mmlu_pro_n2000_robust_loss/probe_metrics.parquet",
+  "model_paths": {
+    "0": "outputs/activation_probe_mmlu_pro_n2000_robust_loss/models/layer_000.npz",
+    "12": "outputs/activation_probe_mmlu_pro_n2000_robust_loss/models/layer_012.npz",
+    "16": "outputs/activation_probe_mmlu_pro_n2000_robust_loss/models/layer_016.npz",
+    "20": "outputs/activation_probe_mmlu_pro_n2000_robust_loss/models/layer_020.npz",
+    "24": "outputs/activation_probe_mmlu_pro_n2000_robust_loss/models/layer_024.npz",
+    "28": "outputs/activation_probe_mmlu_pro_n2000_robust_loss/models/layer_028.npz",
+    "32": "outputs/activation_probe_mmlu_pro_n2000_robust_loss/models/layer_032.npz",
+    "36": "outputs/activation_probe_mmlu_pro_n2000_robust_loss/models/layer_036.npz",
+    "4": "outputs/activation_probe_mmlu_pro_n2000_robust_loss/models/layer_004.npz",
+    "40": "outputs/activation_probe_mmlu_pro_n2000_robust_loss/models/layer_040.npz",
+    "44": "outputs/activation_probe_mmlu_pro_n2000_robust_loss/models/layer_044.npz",
+    "48": "outputs/activation_probe_mmlu_pro_n2000_robust_loss/models/layer_048.npz",
+    "8": "outputs/activation_probe_mmlu_pro_n2000_robust_loss/models/layer_008.npz"
+  },
+  "output_dir": "outputs/activation_probe_mmlu_pro_n2000_robust_loss",
+  "predictions_path": "outputs/activation_probe_mmlu_pro_n2000_robust_loss/probe_predictions.parquet",
+  "targets": [
+    "robust_loss_case"
+  ],
+  "timings_seconds": {
+    "loading": 0.01,
+    "total": 5.205,
+    "training_and_evaluation": 5.195
+  }
+}

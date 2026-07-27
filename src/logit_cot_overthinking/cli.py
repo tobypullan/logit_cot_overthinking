@@ -16,7 +16,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--dataset", default="TIGER-Lab/MMLU-Pro")
     parser.add_argument(
         "--dataset-format",
-        choices=("auto", "mmlu-pro", "gpqa-diamond"),
+        choices=("auto", "mmlu-pro", "gpqa-diamond", "swe-qa"),
         default="auto",
         help="Dataset adapter. Auto detects supported schemas.",
     )

@@ -9,10 +9,11 @@ Models](https://arxiv.org/abs/2601.23163):
 3. Reinject each prefix and measure the next-token distribution over the valid
    answer letters.
 
-The implementation supports MMLU-Pro, GPQA Diamond, and
+The implementation supports MMLU-Pro, GPQA Diamond, SWE-QA, and
 [`google/gemma-4-12B-it`](https://huggingface.co/google/gemma-4-12B-it).
 Gemma's thought-channel format is handled explicitly. MMLU-Pro's variable
 number of choices and GPQA Diamond's nested choice mappings are preserved.
+SWE-QA's repository code context and four-choice mappings are preserved.
 
 ## Installation
 
@@ -185,6 +186,91 @@ trajectory-probe \
   --output-dir outputs/gpqa_diamond_gemma4_12b_seed0
 ```
 
+## SWE-QA Repository-Code Experiment
+
+[`lailaelkoussy/swe-qa`](https://huggingface.co/datasets/lailaelkoussy/swe-qa)
+contains four-choice code-comprehension questions derived from real Python
+repositories in SWE-bench. Each question requires reasoning across multiple
+code entities. The `noisy_oracle` split adds plausible distractor chunks and
+is the primary setting for this experiment.
+
+The adapter places the supplied code before the question, preserves the source
+repository and question type as separate output columns, and uses their pair
+as the analysis category. Consequently, `--selection balanced-categories`
+balances across repository/question-type pairs rather than only repositories.
+
+Run a three-question smoke test:
+
+```bash
+trajectory-probe \
+  --dataset lailaelkoussy/swe-qa \
+  --dataset-format swe-qa \
+  --split noisy_oracle \
+  --start-row 0 \
+  --num-rows 3 \
+  --seed 0 \
+  --trace-max-tokens 8192 \
+  --max-model-len 32768 \
+  --max-num-seqs 2 \
+  --output-dir outputs/swe_qa_gemma4_12b_smoke
+```
+
+After inspecting the smoke artifacts, run a deterministic 1,000-question
+balanced sample:
+
+```bash
+trajectory-probe \
+  --dataset lailaelkoussy/swe-qa \
+  --dataset-format swe-qa \
+  --split noisy_oracle \
+  --selection balanced-categories \
+  --num-rows 1000 \
+  --seed 0 \
+  --trace-max-tokens 16384 \
+  --max-model-len 49152 \
+  --max-num-seqs 8 \
+  --output-dir outputs/swe_qa_gemma4_12b_n1000_seed0
+```
+
+Generate the standard trajectory figures and fragile-correctness analysis:
+
+```bash
+trajectory-visualize \
+  --input-dir outputs/swe_qa_gemma4_12b_n1000_seed0
+
+trajectory-analyze-lost \
+  --input-dir outputs/swe_qa_gemma4_12b_n1000_seed0
+```
+
+The `oracle` and `noisy_oracle` splits contain the same questions with
+different context construction, so they should not be treated as independent
+evaluation sets.
+
+## Disjoint 2,000-Question MMLU-Pro Expansion
+
+The expansion launcher selects 2,000 MMLU-Pro test questions balanced across
+the 14 categories after excluding the exact 1,000-question balanced seed-0
+selection used above. The selection seed and generation seed are recorded
+separately in the launcher, and the resulting probe summary stores all 2,000
+explicit row indices.
+
+Inspect the selection without starting the model:
+
+```bash
+experiments/run_mmlu_pro_n2000_disjoint.sh --plan-only
+```
+
+Start the run:
+
+```bash
+experiments/run_mmlu_pro_n2000_disjoint.sh
+```
+
+The output is written to
+`outputs/mmlu_pro_gemma4_12b_n2000_disjoint_seed0/`. The run uses the completed
+32,768-token trace budget and 49,152-token model context used by the extended
+baseline, avoiding a separate trace-extension pass for most questions.
+
 ## Candidate Seed Reruns
 
 Rerun the 17 confidence-filtered MMLU-Pro candidates and 8 normalized GPQA
@@ -321,6 +407,71 @@ probes for halting-policy evaluation:
 trajectory-train-activation-probes \
   --input-root outputs/matched_controls_gemma4_12b_extended \
   --output-dir outputs/activation_probe_gemma4_12b
+```
+
+To train a diagnostic probe specifically on robust-loss versus no-loss
+checkpoints from a single trajectory run, retain only checkpoints where the
+model is currently correct and use decile-matched negative sampling:
+
+```bash
+trajectory-train-activation-probes \
+  --input-root outputs/mmlu_pro_gemma4_12b_n2000_disjoint_seed0 \
+  --output-dir outputs/activation_probe_mmlu_pro_n2000_robust_loss \
+  --example-cohort robust_loss_vs_no_loss \
+  --cohort-negative-ratio 3 \
+  --targets robust_loss_case \
+  --layers 0,4,8,12,16,20,24,28,32,36,40,44,48 \
+  --epochs 16
+```
+
+This keeps every currently-correct checkpoint from a robust-loss trace, draws
+three currently-correct no-loss checkpoints per positive within each decile,
+and excludes broad losses that do not pass the robust-loss filters. Cross
+validation remains grouped by question.
+
+For an intervention evaluation, use one deployable candidate per question:
+the earliest checkpoint whose normalized answer confidence is at least 0.9.
+Unlike the diagnostic cohort, this retains currently-wrong checkpoints so the
+reported stopping accuracy includes prevented self-corrections:
+
+```bash
+trajectory-train-activation-probes \
+  --input-root outputs/mmlu_pro_gemma4_12b_n2000_disjoint_seed0 \
+  --output-dir outputs/activation_probe_mmlu_pro_n2000_intervention \
+  --example-cohort intervention_candidates \
+  --intervention-confidence-threshold 0.9 \
+  --targets robust_stop_candidate \
+  --layers 0,4,8,12,16,20,24,28,32,36,40,44,48 \
+  --epochs 16
+```
+
+The resulting `probe_halting_summary.parquet` reports question-grouped
+out-of-fold accuracy, stop rate, beneficial stops, and harmful stops. Questions
+without a qualifying checkpoint automatically continue to the final answer.
+
+To separate "is the current answer correct?" from "will continued reasoning
+lose it?", train the two-head intervention on the extracted candidates:
+
+```bash
+trajectory-two-head-intervention \
+  --stage train \
+  --source-dir outputs/activation_probe_mmlu_pro_n2000_intervention \
+  --output-dir outputs/two_head_intervention_mmlu_pro_n2000 \
+  --layers 0,4,8,12,16,20,24,28,32,36,40,44,48
+```
+
+Both thresholds must pass before stopping. Apply a policy to a separately
+extracted candidate cache with:
+
+```bash
+trajectory-two-head-intervention \
+  --stage apply \
+  --output-dir outputs/two_head_intervention_mmlu_pro_n2000 \
+  --evaluation-dir outputs/activation_probe_mmlu_pro_n1000_intervention_eval_layer16 \
+  --output-path outputs/activation_probe_mmlu_pro_n1000_intervention_eval_layer16/external_two_head_safety_summary.json \
+  --layer 16 \
+  --correctness-threshold 0.7 \
+  --loss-threshold 0.7
 ```
 
 Large activation caches can be stored as `activations_shards/manifest.json`

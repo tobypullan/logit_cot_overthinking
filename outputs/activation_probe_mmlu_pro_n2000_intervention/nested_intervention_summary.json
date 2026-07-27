@@ -1,0 +1,93 @@
+{
+  "method": "nested_5_fold_layer_and_threshold_selection",
+  "candidate_confidence_threshold": 0.9,
+  "probe_threshold_grid": [
+    0.3,
+    0.5,
+    0.7,
+    0.9,
+    1.1
+  ],
+  "baseline_correct": 1472,
+  "baseline_accuracy": 0.7396984924623116,
+  "intervention_correct": 1458,
+  "intervention_accuracy": 0.7326633165829146,
+  "delta_correct": -14,
+  "delta_accuracy": -0.007035175879396985,
+  "stop_count": 273,
+  "stop_rate": 0.1371859296482412,
+  "beneficial_stop_count": 16,
+  "harmful_stop_count": 30,
+  "folds": [
+    {
+      "outer_fold": 0,
+      "validation_fold": 1,
+      "selected_layer": 48,
+      "selected_threshold": 0.7,
+      "validation_net_correct": 5,
+      "validation_stops": 23,
+      "validation_harmful_stops": 0,
+      "test_questions": 420,
+      "test_stops": 47,
+      "test_beneficial_stops": 4,
+      "test_harmful_stops": 8,
+      "test_net_correct": -4
+    },
+    {
+      "outer_fold": 1,
+      "validation_fold": 2,
+      "selected_layer": 12,
+      "selected_threshold": 0.7,
+      "validation_net_correct": 3,
+      "validation_stops": 68,
+      "validation_harmful_stops": 3,
+      "test_questions": 355,
+      "test_stops": 80,
+      "test_beneficial_stops": 6,
+      "test_harmful_stops": 6,
+      "test_net_correct": 0
+    },
+    {
+      "outer_fold": 2,
+      "validation_fold": 3,
+      "selected_layer": 48,
+      "selected_threshold": 1.1,
+      "validation_net_correct": 0,
+      "validation_stops": 0,
+      "validation_harmful_stops": 0,
+      "test_questions": 420,
+      "test_stops": 0,
+      "test_beneficial_stops": 0,
+      "test_harmful_stops": 0,
+      "test_net_correct": 0
+    },
+    {
+      "outer_fold": 3,
+      "validation_fold": 4,
+      "selected_layer": 36,
+      "selected_threshold": 0.5,
+      "validation_net_correct": 13,
+      "validation_stops": 152,
+      "validation_harmful_stops": 7,
+      "test_questions": 407,
+      "test_stops": 146,
+      "test_beneficial_stops": 6,
+      "test_harmful_stops": 16,
+      "test_net_correct": -10
+    },
+    {
+      "outer_fold": 4,
+      "validation_fold": 0,
+      "selected_layer": 44,
+      "selected_threshold": 0.9,
+      "validation_net_correct": 1,
+      "validation_stops": 2,
+      "validation_harmful_stops": 0,
+      "test_questions": 382,
+      "test_stops": 0,
+      "test_beneficial_stops": 0,
+      "test_harmful_stops": 0,
+      "test_net_correct": 0
+    }
+  ]
+}

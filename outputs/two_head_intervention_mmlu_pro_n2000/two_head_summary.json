@@ -1,0 +1,144 @@
+{
+  "activations_path": "outputs/activation_probe_mmlu_pro_n2000_intervention/activations.npy",
+  "best_auc_by_head": [
+    {
+      "accuracy_at_0_5": 0.5881481481481482,
+      "auc": 0.8102762381548364,
+      "brier": 0.25987718235801344,
+      "head": "conditional_robust_loss",
+      "layer": 32,
+      "positive_rate": 0.025185185185185185,
+      "row_count": 1350
+    },
+    {
+      "accuracy_at_0_5": 0.7167338709677419,
+      "auc": 0.7961724500525762,
+      "brier": 0.1930311897352587,
+      "head": "current_correct",
+      "layer": 40,
+      "positive_rate": 0.6804435483870968,
+      "row_count": 1984
+    },
+    {
+      "accuracy_at_0_5": 0.9435483870967742,
+      "auc": 0.5753846153846154,
+      "brier": 0.08463872316414917,
+      "head": "combined_safe_stop",
+      "layer": 8,
+      "positive_rate": 0.017137096774193547,
+      "row_count": 1984
+    }
+  ],
+  "best_policy": [
+    {
+      "accuracy": 0.74321608040201,
+      "attempt_count": 1990,
+      "beneficial_stop_count": 28,
+      "conditional_loss_threshold": 0.5,
+      "current_correct_threshold": 0.5,
+      "delta_vs_final": 0.0035175879396984926,
+      "final_accuracy": 0.7396984924623116,
+      "harmful_stop_count": 21,
+      "layer": 36,
+      "stop_count": 383,
+      "stop_rate": 0.19246231155778895
+    }
+  ],
+  "epochs": 16,
+  "example_count": 1984,
+  "examples_path": "outputs/activation_probe_mmlu_pro_n2000_intervention/activation_probe_examples.parquet",
+  "experiment": "two_head_intervention",
+  "fixed_layer36_0_9_policy": [
+    {
+      "accuracy": 0.7396984924623116,
+      "attempt_count": 1990,
+      "beneficial_stop_count": 0,
+      "conditional_loss_threshold": 0.9,
+      "current_correct_threshold": 0.9,
+      "delta_vs_final": 0.0,
+      "final_accuracy": 0.7396984924623116,
+      "harmful_stop_count": 0,
+      "layer": 36,
+      "stop_count": 0,
+      "stop_rate": 0.0
+    }
+  ],
+  "folds": 5,
+  "layers": [
+    0,
+    4,
+    8,
+    12,
+    16,
+    20,
+    24,
+    28,
+    32,
+    36,
+    40,
+    44,
+    48
+  ],
+  "metrics_path": "outputs/two_head_intervention_mmlu_pro_n2000/two_head_metrics.parquet",
+  "model_paths": {
+    "0": {
+      "conditional_robust_loss": "outputs/two_head_intervention_mmlu_pro_n2000/models/conditional_robust_loss_layer_000.npz",
+      "current_correct": "outputs/two_head_intervention_mmlu_pro_n2000/models/current_correct_layer_000.npz"
+    },
+    "12": {
+      "conditional_robust_loss": "outputs/two_head_intervention_mmlu_pro_n2000/models/conditional_robust_loss_layer_012.npz",
+      "current_correct": "outputs/two_head_intervention_mmlu_pro_n2000/models/current_correct_layer_012.npz"
+    },
+    "16": {
+      "conditional_robust_loss": "outputs/two_head_intervention_mmlu_pro_n2000/models/conditional_robust_loss_layer_016.npz",
+      "current_correct": "outputs/two_head_intervention_mmlu_pro_n2000/models/current_correct_layer_016.npz"
+    },
+    "20": {
+      "conditional_robust_loss": "outputs/two_head_intervention_mmlu_pro_n2000/models/conditional_robust_loss_layer_020.npz",
+      "current_correct": "outputs/two_head_intervention_mmlu_pro_n2000/models/current_correct_layer_020.npz"
+    },
+    "24": {
+      "conditional_robust_loss": "outputs/two_head_intervention_mmlu_pro_n2000/models/conditional_robust_loss_layer_024.npz",
+      "current_correct": "outputs/two_head_intervention_mmlu_pro_n2000/models/current_correct_layer_024.npz"
+    },
+    "28": {
+      "conditional_robust_loss": "outputs/two_head_intervention_mmlu_pro_n2000/models/conditional_robust_loss_layer_028.npz",
+      "current_correct": "outputs/two_head_intervention_mmlu_pro_n2000/models/current_correct_layer_028.npz"
+    },
+    "32": {
+      "conditional_robust_loss": "outputs/two_head_intervention_mmlu_pro_n2000/models/conditional_robust_loss_layer_032.npz",
+      "current_correct": "outputs/two_head_intervention_mmlu_pro_n2000/models/current_correct_layer_032.npz"
+    },
+    "36": {
+      "conditional_robust_loss": "outputs/two_head_intervention_mmlu_pro_n2000/models/conditional_robust_loss_layer_036.npz",
+      "current_correct": "outputs/two_head_intervention_mmlu_pro_n2000/models/current_correct_layer_036.npz"
+    },
+    "4": {
+      "conditional_robust_loss": "outputs/two_head_intervention_mmlu_pro_n2000/models/conditional_robust_loss_layer_004.npz",
+      "current_correct": "outputs/two_head_intervention_mmlu_pro_n2000/models/current_correct_layer_004.npz"
+    },
+    "40": {
+      "conditional_robust_loss": "outputs/two_head_intervention_mmlu_pro_n2000/models/conditional_robust_loss_layer_040.npz",
+      "current_correct": "outputs/two_head_intervention_mmlu_pro_n2000/models/current_correct_layer_040.npz"
+    },
+    "44": {
+      "conditional_robust_loss": "outputs/two_head_intervention_mmlu_pro_n2000/models/conditional_robust_loss_layer_044.npz",
+      "current_correct": "outputs/two_head_intervention_mmlu_pro_n2000/models/current_correct_layer_044.npz"
+    },
+    "48": {
+      "conditional_robust_loss": "outputs/two_head_intervention_mmlu_pro_n2000/models/conditional_robust_loss_layer_048.npz",
+      "current_correct": "outputs/two_head_intervention_mmlu_pro_n2000/models/current_correct_layer_048.npz"
+    },
+    "8": {
+      "conditional_robust_loss": "outputs/two_head_intervention_mmlu_pro_n2000/models/conditional_robust_loss_layer_008.npz",
+      "current_correct": "outputs/two_head_intervention_mmlu_pro_n2000/models/current_correct_layer_008.npz"
+    }
+  },
+  "output_dir": "outputs/two_head_intervention_mmlu_pro_n2000",
+  "policies_path": "outputs/two_head_intervention_mmlu_pro_n2000/two_head_policies.parquet",
+  "predictions_path": "outputs/two_head_intervention_mmlu_pro_n2000/two_head_predictions.parquet",
+  "source_dir": "outputs/activation_probe_mmlu_pro_n2000_intervention",
+  "timings_seconds": {
+    "total": 27.506
+  }
+}

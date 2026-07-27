@@ -7,6 +7,7 @@ from pathlib import Path
 from .activation_probe import (
     DEFAULT_CONFIDENCE_THRESHOLDS,
     DEFAULT_DECILES,
+    DEFAULT_PROBE_TARGETS,
     DEFAULT_PROBE_THRESHOLDS,
     PROBE_TARGETS,
     ActivationExtractionConfig,
@@ -115,6 +116,46 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument("--device-map", default="auto")
     parser.add_argument(
+        "--example-cohort",
+        choices=(
+            "all",
+            "robust_loss_vs_no_loss",
+            "intervention_candidates",
+        ),
+        default="all",
+        help=(
+            "Use all checkpoints, or only currently-correct checkpoints from "
+            "robust-loss and no-loss traces."
+        ),
+    )
+    parser.add_argument(
+        "--robust-confidence-threshold",
+        type=float,
+        default=0.5,
+    )
+    parser.add_argument(
+        "--cohort-negative-ratio",
+        type=float,
+        help=(
+            "For the robust-loss cohort, retain this many no-loss examples "
+            "per positive within each decile. By default, retain all."
+        ),
+    )
+    parser.add_argument(
+        "--intervention-confidence-threshold",
+        type=float,
+        default=0.9,
+        help=(
+            "Choose the earliest checkpoint at or above this normalized "
+            "choice confidence for the intervention-candidate cohort."
+        ),
+    )
+    parser.add_argument(
+        "--robust-final-choice-mass-threshold",
+        type=float,
+        default=0.5,
+    )
+    parser.add_argument(
         "--no-reuse-examples",
         action="store_true",
         help="Rebuild activation_probe_examples.parquet even if it exists.",
@@ -126,7 +167,7 @@ def build_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "--targets",
-        default=",".join(PROBE_TARGETS),
+        default=",".join(DEFAULT_PROBE_TARGETS),
         help=f"Comma-separated targets: {', '.join(PROBE_TARGETS)}",
     )
     parser.add_argument(
@@ -167,6 +208,15 @@ def main() -> None:
             seeds=seeds,
             max_examples=args.max_examples,
             random_seed=args.random_seed,
+            example_cohort=args.example_cohort,
+            cohort_negative_ratio=args.cohort_negative_ratio,
+            intervention_confidence_threshold=(
+                args.intervention_confidence_threshold
+            ),
+            robust_confidence_threshold=args.robust_confidence_threshold,
+            robust_final_choice_mass_threshold=(
+                args.robust_final_choice_mass_threshold
+            ),
         )
         print(
             json.dumps(
@@ -178,6 +228,7 @@ def main() -> None:
                     "target_positive_counts": {
                         target: int(examples[target].sum())
                         for target in PROBE_TARGETS
+                        if target in examples
                     },
                 },
                 indent=2,
@@ -200,6 +251,15 @@ def main() -> None:
         activation_dtype=args.activation_dtype,
         model_dtype=args.model_dtype,
         device_map=args.device_map,
+        example_cohort=args.example_cohort,
+        cohort_negative_ratio=args.cohort_negative_ratio,
+        intervention_confidence_threshold=(
+            args.intervention_confidence_threshold
+        ),
+        robust_confidence_threshold=args.robust_confidence_threshold,
+        robust_final_choice_mass_threshold=(
+            args.robust_final_choice_mass_threshold
+        ),
         reuse_examples=not args.no_reuse_examples,
         reuse_activations=not args.no_reuse_activations,
     )

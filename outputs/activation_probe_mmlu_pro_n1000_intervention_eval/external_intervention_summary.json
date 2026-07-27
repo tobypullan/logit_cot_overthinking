@@ -1,0 +1,25 @@
+{
+  "training_run": "outputs/activation_probe_mmlu_pro_n2000_intervention",
+  "evaluation_run": "outputs/activation_probe_mmlu_pro_n1000_intervention_eval",
+  "policy": {
+    "candidate_normalized_confidence_threshold": 0.9,
+    "layer": 36,
+    "probe_threshold": 0.9
+  },
+  "question_count": 1000,
+  "candidate_count": 997,
+  "positive_candidate_count": 12,
+  "harmful_candidate_count": 139,
+  "candidate_auc": 0.8544839255499154,
+  "baseline_correct": 731,
+  "baseline_accuracy": 0.731,
+  "intervention_correct": 731,
+  "intervention_accuracy": 0.731,
+  "delta_correct": 0,
+  "delta_accuracy": 0.0,
+  "stop_count": 10,
+  "stop_rate": 0.01,
+  "beneficial_stop_count": 2,
+  "harmful_stop_count": 2,
+  "neutral_stop_count": 6
+}

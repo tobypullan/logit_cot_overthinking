@@ -1,0 +1,64 @@
+{
+  "activations_path": "outputs/activation_probe_pre2000_robust_loss_matched_controls/activations.npy",
+  "backend": "torch",
+  "batch_size": 128,
+  "best_auc_by_target": [
+    {
+      "accuracy_at_0_5": 0.6838235294117647,
+      "auc": 0.7262911700627963,
+      "brier": 0.21992140802570076,
+      "layer": 36,
+      "positive_rate": 0.25,
+      "row_count": 408,
+      "target": "robust_loss_case"
+    }
+  ],
+  "best_halting_by_target": [],
+  "epochs": 16,
+  "example_count": 408,
+  "examples_path": "outputs/activation_probe_pre2000_robust_loss_matched_controls/activation_probe_examples.parquet",
+  "experiment": "activation_probe_training",
+  "folds": 5,
+  "halting_summary_path": "outputs/activation_probe_pre2000_robust_loss_matched_controls/probe_halting_summary.parquet",
+  "layers": [
+    0,
+    4,
+    8,
+    12,
+    16,
+    20,
+    24,
+    28,
+    32,
+    36,
+    40,
+    44,
+    48
+  ],
+  "metrics_path": "outputs/activation_probe_pre2000_robust_loss_matched_controls/probe_metrics.parquet",
+  "model_paths": {
+    "0": "outputs/activation_probe_pre2000_robust_loss_matched_controls/models/layer_000.npz",
+    "12": "outputs/activation_probe_pre2000_robust_loss_matched_controls/models/layer_012.npz",
+    "16": "outputs/activation_probe_pre2000_robust_loss_matched_controls/models/layer_016.npz",
+    "20": "outputs/activation_probe_pre2000_robust_loss_matched_controls/models/layer_020.npz",
+    "24": "outputs/activation_probe_pre2000_robust_loss_matched_controls/models/layer_024.npz",
+    "28": "outputs/activation_probe_pre2000_robust_loss_matched_controls/models/layer_028.npz",
+    "32": "outputs/activation_probe_pre2000_robust_loss_matched_controls/models/layer_032.npz",
+    "36": "outputs/activation_probe_pre2000_robust_loss_matched_controls/models/layer_036.npz",
+    "4": "outputs/activation_probe_pre2000_robust_loss_matched_controls/models/layer_004.npz",
+    "40": "outputs/activation_probe_pre2000_robust_loss_matched_controls/models/layer_040.npz",
+    "44": "outputs/activation_probe_pre2000_robust_loss_matched_controls/models/layer_044.npz",
+    "48": "outputs/activation_probe_pre2000_robust_loss_matched_controls/models/layer_048.npz",
+    "8": "outputs/activation_probe_pre2000_robust_loss_matched_controls/models/layer_008.npz"
+  },
+  "output_dir": "outputs/activation_probe_pre2000_robust_loss_matched_controls",
+  "predictions_path": "outputs/activation_probe_pre2000_robust_loss_matched_controls/probe_predictions.parquet",
+  "targets": [
+    "robust_loss_case"
+  ],
+  "timings_seconds": {
+    "loading": 1.363,
+    "total": 7.693,
+    "training_and_evaluation": 6.33
+  }
+}

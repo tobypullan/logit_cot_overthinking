@@ -1,0 +1,58 @@
+{
+  "activation_dtype": "float16",
+  "activations_path": "outputs/activation_probe_mmlu_pro_n2000_intervention/activations.npy",
+  "batch_size": 1,
+  "batching": "sorted_by_prefix_token_count",
+  "cohort_negative_ratio": null,
+  "example_cohort": "intervention_candidates",
+  "example_count": 1984,
+  "examples_path": "outputs/activation_probe_mmlu_pro_n2000_intervention/activation_probe_examples.parquet",
+  "experiment": "activation_probe_extraction",
+  "hidden_size": 3840,
+  "input_root": "outputs/mmlu_pro_gemma4_12b_n2000_disjoint_seed0",
+  "intervention_confidence_threshold": 0.9,
+  "layers": [
+    0,
+    4,
+    8,
+    12,
+    16,
+    20,
+    24,
+    28,
+    32,
+    36,
+    40,
+    44,
+    48
+  ],
+  "model": "google/gemma-4-12B-it",
+  "model_dtype": "bfloat16",
+  "output_dir": "outputs/activation_probe_mmlu_pro_n2000_intervention",
+  "preexisting_filled_rows": 0,
+  "processed_rows": 1984,
+  "resumed_from_partial": false,
+  "reused": false,
+  "robust_confidence_threshold": 0.5,
+  "robust_final_choice_mass_threshold": 0.5,
+  "target_positive_counts": {
+    "current_correct": 1350,
+    "future_answer_flip": 453,
+    "future_change_to_wrong": 206,
+    "future_loss": 126,
+    "robust_stop_candidate": 34
+  },
+  "target_positive_rates": {
+    "current_correct": 0.6804435483870968,
+    "future_answer_flip": 0.2283266129032258,
+    "future_change_to_wrong": 0.10383064516129033,
+    "future_loss": 0.06350806451612903,
+    "robust_stop_candidate": 0.017137096774193547
+  },
+  "timings_seconds": {
+    "activation_extraction": 498.024,
+    "examples": 0.045,
+    "model_initialization": 12.379,
+    "total": 510.448
+  }
+}

@@ -20,6 +20,12 @@ from .matched_analysis import auc_score
 DEFAULT_DECILES = tuple(range(10, 100, 10))
 DEFAULT_CONFIDENCE_THRESHOLDS = (0.7, 0.8, 0.9, 0.95)
 DEFAULT_PROBE_THRESHOLDS = (0.3, 0.5, 0.7, 0.9)
+DEFAULT_PROBE_TARGETS = (
+    "current_correct",
+    "future_loss",
+    "future_change_to_wrong",
+    "future_answer_flip",
+)
 PROBE_TARGETS = {
     "current_correct": (
         "The current prediction matches the true answer."
@@ -32,6 +38,14 @@ PROBE_TARGETS = {
     ),
     "future_answer_flip": (
         "The final prediction differs from the current prediction."
+    ),
+    "robust_loss_case": (
+        "The currently correct checkpoint belongs to a robust-loss trace, "
+        "rather than a trace with no loss."
+    ),
+    "robust_stop_candidate": (
+        "Stopping at this observable-confidence candidate preserves a "
+        "currently correct answer from a robust-loss trace."
     ),
 }
 
@@ -51,6 +65,11 @@ class ActivationExtractionConfig:
     activation_dtype: str = "float16"
     model_dtype: str = "bfloat16"
     device_map: str = "auto"
+    example_cohort: str = "all"
+    cohort_negative_ratio: float | None = None
+    intervention_confidence_threshold: float = 0.9
+    robust_confidence_threshold: float = 0.5
+    robust_final_choice_mass_threshold: float = 0.5
     reuse_examples: bool = True
     reuse_activations: bool = True
 
@@ -77,6 +96,24 @@ class ActivationExtractionConfig:
             raise ValueError(
                 "model_dtype must be float16, bfloat16, float32, or auto"
             )
+        if self.example_cohort not in {
+            "all",
+            "robust_loss_vs_no_loss",
+            "intervention_candidates",
+        }:
+            raise ValueError(
+                "example_cohort must be all, robust_loss_vs_no_loss, or "
+                "intervention_candidates"
+            )
+        if (
+            self.cohort_negative_ratio is not None
+            and self.cohort_negative_ratio <= 0
+        ):
+            raise ValueError("cohort_negative_ratio must be positive")
+        if not 0 < self.intervention_confidence_threshold <= 1:
+            raise ValueError(
+                "intervention_confidence_threshold must be in (0, 1]"
+            )
 
 
 @dataclass(frozen=True)
@@ -85,7 +122,7 @@ class ProbeTrainingConfig:
     examples_path: Path | None = None
     activations_path: Path | None = None
     layers: tuple[int, ...] | None = None
-    targets: tuple[str, ...] = tuple(PROBE_TARGETS)
+    targets: tuple[str, ...] = DEFAULT_PROBE_TARGETS
     backend: str = "auto"
     folds: int = 5
     epochs: int = 8
@@ -113,6 +150,39 @@ class ProbeTrainingConfig:
             raise ValueError("learning_rate must be positive")
         if self.weight_decay < 0:
             raise ValueError("weight_decay must be non-negative")
+
+
+@dataclass(frozen=True)
+class TwoHeadInterventionConfig:
+    source_dir: Path = Path(
+        "outputs/activation_probe_mmlu_pro_n2000_intervention"
+    )
+    output_dir: Path = Path(
+        "outputs/two_head_intervention_mmlu_pro_n2000"
+    )
+    layers: tuple[int, ...] | None = None
+    folds: int = 5
+    epochs: int = 16
+    batch_size: int = 256
+    learning_rate: float = 1e-3
+    weight_decay: float = 1e-4
+    seed: int = 0
+    correctness_thresholds: tuple[float, ...] = (0.5, 0.7, 0.8, 0.9)
+    loss_thresholds: tuple[float, ...] = (0.5, 0.7, 0.8, 0.9)
+
+    def validate(self) -> None:
+        if self.folds < 2:
+            raise ValueError("folds must be at least 2")
+        if self.epochs < 1:
+            raise ValueError("epochs must be positive")
+        if self.batch_size < 1:
+            raise ValueError("batch_size must be positive")
+        for threshold in (
+            *self.correctness_thresholds,
+            *self.loss_thresholds,
+        ):
+            if not 0 <= threshold <= 1:
+                raise ValueError("probe thresholds must be in [0, 1]")
 
 
 def _read_jsonl(path: Path) -> list[dict[str, object]]:
@@ -179,16 +249,28 @@ def _normalized_probability(
     return probability_value / mass_value
 
 
+def _integer_or_default(value: object, default: int) -> int:
+    try:
+        if pd.isna(value):
+            return int(default)
+        return int(value)
+    except (TypeError, ValueError):
+        return int(default)
+
+
 def _run_identity_from_path(path: Path) -> tuple[str, int]:
     seed_dir = path.parent.name
     dataset = path.parent.parent.name
     match = re.fullmatch(r"seed_(\d+)", seed_dir)
     if not match:
-        raise ValueError(f"Could not infer seed from {path}")
+        return seed_dir, 0
     return dataset, int(match.group(1))
 
 
 def _trajectory_paths(input_root: Path) -> list[Path]:
+    direct = input_root / "trajectory.parquet"
+    if direct.exists():
+        return [direct]
     return sorted(input_root.glob("*/*/trajectory.parquet"))
 
 
@@ -244,14 +326,19 @@ def _build_example_rows(
             )
             current_correct = bool(row_dict["correct"])
             final_wrong = not final_correct
+            seed = _integer_or_default(row_dict.get("seed"), 0)
+            run_seed = _integer_or_default(
+                row_dict.get("run_seed"),
+                seed,
+            )
             rows.append(
                 {
                     "dataset": str(row_dict.get("dataset", "")),
                     "dataset_label": str(
                         row_dict.get("dataset_label", row_dict.get("dataset", ""))
                     ),
-                    "seed": int(row_dict.get("seed", row_dict.get("run_seed", 0))),
-                    "run_seed": int(row_dict.get("run_seed", row_dict.get("seed", 0))),
+                    "seed": seed,
+                    "run_seed": run_seed,
                     "position": int(row_dict["position"]),
                     "question_id": str(row_dict["question_id"]),
                     "category": str(row_dict.get("category", "")),
@@ -307,29 +394,145 @@ def build_activation_probe_examples(
     seeds: Sequence[int] = (),
     max_examples: int | None = None,
     random_seed: int = 0,
+    example_cohort: str = "all",
+    cohort_negative_ratio: float | None = None,
+    intervention_confidence_threshold: float = 0.9,
+    robust_confidence_threshold: float = 0.5,
+    robust_final_choice_mass_threshold: float = 0.5,
 ) -> pd.DataFrame:
+    if example_cohort not in {
+        "all",
+        "robust_loss_vs_no_loss",
+        "intervention_candidates",
+    }:
+        raise ValueError(
+            "example_cohort must be all, robust_loss_vs_no_loss, or "
+            "intervention_candidates"
+        )
     output_dir.mkdir(parents=True, exist_ok=True)
     dataset_filter = set(datasets)
     seed_filter = {int(seed) for seed in seeds}
     selected_deciles = {int(decile) for decile in deciles}
     rows: list[dict[str, object]] = []
+    complete_question_count = 0
+    missing_candidate_count = 0
+    missing_candidate_final_correct_count = 0
     for trajectory_path in _trajectory_paths(input_root):
         dataset, seed = _run_identity_from_path(trajectory_path)
         if dataset_filter and dataset not in dataset_filter:
             continue
         if seed_filter and seed not in seed_filter:
             continue
-        trajectory = pd.read_parquet(trajectory_path).copy()
+        if example_cohort in {
+            "robust_loss_vs_no_loss",
+            "intervention_candidates",
+        }:
+            from .lost_analysis import build_lost_case_table, load_complete_run
+
+            trajectory, traces = load_complete_run(trajectory_path.parent)
+            loss_cases = build_lost_case_table(
+                trajectory,
+                traces,
+                confidence_threshold=robust_confidence_threshold,
+                final_choice_mass_threshold=(
+                    robust_final_choice_mass_threshold
+                ),
+            )
+            broad_loss_keys = {
+                (int(row.position), str(row.question_id))
+                for row in loss_cases.itertuples(index=False)
+            }
+            robust_loss_keys = {
+                (int(row.position), str(row.question_id))
+                for row in loss_cases[
+                    loss_cases["robust_loss"].astype(bool)
+                ].itertuples(index=False)
+            }
+        else:
+            trajectory = pd.read_parquet(trajectory_path).copy()
         trajectory["dataset"] = trajectory.get("dataset", dataset)
         trajectory["seed"] = trajectory.get("seed", seed)
         trajectory["run_seed"] = trajectory.get("run_seed", seed)
-        rows.extend(
-            _build_example_rows(
-                trajectory,
-                trace_path=trajectory_path.parent / "traces.jsonl",
-                deciles=selected_deciles,
-            )
+        path_rows = _build_example_rows(
+            trajectory,
+            trace_path=trajectory_path.parent / "traces.jsonl",
+            deciles=selected_deciles,
         )
+        if example_cohort == "robust_loss_vs_no_loss":
+            filtered_rows: list[dict[str, object]] = []
+            for row in path_rows:
+                key = (int(row["position"]), str(row["question_id"]))
+                is_robust_loss = key in robust_loss_keys
+                is_no_loss = key not in broad_loss_keys
+                if not bool(row["current_correct"]):
+                    continue
+                if not (is_robust_loss or is_no_loss):
+                    continue
+                row["robust_loss_case"] = int(is_robust_loss)
+                row["example_cohort"] = (
+                    "robust_loss" if is_robust_loss else "no_loss"
+                )
+                filtered_rows.append(row)
+            path_rows = filtered_rows
+        elif example_cohort == "intervention_candidates":
+            attempt_columns = ("dataset", "seed", "position", "question_id")
+            candidates = [
+                row
+                for row in path_rows
+                if float(row["normalized_prediction_probability"])
+                >= intervention_confidence_threshold
+            ]
+            candidate_by_attempt: dict[
+                tuple[object, ...], dict[str, object]
+            ] = {}
+            for row in candidates:
+                attempt_key = tuple(row[column] for column in attempt_columns)
+                previous = candidate_by_attempt.get(attempt_key)
+                if previous is None or int(row["decile"]) < int(
+                    previous["decile"]
+                ):
+                    candidate_by_attempt[attempt_key] = row
+            total_attempts = {
+                (int(row.position), str(row.question_id))
+                for row in trajectory[
+                    trajectory["decile"].astype(int) == 100
+                ].itertuples(index=False)
+            }
+            selected_attempts = {
+                (int(row["position"]), str(row["question_id"]))
+                for row in candidate_by_attempt.values()
+            }
+            final_by_attempt = {
+                (int(row.position), str(row.question_id)): bool(row.correct)
+                for row in trajectory[
+                    trajectory["decile"].astype(int) == 100
+                ].itertuples(index=False)
+            }
+            missing_attempts = total_attempts - selected_attempts
+            complete_question_count += len(total_attempts)
+            missing_candidate_count += len(missing_attempts)
+            missing_candidate_final_correct_count += sum(
+                int(final_by_attempt[key]) for key in missing_attempts
+            )
+            path_rows = []
+            for row in candidate_by_attempt.values():
+                key = (int(row["position"]), str(row["question_id"]))
+                beneficial = key in robust_loss_keys and bool(
+                    row["current_correct"]
+                )
+                harmful = (
+                    not bool(row["current_correct"])
+                    and bool(row["final_correct"])
+                )
+                row["robust_stop_candidate"] = int(beneficial)
+                row["intervention_utility"] = (
+                    "beneficial"
+                    if beneficial
+                    else ("harmful" if harmful else "neutral")
+                )
+                row["example_cohort"] = "intervention_candidate"
+                path_rows.append(row)
+        rows.extend(path_rows)
 
     examples = pd.DataFrame(rows)
     if examples.empty:
@@ -337,6 +540,34 @@ def build_activation_probe_examples(
     examples = examples.sort_values(
         ["dataset", "seed", "position", "question_id", "decile"]
     ).reset_index(drop=True)
+    if (
+        example_cohort == "robust_loss_vs_no_loss"
+        and cohort_negative_ratio is not None
+    ):
+        positives = examples[examples["robust_loss_case"].eq(1)]
+        sampled = [positives]
+        for decile, positive_rows in positives.groupby("decile"):
+            candidates = examples[
+                examples["robust_loss_case"].eq(0)
+                & examples["decile"].eq(decile)
+            ]
+            sample_count = min(
+                len(candidates),
+                int(math.ceil(len(positive_rows) * cohort_negative_ratio)),
+            )
+            sampled.append(
+                candidates.sample(
+                    n=sample_count,
+                    random_state=random_seed + int(decile),
+                )
+            )
+        examples = (
+            pd.concat(sampled, ignore_index=True)
+            .sort_values(
+                ["dataset", "seed", "position", "question_id", "decile"]
+            )
+            .reset_index(drop=True)
+        )
     if max_examples is not None and len(examples) > max_examples:
         examples = (
             examples.sample(n=max_examples, random_state=random_seed)
@@ -352,6 +583,27 @@ def build_activation_probe_examples(
         output_dir / "activation_probe_examples.parquet",
         index=False,
     )
+    if example_cohort == "intervention_candidates":
+        _write_json(
+            output_dir / "intervention_cohort_summary.json",
+            {
+                "complete_question_count": complete_question_count,
+                "candidate_count": len(examples),
+                "missing_candidate_count": missing_candidate_count,
+                "missing_candidate_final_correct_count": (
+                    missing_candidate_final_correct_count
+                ),
+                "confidence_threshold": (
+                    intervention_confidence_threshold
+                ),
+                "beneficial_candidate_count": int(
+                    examples["robust_stop_candidate"].sum()
+                ),
+                "harmful_candidate_count": int(
+                    examples["intervention_utility"].eq("harmful").sum()
+                ),
+            },
+        )
     return examples
 
 
@@ -364,6 +616,9 @@ def _question_from_trace(trace: dict[str, object]) -> MultipleChoiceQuestion:
         answer=str(trace["answer"]),
         category=str(trace.get("category", "")),
         source=str(trace.get("source", "")),
+        context=str(trace.get("context", "")),
+        repository=str(trace.get("repository", "")),
+        question_type=str(trace.get("question_type", "")),
     )
 
 
@@ -563,6 +818,17 @@ def extract_probe_activations(
             seeds=config.seeds,
             max_examples=config.max_examples,
             random_seed=config.random_seed,
+            example_cohort=config.example_cohort,
+            cohort_negative_ratio=config.cohort_negative_ratio,
+            intervention_confidence_threshold=(
+                config.intervention_confidence_threshold
+            ),
+            robust_confidence_threshold=(
+                config.robust_confidence_threshold
+            ),
+            robust_final_choice_mass_threshold=(
+                config.robust_final_choice_mass_threshold
+            ),
         )
     examples_ready_at = time.perf_counter()
 
@@ -721,6 +987,15 @@ def extract_probe_activations(
         "hidden_size": hidden_size,
         "activation_dtype": config.activation_dtype,
         "model_dtype": config.model_dtype,
+        "example_cohort": config.example_cohort,
+        "cohort_negative_ratio": config.cohort_negative_ratio,
+        "intervention_confidence_threshold": (
+            config.intervention_confidence_threshold
+        ),
+        "robust_confidence_threshold": config.robust_confidence_threshold,
+        "robust_final_choice_mass_threshold": (
+            config.robust_final_choice_mass_threshold
+        ),
         "batch_size": config.batch_size,
         "batching": "sorted_by_prefix_token_count",
         "processed_rows": int(len(extraction_order)),
@@ -729,10 +1004,12 @@ def extract_probe_activations(
         "target_positive_counts": {
             target: int(examples[target].sum())
             for target in PROBE_TARGETS
+            if target in examples
         },
         "target_positive_rates": {
             target: float(examples[target].mean())
             for target in PROBE_TARGETS
+            if target in examples
         },
         "timings_seconds": {
             "examples": round(examples_ready_at - started_at, 3),
@@ -811,6 +1088,9 @@ def _fit_predict_torch(
     import torch
 
     rng = np.random.default_rng(seed)
+    torch.manual_seed(seed)
+    if torch.cuda.is_available():
+        torch.cuda.manual_seed_all(seed)
     train_scaled, test_scaled, mean, scale = _standardize(train_x, test_x)
     device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
     input_dim = train_x.shape[1]
@@ -1073,11 +1353,56 @@ def train_activation_probes(
     metrics_path = config.output_dir / "probe_metrics.parquet"
     predictions.to_parquet(predictions_path, index=False)
     metrics.to_parquet(metrics_path, index=False)
+    halting_predictions = predictions[
+        ~predictions["target"].isin(
+            ("robust_loss_case", "robust_stop_candidate")
+        )
+    ]
+    intervention_summary_path = (
+        config.output_dir / "intervention_cohort_summary.json"
+    )
+    intervention_summary = (
+        json.loads(intervention_summary_path.read_text(encoding="utf-8"))
+        if intervention_summary_path.exists()
+        else {}
+    )
     halting = evaluate_probe_halting(
         examples,
-        predictions,
+        halting_predictions,
         confidence_thresholds=config.confidence_thresholds,
         probe_thresholds=config.probe_thresholds,
+        fallback_attempt_count=int(
+            intervention_summary.get("missing_candidate_count", 0)
+        ),
+        fallback_correct_count=int(
+            intervention_summary.get(
+                "missing_candidate_final_correct_count",
+                0,
+            )
+        ),
+    )
+    candidate_halting = evaluate_candidate_intervention(
+        examples,
+        predictions[
+            predictions["target"].eq("robust_stop_candidate")
+        ],
+        probe_thresholds=config.probe_thresholds,
+        fallback_attempt_count=int(
+            intervention_summary.get("missing_candidate_count", 0)
+        ),
+        fallback_correct_count=int(
+            intervention_summary.get(
+                "missing_candidate_final_correct_count",
+                0,
+            )
+        ),
+        confidence_threshold=float(
+            intervention_summary.get("confidence_threshold", np.nan)
+        ),
+    )
+    halting = pd.concat(
+        [halting, candidate_halting],
+        ignore_index=True,
     )
     halting_path = config.output_dir / "probe_halting_summary.parquet"
     halting.to_parquet(halting_path, index=False)
@@ -1107,7 +1432,9 @@ def train_activation_probes(
         ),
         "best_halting_by_target": (
             halting[
-                halting["policy_family"].isin(("probe_only", "probe_confidence"))
+                halting["policy_family"].isin(
+                    ("probe_only", "probe_confidence", "probe_candidate")
+                )
             ]
             .sort_values("delta_vs_final", ascending=False)
             .groupby("target")
@@ -1132,11 +1459,495 @@ def train_activation_probes(
     return summary
 
 
+def _save_two_head_model(
+    output_dir: Path,
+    head: str,
+    layer: int,
+    coefficients: np.ndarray,
+    intercepts: np.ndarray,
+    mean: np.ndarray,
+    scale: np.ndarray,
+) -> Path:
+    model_dir = output_dir / "models"
+    model_dir.mkdir(parents=True, exist_ok=True)
+    path = model_dir / f"{head}_layer_{int(layer):03d}.npz"
+    np.savez_compressed(
+        path,
+        head=np.asarray([head]),
+        layer=np.asarray([int(layer)]),
+        coefficients=coefficients[0].astype(np.float32),
+        intercept=np.asarray([intercepts[0]], dtype=np.float32),
+        mean=mean.astype(np.float32),
+        scale=scale.astype(np.float32),
+    )
+    return path
+
+
+def _score_saved_head(path: Path, features: np.ndarray) -> np.ndarray:
+    model = np.load(path)
+    standardized = (
+        np.asarray(features, dtype=np.float32) - model["mean"]
+    ) / model["scale"]
+    logits = (
+        standardized @ model["coefficients"]
+        + float(model["intercept"][0])
+    )
+    return _sigmoid(logits)
+
+
+def train_two_head_intervention(
+    config: TwoHeadInterventionConfig,
+) -> dict[str, object]:
+    config.validate()
+    started_at = time.perf_counter()
+    config.output_dir.mkdir(parents=True, exist_ok=True)
+    examples_path = config.source_dir / "activation_probe_examples.parquet"
+    examples = pd.read_parquet(examples_path).reset_index(drop=True)
+    activations, activations_path = _load_activation_array(
+        config.source_dir / "activations.npy",
+        config.source_dir,
+    )
+    activation_manifest = json.loads(
+        (config.source_dir / "activation_manifest.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    layers = tuple(
+        int(layer)
+        for layer in (
+            config.layers
+            or activation_manifest.get("layers")
+            or range(activations.shape[1])
+        )
+    )
+    if len(layers) != activations.shape[1]:
+        raise ValueError("Layer count does not match activation tensor")
+
+    current_labels = examples["current_correct"].astype(float).to_numpy()
+    loss_labels = (
+        examples["robust_stop_candidate"].astype(float).to_numpy()
+    )
+    correct_rows = current_labels.astype(bool)
+    fold_ids = _fold_ids(examples, config.folds)
+    prediction_rows: list[dict[str, object]] = []
+    metric_rows: list[dict[str, object]] = []
+    policy_rows: list[dict[str, object]] = []
+    model_paths: dict[str, dict[str, str]] = {}
+    intervention_summary = json.loads(
+        (
+            config.source_dir / "intervention_cohort_summary.json"
+        ).read_text(encoding="utf-8")
+    )
+    fallback_count = int(
+        intervention_summary.get("missing_candidate_count", 0)
+    )
+    fallback_correct = int(
+        intervention_summary.get(
+            "missing_candidate_final_correct_count",
+            0,
+        )
+    )
+    total_attempts = len(examples) + fallback_count
+    final_correct_count = (
+        int(examples["final_correct"].astype(bool).sum())
+        + fallback_correct
+    )
+    utility = (
+        examples["current_correct"].astype(int)
+        - examples["final_correct"].astype(int)
+    ).to_numpy()
+
+    for layer_offset, layer in enumerate(layers):
+        features = _activation_layer_features(activations, layer_offset)
+        current_scores = np.full(len(examples), np.nan)
+        loss_scores = np.full(len(examples), np.nan)
+        for fold in range(config.folds):
+            train = fold_ids != fold
+            test = fold_ids == fold
+            current_fold_scores, *_ = _fit_predict_torch(
+                features[train],
+                current_labels[train, None],
+                features[test],
+                epochs=config.epochs,
+                batch_size=config.batch_size,
+                learning_rate=config.learning_rate,
+                weight_decay=config.weight_decay,
+                seed=config.seed + int(layer) * 100 + fold,
+            )
+            conditional_train = train & correct_rows
+            loss_fold_scores, *_ = _fit_predict_torch(
+                features[conditional_train],
+                loss_labels[conditional_train, None],
+                features[test],
+                epochs=config.epochs,
+                batch_size=config.batch_size,
+                learning_rate=config.learning_rate,
+                weight_decay=config.weight_decay,
+                seed=config.seed + 50000 + int(layer) * 100 + fold,
+            )
+            current_scores[test] = current_fold_scores[:, 0]
+            loss_scores[test] = loss_fold_scores[:, 0]
+
+        _, current_coefs, current_intercepts, current_mean, current_scale = (
+            _fit_predict_torch(
+                features,
+                current_labels[:, None],
+                features[:1],
+                epochs=config.epochs,
+                batch_size=config.batch_size,
+                learning_rate=config.learning_rate,
+                weight_decay=config.weight_decay,
+                seed=config.seed + int(layer) * 1000,
+            )
+        )
+        _, loss_coefs, loss_intercepts, loss_mean, loss_scale = (
+            _fit_predict_torch(
+                features[correct_rows],
+                loss_labels[correct_rows, None],
+                features[:1],
+                epochs=config.epochs,
+                batch_size=config.batch_size,
+                learning_rate=config.learning_rate,
+                weight_decay=config.weight_decay,
+                seed=config.seed + 50000 + int(layer) * 1000,
+            )
+        )
+        model_paths[str(layer)] = {
+            "current_correct": str(
+                _save_two_head_model(
+                    config.output_dir,
+                    "current_correct",
+                    layer,
+                    current_coefs,
+                    current_intercepts,
+                    current_mean,
+                    current_scale,
+                )
+            ),
+            "conditional_robust_loss": str(
+                _save_two_head_model(
+                    config.output_dir,
+                    "conditional_robust_loss",
+                    layer,
+                    loss_coefs,
+                    loss_intercepts,
+                    loss_mean,
+                    loss_scale,
+                )
+            ),
+        }
+        combined_scores = current_scores * loss_scores
+        for head, labels, scores, mask in (
+            (
+                "current_correct",
+                current_labels,
+                current_scores,
+                np.ones(len(examples), dtype=bool),
+            ),
+            (
+                "conditional_robust_loss",
+                loss_labels,
+                loss_scores,
+                correct_rows,
+            ),
+            (
+                "combined_safe_stop",
+                loss_labels,
+                combined_scores,
+                np.ones(len(examples), dtype=bool),
+            ),
+        ):
+            metric_rows.append(
+                {
+                    "layer": int(layer),
+                    "head": head,
+                    **_classification_metrics(labels[mask], scores[mask]),
+                }
+            )
+        for index in range(len(examples)):
+            prediction_rows.append(
+                {
+                    "example_index": int(examples.loc[index, "example_index"]),
+                    "layer": int(layer),
+                    "fold": int(fold_ids[index]),
+                    "current_correct_score": float(current_scores[index]),
+                    "conditional_robust_loss_score": float(
+                        loss_scores[index]
+                    ),
+                    "combined_score": float(combined_scores[index]),
+                    "current_correct_label": int(current_labels[index]),
+                    "robust_stop_label": int(loss_labels[index]),
+                }
+            )
+        for current_threshold in config.correctness_thresholds:
+            for loss_threshold in config.loss_thresholds:
+                stopped = (
+                    (current_scores >= current_threshold)
+                    & (loss_scores >= loss_threshold)
+                )
+                net_correct = int(utility[stopped].sum())
+                policy_rows.append(
+                    {
+                        "layer": int(layer),
+                        "current_correct_threshold": float(
+                            current_threshold
+                        ),
+                        "conditional_loss_threshold": float(loss_threshold),
+                        "attempt_count": total_attempts,
+                        "accuracy": (
+                            final_correct_count + net_correct
+                        )
+                        / total_attempts,
+                        "final_accuracy": (
+                            final_correct_count / total_attempts
+                        ),
+                        "delta_vs_final": net_correct / total_attempts,
+                        "stop_count": int(stopped.sum()),
+                        "stop_rate": float(stopped.sum()) / total_attempts,
+                        "beneficial_stop_count": int(
+                            ((utility > 0) & stopped).sum()
+                        ),
+                        "harmful_stop_count": int(
+                            ((utility < 0) & stopped).sum()
+                        ),
+                    }
+                )
+
+    predictions = pd.DataFrame(prediction_rows)
+    metrics = pd.DataFrame(metric_rows)
+    policies = pd.DataFrame(policy_rows)
+    predictions_path = config.output_dir / "two_head_predictions.parquet"
+    metrics_path = config.output_dir / "two_head_metrics.parquet"
+    policies_path = config.output_dir / "two_head_policies.parquet"
+    predictions.to_parquet(predictions_path, index=False)
+    metrics.to_parquet(metrics_path, index=False)
+    policies.to_parquet(policies_path, index=False)
+    fixed_policy = policies[
+        policies["layer"].eq(36)
+        & policies["current_correct_threshold"].eq(0.9)
+        & policies["conditional_loss_threshold"].eq(0.9)
+    ].to_dict(orient="records")
+    summary = {
+        "experiment": "two_head_intervention",
+        "source_dir": config.source_dir,
+        "output_dir": config.output_dir,
+        "examples_path": examples_path,
+        "activations_path": activations_path,
+        "predictions_path": predictions_path,
+        "metrics_path": metrics_path,
+        "policies_path": policies_path,
+        "example_count": len(examples),
+        "layers": layers,
+        "folds": config.folds,
+        "epochs": config.epochs,
+        "model_paths": model_paths,
+        "best_auc_by_head": (
+            metrics.sort_values("auc", ascending=False)
+            .groupby("head")
+            .head(1)
+            .to_dict(orient="records")
+        ),
+        "best_policy": (
+            policies.sort_values(
+                ["delta_vs_final", "harmful_stop_count", "stop_count"],
+                ascending=[False, True, True],
+            )
+            .head(1)
+            .to_dict(orient="records")
+        ),
+        "fixed_layer36_0_9_policy": fixed_policy,
+        "timings_seconds": {
+            "total": round(time.perf_counter() - started_at, 3)
+        },
+    }
+    _write_json(
+        config.output_dir / "two_head_summary.json",
+        summary,
+    )
+    return summary
+
+
+def apply_two_head_intervention(
+    *,
+    model_dir: Path,
+    evaluation_dir: Path,
+    output_path: Path,
+    layer: int = 36,
+    current_correct_threshold: float = 0.9,
+    conditional_loss_threshold: float = 0.9,
+) -> dict[str, object]:
+    examples = pd.read_parquet(
+        evaluation_dir / "activation_probe_examples.parquet"
+    ).reset_index(drop=True)
+    activations, _ = _load_activation_array(
+        evaluation_dir / "activations.npy",
+        evaluation_dir,
+    )
+    manifest = json.loads(
+        (evaluation_dir / "activation_manifest.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    layers = tuple(int(value) for value in manifest["layers"])
+    if layer not in layers:
+        raise ValueError(f"Layer {layer} is absent from evaluation activations")
+    features = _activation_layer_features(
+        activations,
+        layers.index(layer),
+    )
+    current_scores = _score_saved_head(
+        model_dir / "models" / f"current_correct_layer_{layer:03d}.npz",
+        features,
+    )
+    loss_scores = _score_saved_head(
+        model_dir
+        / "models"
+        / f"conditional_robust_loss_layer_{layer:03d}.npz",
+        features,
+    )
+    stopped = (
+        (current_scores >= current_correct_threshold)
+        & (loss_scores >= conditional_loss_threshold)
+    )
+    utility = (
+        examples["current_correct"].astype(int)
+        - examples["final_correct"].astype(int)
+    ).to_numpy()
+    cohort = json.loads(
+        (evaluation_dir / "intervention_cohort_summary.json").read_text(
+            encoding="utf-8"
+        )
+    )
+    total = int(cohort["complete_question_count"])
+    baseline_correct = (
+        int(examples["final_correct"].astype(bool).sum())
+        + int(cohort["missing_candidate_final_correct_count"])
+    )
+    net_correct = int(utility[stopped].sum())
+    decisions = pd.DataFrame(
+        {
+            "example_index": examples["example_index"].astype(int),
+            "current_correct_score": current_scores,
+            "conditional_robust_loss_score": loss_scores,
+            "stopped": stopped,
+            "utility": utility,
+        }
+    )
+    decisions_path = output_path.with_suffix(".parquet")
+    decisions.to_parquet(decisions_path, index=False)
+    summary = {
+        "experiment": "external_two_head_intervention",
+        "model_dir": model_dir,
+        "evaluation_dir": evaluation_dir,
+        "layer": layer,
+        "current_correct_threshold": current_correct_threshold,
+        "conditional_loss_threshold": conditional_loss_threshold,
+        "question_count": total,
+        "baseline_correct": baseline_correct,
+        "baseline_accuracy": baseline_correct / total,
+        "intervention_correct": baseline_correct + net_correct,
+        "intervention_accuracy": (baseline_correct + net_correct) / total,
+        "delta_correct": net_correct,
+        "delta_accuracy": net_correct / total,
+        "stop_count": int(stopped.sum()),
+        "stop_rate": float(stopped.sum()) / total,
+        "beneficial_stop_count": int(((utility > 0) & stopped).sum()),
+        "harmful_stop_count": int(((utility < 0) & stopped).sum()),
+        "neutral_stop_count": int(((utility == 0) & stopped).sum()),
+        "decisions_path": decisions_path,
+    }
+    _write_json(output_path, summary)
+    return summary
+
+
+def evaluate_candidate_intervention(
+    examples: pd.DataFrame,
+    predictions: pd.DataFrame,
+    probe_thresholds: Sequence[float] = DEFAULT_PROBE_THRESHOLDS,
+    fallback_attempt_count: int = 0,
+    fallback_correct_count: int = 0,
+    confidence_threshold: float = float("nan"),
+) -> pd.DataFrame:
+    if predictions.empty:
+        return pd.DataFrame()
+    scored = examples.merge(
+        predictions[["example_index", "layer", "target", "score"]],
+        on="example_index",
+        how="inner",
+    )
+    records: list[dict[str, object]] = []
+    total_attempts = len(examples) + int(fallback_attempt_count)
+    for (target, layer), group in scored.groupby(["target", "layer"]):
+        for threshold in probe_thresholds:
+            stopped = group["score"].astype(float) >= float(threshold)
+            selected_correct = np.where(
+                stopped,
+                group["current_correct"].astype(bool),
+                group["final_correct"].astype(bool),
+            )
+            final_correct_count = (
+                int(group["final_correct"].astype(bool).sum())
+                + int(fallback_correct_count)
+            )
+            selected_correct_count = (
+                int(selected_correct.sum())
+                + int(fallback_correct_count)
+            )
+            stop_deciles = np.where(
+                stopped,
+                group["decile"].astype(int),
+                100,
+            )
+            if fallback_attempt_count:
+                stop_deciles = np.concatenate(
+                    [
+                        stop_deciles,
+                        np.full(int(fallback_attempt_count), 100),
+                    ]
+                )
+            records.append(
+                {
+                    "policy_family": "probe_candidate",
+                    "target": str(target),
+                    "layer": int(layer),
+                    "confidence_threshold": float(
+                        confidence_threshold
+                    ),
+                    "probe_threshold": float(threshold),
+                    "attempt_count": total_attempts,
+                    "accuracy": selected_correct_count / total_attempts,
+                    "final_accuracy": final_correct_count / total_attempts,
+                    "delta_vs_final": (
+                        selected_correct_count - final_correct_count
+                    )
+                    / total_attempts,
+                    "stop_rate": float(stopped.sum()) / total_attempts,
+                    "mean_stop_decile": float(np.mean(stop_deciles)),
+                    "median_stop_decile": float(np.median(stop_deciles)),
+                    "beneficial_stop_count": int(
+                        (
+                            stopped
+                            & group["intervention_utility"].eq("beneficial")
+                        ).sum()
+                    ),
+                    "harmful_stop_count": int(
+                        (
+                            stopped
+                            & group["intervention_utility"].eq("harmful")
+                        ).sum()
+                    ),
+                }
+            )
+    return pd.DataFrame(records)
+
+
 def evaluate_probe_halting(
     examples: pd.DataFrame,
     predictions: pd.DataFrame,
     confidence_thresholds: Sequence[float] = DEFAULT_CONFIDENCE_THRESHOLDS,
     probe_thresholds: Sequence[float] = DEFAULT_PROBE_THRESHOLDS,
+    fallback_attempt_count: int = 0,
+    fallback_correct_count: int = 0,
 ) -> pd.DataFrame:
     if predictions.empty:
         return pd.DataFrame()
@@ -1154,6 +1965,19 @@ def evaluate_probe_halting(
         if not rows:
             return
         frame = pd.DataFrame(rows)
+        total_attempts = len(frame) + int(fallback_attempt_count)
+        selected_correct_count = (
+            int(frame["selected_correct"].sum())
+            + int(fallback_correct_count)
+        )
+        final_correct_count = (
+            int(frame["final_correct"].sum())
+            + int(fallback_correct_count)
+        )
+        stop_deciles = [
+            *frame["stop_decile"].astype(int).tolist(),
+            *([100] * int(fallback_attempt_count)),
+        ]
         records.append(
             {
                 "policy_family": policy_family,
@@ -1161,16 +1985,37 @@ def evaluate_probe_halting(
                 "layer": layer,
                 "confidence_threshold": confidence_threshold,
                 "probe_threshold": probe_threshold,
-                "attempt_count": len(frame),
-                "accuracy": float(frame["selected_correct"].mean()),
-                "final_accuracy": float(frame["final_correct"].mean()),
-                "delta_vs_final": float(
-                    frame["selected_correct"].mean()
-                    - frame["final_correct"].mean()
+                "attempt_count": total_attempts,
+                "accuracy": selected_correct_count / total_attempts,
+                "final_accuracy": final_correct_count / total_attempts,
+                "delta_vs_final": (
+                    selected_correct_count - final_correct_count
+                )
+                / total_attempts,
+                "stop_rate": float(frame["stopped_early"].sum())
+                / total_attempts,
+                "mean_stop_decile": float(np.mean(stop_deciles)),
+                "median_stop_decile": float(np.median(stop_deciles)),
+                "beneficial_stop_count": (
+                    int(
+                        (
+                            frame["stopped_early"].astype(bool)
+                            & frame["intervention_utility"].eq("beneficial")
+                        ).sum()
+                    )
+                    if "intervention_utility" in frame
+                    else 0
                 ),
-                "stop_rate": float(frame["stopped_early"].mean()),
-                "mean_stop_decile": float(frame["stop_decile"].mean()),
-                "median_stop_decile": float(frame["stop_decile"].median()),
+                "harmful_stop_count": (
+                    int(
+                        (
+                            frame["stopped_early"].astype(bool)
+                            & frame["intervention_utility"].eq("harmful")
+                        ).sum()
+                    )
+                    if "intervention_utility" in frame
+                    else 0
+                ),
             }
         )
 
@@ -1199,6 +2044,11 @@ def evaluate_probe_halting(
                     "stopped_early": selected is not None,
                     "stop_decile": (
                         int(selected["decile"]) if selected is not None else 100
+                    ),
+                    "intervention_utility": (
+                        str(selected.get("intervention_utility", ""))
+                        if selected is not None
+                        else ""
                     ),
                 }
             )
@@ -1245,6 +2095,11 @@ def evaluate_probe_halting(
                             if selected is not None
                             else 100
                         ),
+                        "intervention_utility": (
+                            str(selected.get("intervention_utility", ""))
+                            if selected is not None
+                            else ""
+                        ),
                     }
                 )
             summarize(
@@ -1288,6 +2143,16 @@ def evaluate_probe_halting(
                                 int(selected["decile"])
                                 if selected is not None
                                 else 100
+                            ),
+                            "intervention_utility": (
+                                str(
+                                    selected.get(
+                                        "intervention_utility",
+                                        "",
+                                    )
+                                )
+                                if selected is not None
+                                else ""
                             ),
                         }
                     )
@@ -1339,9 +2204,15 @@ def write_activation_probe_report(
                 f"{float(row.positive_rate):.1%} |"
             )
     lines.extend(["", "## Best Halting Deltas", ""])
-    deployable = halting[
-        halting["policy_family"].isin(("probe_only", "probe_confidence"))
-    ]
+    deployable = (
+        halting[
+            halting["policy_family"].isin(
+                ("probe_only", "probe_confidence", "probe_candidate")
+            )
+        ]
+        if not halting.empty
+        else halting
+    )
     if deployable.empty:
         lines.append("No probe halting policies were evaluated.")
     else:
@@ -1370,7 +2241,11 @@ def write_activation_probe_report(
                 f"{float(row.stop_rate):.1%} |"
             )
     lines.extend(["", "## Best Probe-Only Halting Deltas", ""])
-    probe_only = halting[halting["policy_family"] == "probe_only"]
+    probe_only = (
+        halting[halting["policy_family"] == "probe_only"]
+        if not halting.empty
+        else halting
+    )
     if probe_only.empty:
         lines.append("No probe-only halting policies were evaluated.")
     else:
